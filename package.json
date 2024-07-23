@@ -1,0 +1,54 @@
+{
+  "name": "@safe-global/safe-core-sdk-react-hooks",
+  "version": "0.0.0",
+  "description": "SDK that facilitates the interaction with Safe Smart Accounts",
+  "keywords": [
+    "Ethereum",
+    "Wallet",
+    "Safe",
+    "Smart Account",
+    "SDK",
+    "React",
+    "Hooks"
+  ],
+  "scripts": {
+    "test": "mocha -r ts-node/register -r tsconfig-paths/register tests/unit/**/*.ts",
+    "format:check": "prettier --check \"*/**/*.{js,json,md,ts}\"",
+    "format": "prettier --write \"*/**/*.{js,json,md,ts}\"",
+    "unbuild": "rm -rf dist cache *.tsbuildinfo",
+    "build": "yarn unbuild && tsc -p tsconfig.build.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/safe-global/safe-core-sdk-react-hooks.git"
+  },
+  "author": "Safe (https://safe.global)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/safe-global/safe-core-sdk-react-hooks/issues"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "main": "./dist/esm/exports/index.js",
+  "types": "./dist/types/exports/index.d.ts",
+  "typings": "./dist/types/exports/index.d.ts",
+  "peerDependencies": {
+    "@tanstack/react-query": ">=5.0.0",
+    "react": ">=18",
+    "typescript": ">=5.0.4"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": ">=5.45.1",
+    "@testing-library/react": ">=15.0.7",
+    "@types/react": ">=18.3.1",
+    "@types/react-dom": ">=18.3.0",
+    "react": ">=18.3.1",
+    "react-dom": ">=18.3.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {},
+  "packageManager": "yarn@1.22.22"
+}
