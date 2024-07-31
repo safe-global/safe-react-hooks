@@ -7,7 +7,8 @@ export type UseConfigParams<Config extends SafeConfig = SafeConfig> = ConfigPara
 
 /**
  * Hook to get the SafeConfig object provided by the nearest `SafeProvider`.
- * @param params SafeConfig to use instead of the one provided by `SafeProvider`.
+ * @param params Parameters to customize the hook behavior.
+ * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns SafeConfig object provided by `SafeProvider` or the one passed as a parameter.
  */
 export function useConfig<Config extends SafeConfig = SafeConfig>(
