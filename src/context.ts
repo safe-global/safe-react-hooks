@@ -1,4 +1,4 @@
-import { createContext } from 'react'
+import { createContext, createElement } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createConfig, http, WagmiProvider } from 'wagmi'
 import { sepolia } from 'wagmi/chains'
@@ -24,11 +24,14 @@ export const wagmiConfig = createConfig({
 
 export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>) {
   const { children, config } = params
-  return (
-    <SafeContext.Provider value={config}>
-      <WagmiProvider config={wagmiConfig}>
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-      </WagmiProvider>
-    </SafeContext.Provider>
+  const props = { value: config }
+  return createElement(
+    SafeContext.Provider,
+    props,
+    createElement(
+      WagmiProvider,
+      { config: wagmiConfig },
+      createElement(QueryClientProvider, { client: queryClient }, children)
+    )
   )
 }
