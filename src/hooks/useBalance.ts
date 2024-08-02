@@ -1,8 +1,7 @@
 import { type UseBalanceReturnType, useBalance as useBalanceWagmi } from 'wagmi'
 import { type GetBalanceQueryFnData } from 'wagmi/query'
-
-import type { ConfigParam, SafeConfig } from '../types/index.js'
-import { useSafeInfo } from './useSafeInfo.js'
+import type { ConfigParam, SafeConfig } from '@/types/index.js'
+import { useSafeInfo } from '@/hooks/useSafeInfo.js'
 
 export type UseBalanceParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
 

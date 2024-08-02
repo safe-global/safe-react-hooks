@@ -2,8 +2,7 @@ import { createContext, createElement } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createConfig, http, WagmiProvider } from 'wagmi'
 import { sepolia } from 'wagmi/chains'
-
-import { SafeConfig } from './types/index.js'
+import { SafeConfig } from '@/types/index.js'
 
 export const SafeContext = createContext<SafeConfig | undefined>(undefined)
 

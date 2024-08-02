@@ -1,9 +1,8 @@
 import { useCallback } from 'react'
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import type { Address } from 'viem'
-
-import type { ConfigParam, SafeConfig, SafeInfo } from '../types/index.js'
-import { useSafeClient } from './useSafeClient.js'
+import type { ConfigParam, SafeConfig, SafeInfo } from '@/types/index.js'
+import { useSafeClient } from '@/hooks/useSafeClient.js'
 
 export type UseSafeInfoParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
 export type UseSafeInfoReturnType = UseQueryResult<SafeInfo>

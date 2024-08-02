@@ -16,7 +16,7 @@
     "format:check": "prettier --check \"*/**/*.{js,json,md,ts}\"",
     "format": "prettier --write \"*/**/*.{js,json,md,ts}\"",
     "unbuild": "rm -rf dist cache *.tsbuildinfo",
-    "build": "yarn unbuild && tsc -p tsconfig.build.json"
+    "build": "yarn unbuild && tsc -p tsconfig.build.json && tsc-alias"
   },
   "repository": {
     "type": "git",
@@ -47,6 +47,7 @@
     "@types/react-dom": ">=18.3.0",
     "react": ">=18.3.1",
     "react-dom": ">=18.3.1",
+    "tsc-alias": "^1.8.10",
     "typescript": "^5.3.3"
   },
   "dependencies": {

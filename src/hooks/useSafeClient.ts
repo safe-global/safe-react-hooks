@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createSafeClient, type SafeClient } from '@safe-global/safe-kit'
-
-import type { ConfigParam, SafeConfig } from '../types/index.js'
-import { useConfig } from './useConfig.js'
+import type { ConfigParam, SafeConfig } from '@/types/index.js'
+import { useConfig } from '@/hooks/useConfig.js'
 
 export type UseSafeClientParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
 export type UseSafeClientReturnType = {
