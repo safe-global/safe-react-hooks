@@ -16,7 +16,7 @@ export function useBalance<Config extends SafeConfig = SafeConfig>(
 ): UseBalanceReturnType<GetBalanceQueryFnData> {
   const { config } = params
 
-  const { data: { address } = {} } = useSafeInfo({ config })
+  const { data: { address } = {} } = config ? useSafeInfo({ config }) : useSafeInfo()
 
   return useBalanceWagmi({ address })
 }

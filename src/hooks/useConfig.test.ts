@@ -47,13 +47,13 @@ export function catchHookError(...args: Parameters<typeof renderHook>) {
 }
 
 describe('useConfig', () => {
-  it('should return the config from the SafeProvider', async () => {
+  it('should return the config from the SafeProvider', () => {
     const { result } = renderHookInSafeProvider(() => useConfig(), { config: safeProviderConfig })
 
     expect(result.current).toBe(safeProviderConfig)
   })
 
-  it('should return the config passed to the hook', async () => {
+  it('should return the config passed to the hook', () => {
     const overrideConfig = {
       provider: 'https://rpc.provider2.com',
       signer: '0x321',
@@ -67,7 +67,7 @@ describe('useConfig', () => {
     expect(result.current).toBe(overrideConfig)
   })
 
-  it('should throw if not rendered inside a SafeProvider', async () => {
+  it('should throw if not rendered inside a SafeProvider', () => {
     const error = catchHookError(() => useConfig())
 
     expect(error?.message).toEqual('`useConfig` must be used within `SafeProvider`.')
