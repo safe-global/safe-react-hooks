@@ -3,9 +3,9 @@ import { GetBalanceData } from 'wagmi/query'
 import { renderHook } from '@testing-library/react'
 import { useBalance } from '@/hooks/useBalance.js'
 import * as useSafeInfo from '@/hooks/useSafeInfo.js'
+import { safeAddress, safeConfig } from '@test/fixtures.js'
 
 describe('useBalance', () => {
-  const mockSafeAddress = '0x123'
   const mockBalanceResult = {
     data: {
       decimals: 18,
@@ -20,7 +20,7 @@ describe('useBalance', () => {
 
   beforeEach(() => {
     useSafeInfoSpy.mockReturnValue({
-      data: { address: mockSafeAddress }
+      data: { address: safeAddress }
     } as useSafeInfo.UseSafeInfoReturnType)
 
     useBalanceWagmiSpy.mockReturnValue(
@@ -41,28 +41,22 @@ describe('useBalance', () => {
     expect(useSafeInfoSpy).toHaveBeenCalledWith()
 
     expect(useBalanceWagmiSpy).toHaveBeenCalledTimes(1)
-    expect(useBalanceWagmiSpy).toHaveBeenCalledWith({ address: mockSafeAddress })
+    expect(useBalanceWagmiSpy).toHaveBeenCalledWith({ address: safeAddress })
   })
 
   it('should return the balance for the Safe using the passed config', () => {
-    const config = {
-      provider: 'https://rpc.provider.com',
-      signer: '0x1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-      safeAddress: '0x9a1148b5D6a2D34CA46111379d0FD1352a0ade4a'
-    }
-
     useSafeInfoSpy.mockReturnValueOnce({
-      data: { address: config.safeAddress }
+      data: { address: safeConfig.safeAddress }
     } as useSafeInfo.UseSafeInfoReturnType)
 
-    const result = renderHook(() => useBalance({ config }))
+    const result = renderHook(() => useBalance({ config: safeConfig }))
 
     expect(result.result.current).toEqual(mockBalanceResult)
 
     expect(useSafeInfoSpy).toHaveBeenCalledTimes(1)
-    expect(useSafeInfoSpy).toHaveBeenCalledWith({ config })
+    expect(useSafeInfoSpy).toHaveBeenCalledWith({ config: safeConfig })
 
     expect(useBalanceWagmiSpy).toHaveBeenCalledTimes(1)
-    expect(useBalanceWagmiSpy).toHaveBeenCalledWith({ address: config.safeAddress })
+    expect(useBalanceWagmiSpy).toHaveBeenCalledWith({ address: safeConfig.safeAddress })
   })
 })

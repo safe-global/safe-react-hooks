@@ -17,7 +17,8 @@ const config: JestConfigWithTsJest = {
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
-    "^@(.*)\\.js$": "<rootDir>/src$1",
+    "^@/(.*)\\.js$": "<rootDir>/src/$1",
+    "^@test/(.*)\\.js$": "<rootDir>/test/$1",
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
 

@@ -5,9 +5,10 @@
   "compilerOptions": {
     "sourceMap": true,
     "jsx": "preserve",
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"],
+      "@test/*": ["./test/*"]
     }
   }
 }
