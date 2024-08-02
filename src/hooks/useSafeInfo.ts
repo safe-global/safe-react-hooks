@@ -10,10 +10,12 @@ export type UseSafeInfoReturnType = UseQueryResult<SafeInfo>
 export function useSafeInfo<Config extends SafeConfig = SafeConfig>(
   params: UseSafeInfoParams<Config> = {}
 ): UseSafeInfoReturnType {
-  const { getSafeClient } = useSafeClient({ config: params.config })
+  const safeClient = useSafeClient({ config: params.config })
 
   const getSafeInfo = useCallback(async (): Promise<SafeInfo | undefined> => {
-    const safeClient = await getSafeClient()
+    if (!safeClient) {
+      throw new Error('SafeClient not initialized')
+    }
     const [address, nonce, threshold, isDeployed, owners] = await Promise.all([
       safeClient.protocolKit.getAddress().then((address) => address as Address),
       safeClient.protocolKit.getNonce(),
@@ -22,7 +24,7 @@ export function useSafeInfo<Config extends SafeConfig = SafeConfig>(
       safeClient.protocolKit.getOwners()
     ])
     return { address, nonce, threshold, isDeployed, owners }
-  }, [getSafeClient])
+  }, [safeClient])
 
   return useQuery({ queryKey: ['safeInfo'], queryFn: getSafeInfo })
 }

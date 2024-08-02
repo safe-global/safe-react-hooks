@@ -33,9 +33,9 @@ describe('useBalance', () => {
   })
 
   it('should return the balance for the Safe provided by `useSafeInfo`', () => {
-    const result = renderHook(() => useBalance())
+    const { result } = renderHook(() => useBalance())
 
-    expect(result.result.current).toEqual(mockBalanceResult)
+    expect(result.current).toEqual(mockBalanceResult)
 
     expect(useSafeInfoSpy).toHaveBeenCalledTimes(1)
     expect(useSafeInfoSpy).toHaveBeenCalledWith()
