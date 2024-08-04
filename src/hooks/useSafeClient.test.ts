@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import * as safeKit from '@safe-global/safe-kit'
 import { useSafeClient } from '@/hooks/useSafeClient.js'
 import * as useConfig from '@/hooks/useConfig.js'
-import { safeConfig } from '@test/fixtures.js'
+import { safeConfig } from '@test/config.js'
 
 describe('useSafeClient', () => {
   const safeClientMock = { foo: 'bar' } as unknown as safeKit.SafeClient
@@ -37,11 +37,7 @@ describe('useSafeClient', () => {
   })
 
   it('should accept a config to override the one from the SafeProvider', async () => {
-    const overrideConfig = {
-      provider: 'https://rpc.provider2.com',
-      signer: '0x321',
-      safeAddress: '0x123'
-    }
+    const overrideConfig = { ...safeConfig, safeAddress: '0x123', safeOptions: undefined }
 
     const { result } = renderHook(() => useSafeClient({ config: overrideConfig }))
 

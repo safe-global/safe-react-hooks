@@ -3,7 +3,8 @@ import { GetBalanceData } from 'wagmi/query'
 import { renderHook } from '@testing-library/react'
 import { useBalance } from '@/hooks/useBalance.js'
 import * as useSafeInfo from '@/hooks/useSafeInfo.js'
-import { safeAddress, safeConfig } from '@test/fixtures.js'
+import { safeConfig } from '@test/config.js'
+import { safeAddress } from '@test/fixtures.js'
 
 describe('useBalance', () => {
   const mockBalanceResult = {

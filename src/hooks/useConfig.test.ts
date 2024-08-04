@@ -1,5 +1,5 @@
 import { useConfig } from '@/hooks/useConfig.js'
-import { safeConfig } from '@test/fixtures.js'
+import { safeConfig } from '@test/config.js'
 import { catchHookError, renderHookInSafeProvider } from '@test/utils.js'
 
 describe('useConfig', () => {
@@ -10,11 +10,7 @@ describe('useConfig', () => {
   })
 
   it('should return the config passed to the hook', () => {
-    const overrideConfig = {
-      provider: 'https://rpc.provider2.com',
-      signer: '0x321',
-      safeAddress: '0x123'
-    }
+    const overrideConfig = { ...safeConfig, safeAddress: '0x123', safeOptions: undefined }
 
     const { result } = renderHookInSafeProvider(() => useConfig({ config: overrideConfig }), {
       config: safeConfig

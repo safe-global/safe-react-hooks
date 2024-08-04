@@ -1,9 +1,10 @@
 import { waitFor } from '@testing-library/react'
+import { SafeClient } from '@safe-global/safe-kit'
 import { useSafeInfo } from '@/hooks/useSafeInfo.js'
 import * as useSafeClient from '@/hooks/useSafeClient.js'
-import { safeConfig, safeInfo } from '@test/fixtures.js'
+import { safeConfig } from '@test/config.js'
+import { safeInfo } from '@test/fixtures.js'
 import { renderHookInSafeProvider } from '@test/utils.js'
-import { SafeClient } from '@safe-global/safe-kit'
 
 describe('useSafeInfo', () => {
   const useSafeClientSpy = jest.spyOn(useSafeClient, 'useSafeClient')
@@ -47,7 +48,7 @@ describe('useSafeInfo', () => {
   })
 
   it('should accept a config to override the one from the SafeProvider', async () => {
-    const overrideConfig = { ...safeConfig, safeAddress: '0x123' }
+    const overrideConfig = { ...safeConfig, safeAddress: '0x123', safeOptions: undefined }
 
     renderHookInSafeProvider(() => useSafeInfo({ config: overrideConfig }), {
       config: safeConfig

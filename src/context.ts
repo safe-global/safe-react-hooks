@@ -1,7 +1,6 @@
 import { createContext, createElement } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createConfig, http, WagmiProvider } from 'wagmi'
-import { sepolia } from 'wagmi/chains'
+import { createConfig, WagmiProvider } from 'wagmi'
 import { SafeConfig } from '@/types/index.js'
 
 export const SafeContext = createContext<SafeConfig | undefined>(undefined)
@@ -14,16 +13,16 @@ export type SafeProviderProps = {
 
 const queryClient = new QueryClient()
 
-export const wagmiConfig = createConfig({
-  chains: [sepolia],
-  transports: {
-    [sepolia.id]: http()
-  }
-})
-
 export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>) {
   const { children, config } = params
+
+  const wagmiConfig = createConfig({
+    chains: [config.chain],
+    transports: { [config.chain.id]: config.transport }
+  })
+
   const props = { value: config }
+
   return createElement(
     SafeContext.Provider,
     props,
