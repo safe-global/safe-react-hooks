@@ -3,7 +3,7 @@ import { GetBalanceData } from 'wagmi/query'
 import { renderHook } from '@testing-library/react'
 import { useBalance } from '@/hooks/useBalance.js'
 import * as useSafeInfo from '@/hooks/useSafeInfo.js'
-import { safeConfig } from '@test/config.js'
+import { configExistingSafe } from '@test/config.js'
 import { safeAddress } from '@test/fixtures.js'
 
 describe('useBalance', () => {
@@ -47,17 +47,17 @@ describe('useBalance', () => {
 
   it('should return the balance for the Safe using the passed config', () => {
     useSafeInfoSpy.mockReturnValueOnce({
-      data: { address: safeConfig.safeAddress }
+      data: { address: configExistingSafe.safeAddress }
     } as useSafeInfo.UseSafeInfoReturnType)
 
-    const result = renderHook(() => useBalance({ config: safeConfig }))
+    const result = renderHook(() => useBalance({ config: configExistingSafe }))
 
     expect(result.result.current).toEqual(mockBalanceResult)
 
     expect(useSafeInfoSpy).toHaveBeenCalledTimes(1)
-    expect(useSafeInfoSpy).toHaveBeenCalledWith({ config: safeConfig })
+    expect(useSafeInfoSpy).toHaveBeenCalledWith({ config: configExistingSafe })
 
     expect(useBalanceWagmiSpy).toHaveBeenCalledTimes(1)
-    expect(useBalanceWagmiSpy).toHaveBeenCalledWith({ address: safeConfig.safeAddress })
+    expect(useBalanceWagmiSpy).toHaveBeenCalledWith({ address: configExistingSafe.safeAddress })
   })
 })

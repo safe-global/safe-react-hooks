@@ -1,21 +1,24 @@
 import { createConfig, CreateConfigParams } from '@/index.js'
-import { SafeKitConfig } from '@safe-global/safe-kit'
 import { sepolia } from 'viem/chains'
+import { accounts, rpcProvider, safeAddress } from './fixtures.js'
 
-type EIP1193Provider = Exclude<SafeKitConfig['provider'], string>
-
-export const createConfigProps: CreateConfigParams<string> = {
+export const configParamsExistingSafe: CreateConfigParams<string> = {
   chain: sepolia,
-  provider: 'https://rpc.provider.com',
-  signer: '0x1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-  safeAddress: '0x5AFEd4047b12B5a6688D5A631f4c027E6827ba8a'
+  provider: rpcProvider,
+  signer: accounts[0],
+  safeAddress: safeAddress
 }
 
-export const createConfigEip1193Props: CreateConfigParams<EIP1193Provider> = {
+export const configParamsPredictedSafe: CreateConfigParams<string> = {
   chain: sepolia,
-  provider: { request: async () => {} },
-  signer: '0x1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-  safeAddress: '0x5AFEd4047b12B5a6688D5A631f4c027E6827ba8a'
+  provider: rpcProvider,
+  signer: accounts[0],
+  safeOptions: {
+    owners: accounts,
+    threshold: 1
+  }
 }
 
-export const safeConfig = createConfig(createConfigProps)
+export const configExistingSafe = createConfig(configParamsExistingSafe)
+
+export const configPredictedSafe = createConfig(configParamsPredictedSafe)

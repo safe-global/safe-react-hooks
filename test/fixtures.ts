@@ -1,4 +1,4 @@
-import { SafeInfo } from '@/index.js'
+import { EIP1193Provider, SafeInfo } from '@/index.js'
 
 export const safeAddress = '0x5AFEf9a179dCE37C9ddf3AE4Cad4aa9dd6B814C2'
 
@@ -15,3 +15,7 @@ export const safeInfo: SafeInfo = {
   isDeployed: true,
   owners: accounts
 }
+
+export const rpcProvider = 'https://rpc.provider.com'
+
+export const eip1193Provider: EIP1193Provider = { request: jest.fn(async () => {}) }

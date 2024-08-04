@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/safe-kit'
 import { useSafeInfo } from '@/hooks/useSafeInfo.js'
 import * as useSafeClient from '@/hooks/useSafeClient.js'
-import { safeConfig } from '@test/config.js'
+import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { safeInfo } from '@test/fixtures.js'
 import { renderHookInSafeProvider } from '@test/utils.js'
 
@@ -28,7 +28,7 @@ describe('useSafeInfo', () => {
   })
 
   it('should return fetch and return Safe infos via SafeClient', async () => {
-    const { result } = renderHookInSafeProvider(() => useSafeInfo(), { config: safeConfig })
+    const { result } = renderHookInSafeProvider(() => useSafeInfo(), { config: configExistingSafe })
 
     expect(useSafeClientSpy).toHaveBeenCalledTimes(1)
     expect(useSafeClientSpy).toHaveBeenCalledWith()
@@ -48,21 +48,19 @@ describe('useSafeInfo', () => {
   })
 
   it('should accept a config to override the one from the SafeProvider', async () => {
-    const overrideConfig = { ...safeConfig, safeAddress: '0x123', safeOptions: undefined }
-
-    renderHookInSafeProvider(() => useSafeInfo({ config: overrideConfig }), {
-      config: safeConfig
+    renderHookInSafeProvider(() => useSafeInfo({ config: configPredictedSafe }), {
+      config: configExistingSafe
     })
 
     expect(useSafeClientSpy).toHaveBeenCalledTimes(1)
-    expect(useSafeClientSpy).toHaveBeenCalledWith({ config: overrideConfig })
+    expect(useSafeClientSpy).toHaveBeenCalledWith({ config: configPredictedSafe })
   })
 
   // TODO: fix this failing test
   it.skip('should return no data if any request fails', async () => {
     safeClientMock.protocolKit.getAddress.mockRejectedValue(new Error('Address error'))
 
-    const { result } = renderHookInSafeProvider(() => useSafeInfo(), { config: safeConfig })
+    const { result } = renderHookInSafeProvider(() => useSafeInfo(), { config: configExistingSafe })
 
     expect(useSafeClientSpy).toHaveBeenCalledTimes(1)
     expect(useSafeClientSpy).toHaveBeenCalledWith()

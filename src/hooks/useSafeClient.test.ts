@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import * as safeKit from '@safe-global/safe-kit'
 import { useSafeClient } from '@/hooks/useSafeClient.js'
 import * as useConfig from '@/hooks/useConfig.js'
-import { safeConfig } from '@test/config.js'
+import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 
 describe('useSafeClient', () => {
   const safeClientMock = { foo: 'bar' } as unknown as safeKit.SafeClient
@@ -11,7 +11,7 @@ describe('useSafeClient', () => {
   const useConfigSpy = jest.spyOn(useConfig, 'useConfig')
 
   beforeEach(() => {
-    useConfigSpy.mockReturnValue(safeConfig)
+    useConfigSpy.mockReturnValue(configExistingSafe)
     createSafeClientSpy.mockResolvedValue(safeClientMock)
   })
 
@@ -33,22 +33,20 @@ describe('useSafeClient', () => {
     expect(useConfigSpy).toHaveBeenCalledWith()
 
     expect(createSafeClientSpy).toHaveBeenCalledTimes(1)
-    expect(createSafeClientSpy).toHaveBeenCalledWith(safeConfig)
+    expect(createSafeClientSpy).toHaveBeenCalledWith(configExistingSafe)
   })
 
   it('should accept a config to override the one from the SafeProvider', async () => {
-    const overrideConfig = { ...safeConfig, safeAddress: '0x123', safeOptions: undefined }
-
-    const { result } = renderHook(() => useSafeClient({ config: overrideConfig }))
+    const { result } = renderHook(() => useSafeClient({ config: configPredictedSafe }))
 
     expect(useConfigSpy).toHaveBeenCalledTimes(1)
-    expect(useConfigSpy).toHaveBeenCalledWith({ config: overrideConfig })
+    expect(useConfigSpy).toHaveBeenCalledWith({ config: configPredictedSafe })
 
     expect(result.current).toBeUndefined()
 
     await waitFor(() => expect(result.current).toMatchObject(safeClientMock))
 
     expect(useConfigSpy).toHaveBeenCalledTimes(2)
-    expect(useConfigSpy).toHaveBeenCalledWith({ config: overrideConfig })
+    expect(useConfigSpy).toHaveBeenCalledWith({ config: configPredictedSafe })
   })
 })
