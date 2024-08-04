@@ -7,8 +7,6 @@ export const SafeContext = createContext<SafeConfig | undefined>(undefined)
 
 export type SafeProviderProps = {
   config: SafeConfig
-  initialState?: SafeConfig | undefined
-  reconnectOnMount?: boolean | undefined
 }
 
 const queryClient = new QueryClient()

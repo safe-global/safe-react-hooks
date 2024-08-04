@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { SafeContext } from '@/context.js'
+import { SafeContext } from '@/SafeProvider.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 
 export type UseConfigParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>

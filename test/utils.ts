@@ -1,6 +1,6 @@
 import { createElement } from 'react'
 import { renderHook } from '@testing-library/react'
-import { SafeProvider, SafeProviderProps } from '@/context.js'
+import { SafeProvider, SafeProviderProps } from '@/SafeProvider.js'
 
 /**
  * Wrapper to render a hook in a SafeProvider.
