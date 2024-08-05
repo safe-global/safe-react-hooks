@@ -1,9 +1,13 @@
-import { type UseBalanceReturnType, useBalance as useBalanceWagmi } from 'wagmi'
+import {
+  type UseBalanceReturnType as UseBalanceReturnTypeWagmi,
+  useBalance as useBalanceWagmi
+} from 'wagmi'
 import { type GetBalanceQueryFnData } from 'wagmi/query'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 import { useSafeInfo } from '@/hooks/useSafeInfo.js'
 
 export type UseBalanceParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
+export type UseBalanceReturnType = UseBalanceReturnTypeWagmi<GetBalanceQueryFnData>
 
 /**
  * Hook to get the connected Safe's balance.
@@ -13,10 +17,10 @@ export type UseBalanceParams<Config extends SafeConfig = SafeConfig> = ConfigPar
  */
 export function useBalance<Config extends SafeConfig = SafeConfig>(
   params: UseBalanceParams<Config> = {}
-): UseBalanceReturnType<GetBalanceQueryFnData> {
+): UseBalanceReturnType {
   const { config } = params
 
   const { data: { address } = {} } = config ? useSafeInfo({ config }) : useSafeInfo()
 
-  return useBalanceWagmi({ address })
+  return useBalanceWagmi({ address }) as UseBalanceReturnType;
 }

@@ -1,20 +1,12 @@
 import * as wagmi from 'wagmi'
-import { GetBalanceData } from 'wagmi/query'
 import { renderHook } from '@testing-library/react'
-import { useBalance } from '@/hooks/useBalance.js'
+import { useBalance, UseBalanceReturnType } from '@/hooks/useBalance.js'
 import * as useSafeInfo from '@/hooks/useSafeInfo.js'
 import { configExistingSafe } from '@test/config.js'
-import { safeAddress } from '@test/fixtures.js'
+import { balanceData, safeAddress } from '@test/fixtures.js'
 
 describe('useBalance', () => {
-  const mockBalanceResult = {
-    data: {
-      decimals: 18,
-      formatted: '0.8',
-      symbol: 'ETH',
-      value: 800000000000000000n
-    }
-  }
+  const mockBalanceResult = { data: balanceData }
 
   const useBalanceWagmiSpy = jest.spyOn(wagmi, 'useBalance')
   const useSafeInfoSpy = jest.spyOn(useSafeInfo, 'useSafeInfo')
@@ -24,9 +16,7 @@ describe('useBalance', () => {
       data: { address: safeAddress }
     } as useSafeInfo.UseSafeInfoReturnType)
 
-    useBalanceWagmiSpy.mockReturnValue(
-      mockBalanceResult as wagmi.UseBalanceReturnType<GetBalanceData>
-    )
+    useBalanceWagmiSpy.mockReturnValue(mockBalanceResult as UseBalanceReturnType)
   })
 
   afterEach(() => {
