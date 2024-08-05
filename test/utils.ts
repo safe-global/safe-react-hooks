@@ -1,5 +1,5 @@
 import { createElement } from 'react'
-import { renderHook } from '@testing-library/react'
+import { renderHook, RenderHookOptions } from '@testing-library/react'
 import { SafeProvider, SafeProviderProps } from '@/SafeProvider.js'
 
 /**
@@ -9,12 +9,12 @@ import { SafeProvider, SafeProviderProps } from '@/SafeProvider.js'
  * @param options Additional options to pass to renderHook.
  * @returns RenderHookResult of the hook rendered in a SafeProvider.
  */
-export function renderHookInSafeProvider(
-  hook: Parameters<typeof renderHook>[0],
+export function renderHookInSafeProvider<Result, Props>(
+  hook: (initialProps: Props) => Result,
   providerProps: SafeProviderProps,
-  options: Parameters<typeof renderHook>[1] = {}
+  options: RenderHookOptions<Props> = {}
 ) {
-  return renderHook(hook, {
+  return renderHook<Result, Props>(hook, {
     ...options,
     wrapper: ({ children }) => createElement(SafeProvider, providerProps, children)
   })
