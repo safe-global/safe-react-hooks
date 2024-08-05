@@ -1,15 +1,15 @@
-import { createConfig, CreateConfigParams } from '@/index.js'
+import { createConfig } from '@/index.js'
 import { sepolia } from 'viem/chains'
 import { accounts, rpcProvider, safeAddress } from './fixtures.js'
 
-export const configParamsExistingSafe: CreateConfigParams<string> = {
+export const configParamsExistingSafe = {
   chain: sepolia,
   provider: rpcProvider,
   signer: accounts[0],
   safeAddress: safeAddress
 }
 
-export const configParamsPredictedSafe: CreateConfigParams<string> = {
+export const configParamsPredictedSafe = {
   chain: sepolia,
   provider: rpcProvider,
   signer: accounts[0],

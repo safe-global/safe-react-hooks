@@ -21,7 +21,7 @@ export type SafeConfig<
 } & SafeKitConfig
 
 export type ConfigParam<Config extends SafeConfig = SafeConfig> = {
-  config?: SafeConfig | Config
+  config?: Config
 }
 
 export type SafeInfo = {

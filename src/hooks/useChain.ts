@@ -1,8 +1,8 @@
-import { Chain } from 'viem'
 import { createConfig, useChains } from 'wagmi'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 
 export type UseChainParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
+export type UseChainReturnType<Config extends SafeConfig = SafeConfig> = Config['chain']
 
 /**
  * Hook to get the configured chain depending on the config from the nearest `SafeProvider`.
@@ -12,7 +12,7 @@ export type UseChainParams<Config extends SafeConfig = SafeConfig> = ConfigParam
  */
 export function useChain<Config extends SafeConfig = SafeConfig>(
   params: UseChainParams<Config> = {}
-): Chain {
+): UseChainReturnType<Config> {
   const wagmiConfig = params.config
     ? createConfig({
         chains: [params.config.chain],
