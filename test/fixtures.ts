@@ -1,13 +1,16 @@
 import { GetBalanceData } from 'wagmi/query'
+import { privateKeyToAddress } from 'viem/accounts'
 import { EIP1193Provider, SafeInfo } from '@/index.js'
+import { Hex } from 'viem'
 
 export const safeAddress = '0x5AFEf9a179dCE37C9ddf3AE4Cad4aa9dd6B814C2'
 
-export const accounts = [
-  '0x1111c45d8C3B30B9Cd9a21D7037F4fC39E99873f',
-  '0x2222Af18a92EE40c3758E278ACeF5623fF2D339c',
-  '0x3333A03730F9836D755c86952450A5188030a062'
+export const signerPrivateKeys: Hex[] = [
+  '0xb0652ca4a8ab9b7021288c0a68f30b6b2f0589f54fea72a2b310b12c5337c451',
+  '0x78bfa62f4f7d2885cc83c68141308ac5e00f2c10e91b4375117c6101da618bd8',
+  '0xb9d12ee94ab3bea741947feb261dd77d72f6c83a5dde5b9c6a44a965609d1b7a'
 ]
+export const accounts = signerPrivateKeys.map(privateKeyToAddress)
 
 export const safeInfo: SafeInfo = {
   address: safeAddress,
