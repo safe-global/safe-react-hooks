@@ -2,15 +2,17 @@ import { sepolia } from 'viem/chains'
 import * as useBalance from '@/hooks/useBalance.js'
 import * as useChain from '@/hooks/useChain.js'
 import * as useSafeInfo from '@/hooks/useSafeInfo.js'
+import * as useSignerAddress from '@/hooks/useSignerAddress.js'
 import { useSafe } from '@/hooks/useSafe.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
-import { balanceData, safeInfo } from '@test/fixtures.js'
+import { accounts, balanceData, safeInfo } from '@test/fixtures.js'
 import { renderHookInSafeProvider } from '@test/utils.js'
 
 describe('useSafe', () => {
   const useChainSpy = jest.spyOn(useChain, 'useChain')
   const useBalanceSpy = jest.spyOn(useBalance, 'useBalance')
   const useSafeInfoSpy = jest.spyOn(useSafeInfo, 'useSafeInfo')
+  const useSignerAddressSpy = jest.spyOn(useSignerAddress, 'useSignerAddress')
 
   beforeEach(() => {})
 
@@ -24,7 +26,8 @@ describe('useSafe', () => {
     expect(result.current).toEqual({
       getBalance: expect.any(Function),
       getChain: expect.any(Function),
-      getSafeInfo: expect.any(Function)
+      getSafeInfo: expect.any(Function),
+      getSignerAddress: expect.any(Function)
     })
   })
 
@@ -80,6 +83,23 @@ describe('useSafe', () => {
       expect(getSafeInfoResult.current).toMatchObject({ data: safeInfo })
       expect(useSafeInfoSpy).toHaveBeenCalledTimes(1)
       expect(useSafeInfoSpy).toHaveBeenCalledWith(params || {})
+    })
+
+    it(`should internally call "useSignerAddress" hook ${label} as well`, () => {
+      useSignerAddressSpy.mockReturnValue(accounts[0])
+
+      const { result } = renderHookInSafeProvider(() => useSafe(params), {
+        config: configExistingSafe
+      })
+
+      const { result: getSignerAddressResult } = renderHookInSafeProvider(
+        () => result.current.getSignerAddress(),
+        { config: configExistingSafe }
+      )
+
+      expect(getSignerAddressResult.current).toEqual(accounts[0])
+      expect(useSignerAddressSpy).toHaveBeenCalledTimes(1)
+      expect(useSignerAddressSpy).toHaveBeenCalledWith(params || {})
     })
   })
 })

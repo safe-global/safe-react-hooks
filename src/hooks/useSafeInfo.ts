@@ -8,6 +8,12 @@ import { useSafeClient } from '@/hooks/useSafeClient.js'
 export type UseSafeInfoParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
 export type UseSafeInfoReturnType = UseQueryResult<SafeInfo>
 
+/**
+ * Hook to get the connected Safe's information.
+ * @param params Parameters to customize the hook behavior.
+ * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
+ * @returns Query result object containing the Safe's information.
+ */
 export function useSafeInfo<Config extends SafeConfig = SafeConfig>(
   params: UseSafeInfoParams<Config> = {}
 ): UseSafeInfoReturnType {
