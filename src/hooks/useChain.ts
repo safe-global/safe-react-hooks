@@ -1,4 +1,5 @@
 import { createConfig, useChains } from 'wagmi'
+import { useConfig } from '@/hooks/useConfig.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 
 export type UseChainParams = ConfigParam<SafeConfig>
@@ -11,14 +12,14 @@ export type UseChainReturnType = SafeConfig['chain']
  * @returns Object describing the configured chain.
  */
 export function useChain(params: UseChainParams = {}): UseChainReturnType {
-  const wagmiConfig = params.config
-    ? createConfig({
-        chains: [params.config.chain],
-        transports: { [params.config.chain.id]: params.config.transport }
-      })
-    : undefined
+  const config = useConfig({ config: params.config })
 
-  const chains = wagmiConfig ? useChains({ config: wagmiConfig }) : useChains()
+  const wagmiConfig = createConfig({
+    chains: [config.chain],
+    transports: { [config.chain.id]: config.transport }
+  })
+
+  const chains = useChains({ config: wagmiConfig })
 
   if (chains.length === 0) {
     throw new Error('`useChain` must be used within `SafeProvider`.')
