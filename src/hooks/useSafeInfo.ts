@@ -5,12 +5,10 @@ import type { ConfigParam, SafeConfig, SafeInfo } from '@/types/index.js'
 import { useConfig } from '@/hooks/useConfig.js'
 import { useSafeClient } from '@/hooks/useSafeClient.js'
 
-export type UseSafeInfoParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
+export type UseSafeInfoParams = ConfigParam<SafeConfig>
 export type UseSafeInfoReturnType = UseQueryResult<SafeInfo>
 
-export function useSafeInfo<Config extends SafeConfig = SafeConfig>(
-  params: UseSafeInfoParams<Config> = {}
-): UseSafeInfoReturnType {
+export function useSafeInfo(params: UseSafeInfoParams = {}): UseSafeInfoReturnType {
   const config = params.config ? useConfig({ config: params.config }) : useConfig()
   const safeClient = useSafeClient(params.config ? { config: params.config } : undefined)
 

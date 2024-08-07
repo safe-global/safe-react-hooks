@@ -2,11 +2,9 @@ import { useContext } from 'react'
 import { SafeContext } from '@/SafeProvider.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 
-type SafeContextConfig = typeof SafeContext extends React.Context<infer T | undefined> ? T : never
+export type UseConfigParams = ConfigParam<SafeConfig>
 
-export type UseConfigParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
-
-export function useConfig(params?: UseConfigParams): SafeContextConfig
+export function useConfig(params?: UseConfigParams): SafeConfig
 export function useConfig<Params extends UseConfigParams>(params: Params): Params['config']
 
 /**
@@ -15,7 +13,7 @@ export function useConfig<Params extends UseConfigParams>(params: Params): Param
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns SafeConfig object provided by `SafeProvider` or the one passed as a parameter.
  */
-export function useConfig(params?: UseConfigParams<SafeConfig>) {
+export function useConfig(params?: UseConfigParams) {
   const contextConfig = useContext(SafeContext)
 
   if (params?.config) {

@@ -1,8 +1,8 @@
 import { createConfig, useChains } from 'wagmi'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 
-export type UseChainParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
-export type UseChainReturnType<Config extends SafeConfig = SafeConfig> = Config['chain']
+export type UseChainParams = ConfigParam<SafeConfig>
+export type UseChainReturnType = SafeConfig['chain']
 
 /**
  * Hook to get the configured chain depending on the config from the nearest `SafeProvider`.
@@ -10,9 +10,7 @@ export type UseChainReturnType<Config extends SafeConfig = SafeConfig> = Config[
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns Object describing the configured chain.
  */
-export function useChain<Config extends SafeConfig = SafeConfig>(
-  params: UseChainParams<Config> = {}
-): UseChainReturnType<Config> {
+export function useChain(params: UseChainParams = {}): UseChainReturnType {
   const wagmiConfig = params.config
     ? createConfig({
         chains: [params.config.chain],
