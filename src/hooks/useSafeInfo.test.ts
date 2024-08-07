@@ -32,7 +32,7 @@ describe('useSafeInfo', () => {
     })
 
     expect(useSafeClientSpy).toHaveBeenCalledTimes(1)
-    expect(useSafeClientSpy).toHaveBeenCalledWith(undefined)
+    expect(useSafeClientSpy).toHaveBeenCalledWith({ config: undefined })
 
     expect(result.current).toMatchObject({ data: undefined, status: 'pending' })
 
@@ -45,7 +45,7 @@ describe('useSafeInfo', () => {
     expect(safeClientMock.protocolKit.getOwners).toHaveBeenCalledTimes(1)
 
     expect(useSafeClientSpy).toHaveBeenCalledTimes(2)
-    expect(useSafeClientSpy).toHaveBeenCalledWith(undefined)
+    expect(useSafeClientSpy).toHaveBeenCalledWith({ config: undefined })
   })
 
   it('should accept a config to override the one from the SafeProvider', async () => {
@@ -71,7 +71,7 @@ describe('useSafeInfo', () => {
     })
 
     expect(useSafeClientSpy).toHaveBeenCalledTimes(1)
-    expect(useSafeClientSpy).toHaveBeenCalledWith(undefined)
+    expect(useSafeClientSpy).toHaveBeenCalledWith({ config: undefined })
 
     expect(result.current).toMatchObject({ data: undefined, status: 'pending' })
   })

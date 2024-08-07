@@ -13,7 +13,7 @@ export type UseSafeClientReturnType = SafeClient | undefined
  * @returns SafeClient instance or `undefined` if the SafeClient is not initialized yet.
  */
 export function useSafeClient(params: UseSafeClientParams = {}): UseSafeClientReturnType {
-  const config = params.config ? useConfig({ config: params.config }) : useConfig()
+  const config = useConfig({ config: params.config })
 
   const [safeClient, setSafeClient] = useState<SafeClient>()
 

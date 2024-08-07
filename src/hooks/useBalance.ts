@@ -18,7 +18,7 @@ export type UseBalanceReturnType = UseBalanceReturnTypeWagmi<GetBalanceQueryFnDa
 export function useBalance(params: UseBalanceParams = {}): UseBalanceReturnType {
   const { config } = params
 
-  const { data: { address } = {} } = config ? useSafeInfo({ config }) : useSafeInfo()
+  const { data: { address } = {} } = useSafeInfo({ config })
 
   return useBalanceWagmi({ address }) as UseBalanceReturnType
 }

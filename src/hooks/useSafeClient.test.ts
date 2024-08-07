@@ -23,14 +23,14 @@ describe('useSafeClient', () => {
     const { result } = renderHook(() => useSafeClient())
 
     expect(useConfigSpy).toHaveBeenCalledTimes(1)
-    expect(useConfigSpy).toHaveBeenCalledWith()
+    expect(useConfigSpy).toHaveBeenCalledWith({ config: undefined })
 
     expect(result.current).toBeUndefined()
 
     await waitFor(() => expect(result.current).toMatchObject(safeClientMock))
 
     expect(useConfigSpy).toHaveBeenCalledTimes(2)
-    expect(useConfigSpy).toHaveBeenCalledWith()
+    expect(useConfigSpy).toHaveBeenCalledWith({ config: undefined })
 
     expect(createSafeClientSpy).toHaveBeenCalledTimes(1)
     expect(createSafeClientSpy).toHaveBeenCalledWith(configExistingSafe)

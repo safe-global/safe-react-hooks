@@ -9,8 +9,8 @@ export type UseSafeInfoParams = ConfigParam<SafeConfig>
 export type UseSafeInfoReturnType = UseQueryResult<SafeInfo>
 
 export function useSafeInfo(params: UseSafeInfoParams = {}): UseSafeInfoReturnType {
-  const config = params.config ? useConfig({ config: params.config }) : useConfig()
-  const safeClient = useSafeClient(params.config ? { config: params.config } : undefined)
+  const config = useConfig({ config: params.config })
+  const safeClient = useSafeClient({ config: params.config })
 
   const getSafeInfo = useCallback(async (): Promise<SafeInfo | undefined> => {
     if (!safeClient) {
