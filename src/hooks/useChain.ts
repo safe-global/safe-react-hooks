@@ -12,7 +12,7 @@ export type UseChainReturnType = SafeConfig['chain']
  * @returns Object describing the configured chain.
  */
 export function useChain(params: UseChainParams = {}): UseChainReturnType {
-  const config = useConfig({ config: params.config })
+  const [config] = useConfig({ config: params.config })
 
   const wagmiConfig = createConfig({
     chains: [config.chain],

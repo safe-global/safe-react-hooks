@@ -15,7 +15,7 @@ export type UseSafeInfoReturnType = UseQueryResult<SafeInfo>
  * @returns Query result object containing the Safe's information.
  */
 export function useSafeInfo(params: UseSafeInfoParams = {}): UseSafeInfoReturnType {
-  const config = useConfig({ config: params.config })
+  const [config] = useConfig({ config: params.config })
   const safeClient = useSafeClient({ config: params.config })
 
   const getSafeInfo = useCallback(async (): Promise<SafeInfo | undefined> => {

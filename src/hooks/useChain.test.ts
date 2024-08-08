@@ -16,7 +16,7 @@ describe('useChain', () => {
   beforeEach(() => {
     useChainsWagmiSpy.mockReturnValue([sepolia])
     createConfigWagmiSpy.mockReturnValue(wagmiConfigMock as any)
-    useConfigSpy.mockReturnValue(configExistingSafe)
+    useConfigSpy.mockReturnValue([configExistingSafe, () => {}])
   })
 
   afterEach(() => {
@@ -33,7 +33,7 @@ describe('useChain', () => {
   })
 
   it('should return the currently selected chain by using the passed config', () => {
-    useConfigSpy.mockReturnValueOnce(configPredictedSafe)
+    useConfigSpy.mockReturnValueOnce([configPredictedSafe, () => {}])
 
     const { result } = renderHook(() => useChain({ config: configPredictedSafe }))
 

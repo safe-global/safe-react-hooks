@@ -21,7 +21,7 @@ describe('useSignerAddress', () => {
   const configWithoutSigner = { ...configExistingSafe, signer: undefined }
 
   beforeEach(() => {
-    useConfigSpy.mockReturnValue(configExistingSafe)
+    useConfigSpy.mockReturnValue([configExistingSafe, () => {}])
     useSafeClientSpy.mockReturnValue(safeClientMock as unknown as SafeClient)
   })
 
@@ -30,7 +30,7 @@ describe('useSignerAddress', () => {
   })
 
   describe.each([
-    ['without config parameter', undefined],
+    ['without config parameter', { config: undefined }],
     ['with config parameter', { config: configPredictedSafe }]
   ])('when being called %s', (_label, params) => {
     it(`should return the configured signer's address`, async () => {
@@ -52,7 +52,7 @@ describe('useSignerAddress', () => {
   })
 
   it('should throw if no signer is configured', async () => {
-    useConfigSpy.mockReturnValue(configWithoutSigner)
+    useConfigSpy.mockReturnValue([configWithoutSigner, () => {}])
 
     const error = catchHookError(() => useSignerAddress())
 

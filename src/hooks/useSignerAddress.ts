@@ -13,12 +13,7 @@ export type UseSignerAddressReturnType = Address | undefined
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns Signer address or undefined if not available.
  */
-export function useSignerAddress<Config extends SafeConfig = SafeConfig>(
-  params: UseSignerAddressParams<Config> = {}
-): UseSignerAddressReturnType {
-  const config = useConfig(params.config ? { config: params.config } : undefined)
-  const safeClient = useSafeClient(params.config ? { config: params.config } : undefined)
-  const [signer, setSigner] = useState<Address>()
+  const [config] = useConfig({ config: params.config })
 
   useEffect(() => {
     safeClient?.protocolKit.getSafeProvider().getSignerAddress().then(setSigner)
