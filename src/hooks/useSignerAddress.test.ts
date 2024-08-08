@@ -2,14 +2,14 @@ import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/safe-kit'
 import { useSignerAddress } from '@/hooks/useSignerAddress.js'
 import * as useConfig from '@/hooks/useConfig.js'
-import * as useSafeClient from '@/hooks/useSafeClient.js'
+import * as usePublicClient from '@/hooks/usePublicClient.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { accounts } from '@test/fixtures.js'
 import { catchHookError, renderHookInSafeProvider } from '@test/utils.js'
 
 describe('useSignerAddress', () => {
   const useConfigSpy = jest.spyOn(useConfig, 'useConfig')
-  const useSafeClientSpy = jest.spyOn(useSafeClient, 'useSafeClient')
+  const useSafeClientSpy = jest.spyOn(usePublicClient, 'usePublicClient')
 
   const getSignerAddressMock = jest.fn().mockResolvedValue(accounts[0])
   const safeClientMock = {

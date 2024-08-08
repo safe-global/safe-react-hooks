@@ -3,7 +3,7 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import type { Address } from 'viem'
 import type { ConfigParam, SafeConfig, SafeInfo } from '@/types/index.js'
 import { useConfig } from '@/hooks/useConfig.js'
-import { useSafeClient } from '@/hooks/useSafeClient.js'
+import { usePublicClient } from '@/hooks/usePublicClient.js'
 
 export type UseSafeInfoParams = ConfigParam<SafeConfig>
 export type UseSafeInfoReturnType = UseQueryResult<SafeInfo>
@@ -16,7 +16,7 @@ export type UseSafeInfoReturnType = UseQueryResult<SafeInfo>
  */
 export function useSafeInfo(params: UseSafeInfoParams = {}): UseSafeInfoReturnType {
   const [config] = useConfig({ config: params.config })
-  const safeClient = useSafeClient({ config: params.config })
+  const safeClient = usePublicClient({ config: params.config })
 
   const getSafeInfo = useCallback(async (): Promise<SafeInfo | undefined> => {
     if (!safeClient) {

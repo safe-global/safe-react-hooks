@@ -1,13 +1,13 @@
 import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/safe-kit'
 import { useSafeInfo } from '@/hooks/useSafeInfo.js'
-import * as useSafeClient from '@/hooks/useSafeClient.js'
+import * as usePublicClient from '@/hooks/usePublicClient.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { safeInfo, signerPrivateKeys } from '@test/fixtures.js'
 import { renderHookInSafeProvider } from '@test/utils.js'
 
 describe('useSafeInfo', () => {
-  const useSafeClientSpy = jest.spyOn(useSafeClient, 'useSafeClient')
+  const useSafeClientSpy = jest.spyOn(usePublicClient, 'usePublicClient')
   const safeClientMock = {
     protocolKit: {
       getAddress: jest.fn().mockResolvedValue(safeInfo.address),
