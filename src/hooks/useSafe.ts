@@ -4,6 +4,7 @@ import { useBalance } from '@/hooks/useBalance.js'
 import { useChain } from '@/hooks/useChain.js'
 import { useSafeInfo } from '@/hooks/useSafeInfo.js'
 import { useSignerAddress } from '@/hooks/useSignerAddress.js'
+import { useAuthenticate } from '@/hooks/useAuthenticate.js'
 import { SafeContext } from '@/SafeProvider.js'
 
 export type UseSafeParams = ConfigParam<SafeConfig>
@@ -14,8 +15,11 @@ export type UseSafeParams = ConfigParam<SafeConfig>
  */
 export function useSafe() {
   const { initialized } = useContext(SafeContext)
+  const { connect, disconnect } = useAuthenticate()
   return {
     initialized,
+    connect,
+    disconnect,
     getBalance: useBalance,
     getChain: useChain,
     getSafeInfo: useSafeInfo,

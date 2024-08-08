@@ -1,3 +1,4 @@
+export * from './useAuthenticate.js'
 export * from './useBalance.js'
 export * from './useChain.js'
 export * from './useConfig.js'
