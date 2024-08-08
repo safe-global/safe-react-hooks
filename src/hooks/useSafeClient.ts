@@ -3,7 +3,7 @@ import { createSafeClient, type SafeClient } from '@safe-global/safe-kit'
 import { useConfig } from '@/hooks/useConfig.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 
-export type UseSafeClientParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
+export type UseSafeClientParams = ConfigParam<SafeConfig>
 export type UseSafeClientReturnType = SafeClient | undefined
 
 /**
@@ -12,10 +12,8 @@ export type UseSafeClientReturnType = SafeClient | undefined
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns SafeClient instance or `undefined` if the SafeClient is not initialized yet.
  */
-export function useSafeClient<Config extends SafeConfig = SafeConfig>(
-  params: UseSafeClientParams<Config> = {}
-): UseSafeClientReturnType {
-  const config = params.config ? useConfig({ config: params.config }) : useConfig()
+export function useSafeClient(params: UseSafeClientParams = {}): UseSafeClientReturnType {
+  const config = useConfig({ config: params.config })
 
   const [safeClient, setSafeClient] = useState<SafeClient>()
 

@@ -1,6 +1,6 @@
 import type { SafeKitConfig } from '@safe-global/safe-kit'
-import { type Address, type CustomTransport, type HttpTransport } from 'viem'
-import { type Chain as ChainType } from 'viem/chains'
+import type { Address, CustomTransport, HttpTransport } from 'viem'
+import type { Chain as ChainType } from 'viem/chains'
 
 export type EIP1193Provider = Exclude<SafeKitConfig['provider'], string>
 

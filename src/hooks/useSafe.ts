@@ -4,7 +4,7 @@ import { useChain } from '@/hooks/useChain.js'
 import { useSafeInfo } from '@/hooks/useSafeInfo.js'
 import { useSignerAddress } from './useSignerAddress.js'
 
-export type UseSafeParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
+export type UseSafeParams = ConfigParam<SafeConfig>
 
 /**
  * Top-level hook to get Safe-related information.
@@ -12,9 +12,7 @@ export type UseSafeParams<Config extends SafeConfig = SafeConfig> = ConfigParam<
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns Object wrapping the Safe hooks.
  */
-export function useSafe<Config extends SafeConfig = SafeConfig>(
-  params: UseSafeParams<Config> = {}
-) {
+export function useSafe(params: UseSafeParams = {}) {
   const { config } = params
   return {
     getBalance: () => useBalance({ config }),

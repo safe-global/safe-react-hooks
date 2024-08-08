@@ -5,7 +5,7 @@ import type { ConfigParam, SafeConfig, SafeInfo } from '@/types/index.js'
 import { useConfig } from '@/hooks/useConfig.js'
 import { useSafeClient } from '@/hooks/useSafeClient.js'
 
-export type UseSafeInfoParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
+export type UseSafeInfoParams = ConfigParam<SafeConfig>
 export type UseSafeInfoReturnType = UseQueryResult<SafeInfo>
 
 /**
@@ -14,11 +14,9 @@ export type UseSafeInfoReturnType = UseQueryResult<SafeInfo>
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns Query result object containing the Safe's information.
  */
-export function useSafeInfo<Config extends SafeConfig = SafeConfig>(
-  params: UseSafeInfoParams<Config> = {}
-): UseSafeInfoReturnType {
-  const config = params.config ? useConfig({ config: params.config }) : useConfig()
-  const safeClient = useSafeClient(params.config ? { config: params.config } : undefined)
+export function useSafeInfo(params: UseSafeInfoParams = {}): UseSafeInfoReturnType {
+  const config = useConfig({ config: params.config })
+  const safeClient = useSafeClient({ config: params.config })
 
   const getSafeInfo = useCallback(async (): Promise<SafeInfo | undefined> => {
     if (!safeClient) {

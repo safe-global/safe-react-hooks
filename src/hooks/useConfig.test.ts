@@ -3,8 +3,16 @@ import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { catchHookError, renderHookInSafeProvider } from '@test/utils.js'
 
 describe('useConfig', () => {
-  it('should return the config from the SafeProvider', () => {
+  it('should return the config from the SafeProvider if no parameter is passed', () => {
     const { result } = renderHookInSafeProvider(() => useConfig(), { config: configExistingSafe })
+
+    expect(result.current).toBe(configExistingSafe)
+  })
+
+  it('should return the config from the SafeProvider if passed config object is undefined', () => {
+    const { result } = renderHookInSafeProvider(() => useConfig({ config: undefined }), {
+      config: configExistingSafe
+    })
 
     expect(result.current).toBe(configExistingSafe)
   })

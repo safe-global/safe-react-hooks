@@ -6,7 +6,7 @@ import { type GetBalanceQueryFnData } from 'wagmi/query'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 import { useSafeInfo } from '@/hooks/useSafeInfo.js'
 
-export type UseBalanceParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
+export type UseBalanceParams = ConfigParam<SafeConfig>
 export type UseBalanceReturnType = UseBalanceReturnTypeWagmi<GetBalanceQueryFnData>
 
 /**
@@ -15,12 +15,10 @@ export type UseBalanceReturnType = UseBalanceReturnTypeWagmi<GetBalanceQueryFnDa
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns Query result object containing the Safe's balance.
  */
-export function useBalance<Config extends SafeConfig = SafeConfig>(
-  params: UseBalanceParams<Config> = {}
-): UseBalanceReturnType {
+export function useBalance(params: UseBalanceParams = {}): UseBalanceReturnType {
   const { config } = params
 
-  const { data: { address } = {} } = config ? useSafeInfo({ config }) : useSafeInfo()
+  const { data: { address } = {} } = useSafeInfo({ config })
 
-  return useBalanceWagmi({ address }) as UseBalanceReturnType;
+  return useBalanceWagmi({ address }) as UseBalanceReturnType
 }

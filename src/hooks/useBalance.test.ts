@@ -29,7 +29,7 @@ describe('useBalance', () => {
     expect(result.current).toEqual(mockBalanceResult)
 
     expect(useSafeInfoSpy).toHaveBeenCalledTimes(1)
-    expect(useSafeInfoSpy).toHaveBeenCalledWith()
+    expect(useSafeInfoSpy).toHaveBeenCalledWith({ config: undefined })
 
     expect(useBalanceWagmiSpy).toHaveBeenCalledTimes(1)
     expect(useBalanceWagmiSpy).toHaveBeenCalledWith({ address: safeAddress })
