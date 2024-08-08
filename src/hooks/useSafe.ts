@@ -1,8 +1,9 @@
+import { useContext } from 'react'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 import { useBalance } from '@/hooks/useBalance.js'
 import { useChain } from '@/hooks/useChain.js'
 import { useSafeInfo } from '@/hooks/useSafeInfo.js'
-import { useSignerAddress } from './useSignerAddress.js'
+import { SafeContext } from '@/SafeProvider.js'
 
 export type UseSafeParams = ConfigParam<SafeConfig>
 
@@ -12,9 +13,9 @@ export type UseSafeParams = ConfigParam<SafeConfig>
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns Object wrapping the Safe hooks.
  */
-export function useSafe(params: UseSafeParams = {}) {
-  const { config } = params
+  const { initialized } = useContext(SafeContext)
   return {
+    initialized,
     getBalance: () => useBalance({ config }),
     getChain: () => useChain({ config }),
     getSafeInfo: () => useSafeInfo({ config }),

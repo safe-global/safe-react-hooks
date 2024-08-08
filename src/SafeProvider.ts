@@ -5,6 +5,7 @@ import { createSafeClient, SafeClient, SafeKitConfig } from '@safe-global/safe-k
 import { SafeConfig } from '@/types/index.js'
 
 export type SafeContextType = {
+  initialized: boolean
   config: SafeConfig | undefined
   setConfig: (config: SafeConfig) => void
   setSigner: (signer: string | undefined) => Promise<void>
@@ -13,13 +14,13 @@ export type SafeContextType = {
 }
 
 export const SafeContext = createContext<SafeContextType>({
+  initialized: false,
   config: undefined,
   setConfig: () => {},
   setSigner: () => Promise.resolve(),
   publicClient: undefined,
   signerClient: undefined
 })
-
 export type SafeProviderProps = {
   config: SafeConfig
 }
@@ -27,6 +28,7 @@ export type SafeProviderProps = {
 const queryClient = new QueryClient()
 
 export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>) {
+  const [initialized, setInitialized] = useState(false)
   const [config, setConfig] = useState(params.config)
   const [publicClient, setPublicClient] = useState<SafeClient>()
   const [signerClient, setSignerClient] = useState<SafeClient>()
@@ -51,7 +53,9 @@ export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>)
     Promise.all([
       createSafeClient(publicClientConfig).then(setPublicClient),
       config.signer ? setSigner(config.signer) : Promise.resolve()
-    ])
+    ]).then(() => {
+      setInitialized(true)
+    })
   }, [publicClientConfig])
 
   const setSigner = useCallback(
@@ -67,7 +71,7 @@ export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>)
   )
 
   const props = {
-    value: { config, setConfig, setSigner, publicClient, signerClient }
+    value: { initialized, config, setConfig, setSigner, publicClient, signerClient }
   }
 
   return createElement(
