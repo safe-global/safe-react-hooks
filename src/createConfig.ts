@@ -10,8 +10,13 @@ import { isString } from '@/utils.js'
  */
 export function createConfig<
   Provider extends SafeKitConfig['provider'] = SafeKitConfig['provider'],
+  Signer extends SafeKitConfig['signer'] = SafeKitConfig['signer'],
   Chain extends ChainType = ChainType
->({ provider, signer, ...rest }: CreateConfigParams<Provider, Chain>): SafeConfig<Provider, Chain> {
+>({
+  provider,
+  signer,
+  ...rest
+}: CreateConfigParams<Provider, Signer, Chain>): SafeConfig<Provider, Signer, Chain> {
   return {
     transport: isString(provider) ? http(provider) : custom(provider),
     provider,
