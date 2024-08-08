@@ -2,7 +2,7 @@ import { createConfig, useChains } from 'wagmi'
 import { useConfig } from '@/hooks/useConfig.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 
-export type UseChainParams = ConfigParam<SafeConfig>
+export type UseChainParams = ConfigParam
 export type UseChainReturnType = SafeConfig['chain']
 
 /**
@@ -14,10 +14,12 @@ export type UseChainReturnType = SafeConfig['chain']
 export function useChain(params: UseChainParams = {}): UseChainReturnType {
   const [config] = useConfig({ config: params.config })
 
-  const wagmiConfig = createConfig({
-    chains: [config.chain],
-    transports: { [config.chain.id]: config.transport }
-  })
+  const wagmiConfig = config.chain
+    ? createConfig({
+        chains: [config.chain],
+        transports: { [config.chain.id]: config.transport }
+      })
+    : undefined
 
   const chains = useChains({ config: wagmiConfig })
 
