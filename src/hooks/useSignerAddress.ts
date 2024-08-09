@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Address } from 'viem'
 import { ConfigParam, SafeConfig, RequiredProp } from '@/types/index.js'
-import { useConfig } from '@/hooks/useConfig.js'
 import { useSignerClient } from '@/hooks/useSignerClient.js'
 
 export type UseSignerAddressParams = ConfigParam<RequiredProp<SafeConfig, 'signer'>>
@@ -14,9 +13,7 @@ export type UseSignerAddressReturnType = Address | undefined
  * @returns Signer address or `undefined` if not available.
  */
 export function useSignerAddress(params: UseSignerAddressParams = {}): UseSignerAddressReturnType {
-  const [config] = useConfig({ config: params.config })
-
-  const signerClient = useSignerClient({ config })
+  const signerClient = useSignerClient({ config: params.config })
   const [signerAddress, setSignerAddress] = useState<UseSignerAddressReturnType>()
 
   useEffect(() => {
