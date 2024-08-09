@@ -1,52 +1,68 @@
-import { renderHook, waitFor } from '@testing-library/react'
+import { waitFor } from '@testing-library/react'
 import * as safeKit from '@safe-global/safe-kit'
 import { usePublicClient } from '@/hooks/usePublicClient.js'
-import * as useConfig from '@/hooks/useConfig.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
+import { renderHookInSafeProvider } from '@test/utils.js'
 
 describe('usePublicClient', () => {
-  const safeClientMock = { foo: 'bar' } as unknown as safeKit.SafeClient
+  const publicClientMock = { safeClient: 'public' } as unknown as safeKit.SafeClient
+  const signerClientMock = { safeClient: 'signer' } as unknown as safeKit.SafeClient
 
   const createSafeClientSpy = jest.spyOn(safeKit, 'createSafeClient')
-  const useConfigSpy = jest.spyOn(useConfig, 'useConfig')
 
   beforeEach(() => {
-    useConfigSpy.mockReturnValue([configExistingSafe, () => {}])
-    createSafeClientSpy.mockResolvedValue(safeClientMock)
+    createSafeClientSpy.mockImplementation(({ signer }) =>
+      Promise.resolve(signer ? signerClientMock : publicClientMock)
+    )
   })
 
   afterEach(() => {
     jest.clearAllMocks()
   })
 
-  it('should return a SafeClient instance and a function to get it', async () => {
-    const { result } = renderHook(() => usePublicClient())
+  it('should return a SafeClient instance', async () => {
+    const { result } = renderHookInSafeProvider(() => usePublicClient(), {
+      config: configExistingSafe
+    })
 
-    expect(useConfigSpy).toHaveBeenCalledTimes(1)
-    expect(useConfigSpy).toHaveBeenCalledWith({ config: undefined })
+    const { provider, safeAddress } = configExistingSafe
 
-    expect(result.current).toBeUndefined()
-
-    await waitFor(() => expect(result.current).toMatchObject(safeClientMock))
-
-    expect(useConfigSpy).toHaveBeenCalledTimes(2)
-    expect(useConfigSpy).toHaveBeenCalledWith({ config: undefined })
+    await waitFor(() => expect(result.current).toMatchObject(publicClientMock))
 
     expect(createSafeClientSpy).toHaveBeenCalledTimes(1)
-    expect(createSafeClientSpy).toHaveBeenCalledWith(configExistingSafe)
+    expect(createSafeClientSpy).toHaveBeenCalledWith({
+      provider,
+      safeAddress,
+      signer: undefined
+    })
+
+    expect(result.current).toMatchObject(publicClientMock)
   })
 
   it('should accept a config to override the one from the SafeProvider', async () => {
-    const { result } = renderHook(() => usePublicClient({ config: configPredictedSafe }))
+    const { result } = renderHookInSafeProvider(
+      () => usePublicClient({ config: configPredictedSafe }),
+      {
+        config: configExistingSafe
+      }
+    )
 
-    expect(useConfigSpy).toHaveBeenCalledTimes(1)
-    expect(useConfigSpy).toHaveBeenCalledWith({ config: configPredictedSafe })
+    await waitFor(() => expect(result.current).toMatchObject(publicClientMock))
 
-    expect(result.current).toBeUndefined()
+    expect(createSafeClientSpy).toHaveBeenCalledTimes(2)
 
-    await waitFor(() => expect(result.current).toMatchObject(safeClientMock))
+    expect(createSafeClientSpy).toHaveBeenCalledWith({
+      provider: configExistingSafe.provider,
+      safeAddress: configExistingSafe.safeAddress,
+      signer: undefined
+    })
 
-    expect(useConfigSpy).toHaveBeenCalledTimes(2)
-    expect(useConfigSpy).toHaveBeenCalledWith({ config: configPredictedSafe })
+    expect(createSafeClientSpy).toHaveBeenCalledWith({
+      provider: configPredictedSafe.provider,
+      safeOptions: configPredictedSafe.safeOptions,
+      signer: undefined
+    })
+
+    expect(result.current).toMatchObject(publicClientMock)
   })
 })
