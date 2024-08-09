@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createElement } from 'react'
 import { renderHook, RenderHookOptions } from '@testing-library/react'
 import { SafeProvider, SafeProviderProps } from '@/SafeProvider.js'
@@ -17,6 +18,23 @@ export function renderHookInSafeProvider<Result, Props>(
   return renderHook<Result, Props>(hook, {
     ...options,
     wrapper: ({ children }) => createElement(SafeProvider, providerProps, children)
+  })
+}
+
+/**
+ * Wrapper to render a hook in a QueryClientProvider.
+ * @param hook Hook to render.
+ * @param options Additional options to pass to renderHook.
+ * @returns RenderHookResult of the hook rendered in a SafeProvider.
+ */
+export function renderHookInQueryClientProvider<Result, Props>(
+  hook: (initialProps: Props) => Result,
+  options: RenderHookOptions<Props> = {}
+) {
+  const queryClient = new QueryClient()
+  return renderHook<Result, Props>(hook, {
+    ...options,
+    wrapper: ({ children }) => createElement(QueryClientProvider, { client: queryClient }, children)
   })
 }
 
