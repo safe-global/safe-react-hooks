@@ -1,15 +1,12 @@
-import { waitFor } from '@testing-library/react'
+import { renderHook, waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/safe-kit'
 import { useSignerAddress } from '@/hooks/useSignerAddress.js'
-import * as useConfig from '@/hooks/useConfig.js'
-import * as usePublicClient from '@/hooks/usePublicClient.js'
-import { configExistingSafe, configPredictedSafe } from '@test/config.js'
-import { accounts } from '@test/fixtures.js'
-import { catchHookError, renderHookInSafeProvider } from '@test/utils.js'
+import * as useSignerClient from '@/hooks/useSignerClient.js'
+import { configPredictedSafe } from '@test/config.js'
+import { accounts, signerPrivateKeys } from '@test/fixtures.js'
 
 describe('useSignerAddress', () => {
-  const useConfigSpy = jest.spyOn(useConfig, 'useConfig')
-  const useSafeClientSpy = jest.spyOn(usePublicClient, 'usePublicClient')
+  const useSignerClientSpy = jest.spyOn(useSignerClient, 'useSignerClient')
 
   const getSignerAddressMock = jest.fn().mockResolvedValue(accounts[0])
   const safeClientMock = {
@@ -18,11 +15,8 @@ describe('useSignerAddress', () => {
     }
   }
 
-  const configWithoutSigner = { ...configExistingSafe, signer: undefined }
-
   beforeEach(() => {
-    useConfigSpy.mockReturnValue([configExistingSafe, () => {}])
-    useSafeClientSpy.mockReturnValue(safeClientMock as unknown as SafeClient)
+    useSignerClientSpy.mockReturnValue(safeClientMock as unknown as SafeClient)
   })
 
   afterEach(() => {
@@ -31,18 +25,13 @@ describe('useSignerAddress', () => {
 
   describe.each([
     ['without config parameter', { config: undefined }],
-    ['with config parameter', { config: configPredictedSafe }]
+    ['with config parameter', { config: { ...configPredictedSafe, signer: signerPrivateKeys[0] } }]
   ])('when being called %s', (_label, params) => {
     it(`should return the configured signer's address`, async () => {
-      const { result } = renderHookInSafeProvider(() => useSignerAddress(params), {
-        config: configExistingSafe
-      })
+      const { result } = renderHook(() => useSignerAddress(params))
 
-      expect(useConfigSpy).toHaveBeenCalledTimes(1)
-      expect(useConfigSpy).toHaveBeenCalledWith(params)
-
-      expect(useSafeClientSpy).toHaveBeenCalledTimes(1)
-      expect(useSafeClientSpy).toHaveBeenCalledWith(params)
+      expect(useSignerClientSpy).toHaveBeenCalledTimes(1)
+      expect(useSignerClientSpy).toHaveBeenCalledWith(params)
 
       await waitFor(() => expect(result.current).toEqual(accounts[0]))
 
@@ -51,11 +40,12 @@ describe('useSignerAddress', () => {
     })
   })
 
-  it('should throw if no signer is configured', async () => {
-    useConfigSpy.mockReturnValue([configWithoutSigner, () => {}])
+  it('should return `undefined` if no signer is configured', async () => {
+    const { result } = renderHook(() => useSignerAddress())
 
-    const error = catchHookError(() => useSignerAddress())
+    expect(useSignerClientSpy).toHaveBeenCalledTimes(1)
+    expect(useSignerClientSpy).toHaveBeenCalledWith({ config: undefined })
 
-    expect(error?.message).toEqual('Signer not configured')
+    await waitFor(() => expect(result.current).toEqual(undefined))
   })
 })
