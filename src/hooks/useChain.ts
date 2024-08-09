@@ -24,7 +24,7 @@ export function useChain(params: UseChainParams = {}): UseChainReturnType {
   const chains = useChains({ config: wagmiConfig })
 
   if (chains.length === 0) {
-    throw new Error('`useChain` must be used within `SafeProvider`.')
+    throw new Error('No chain found for the given config.')
   }
 
   return chains[0]

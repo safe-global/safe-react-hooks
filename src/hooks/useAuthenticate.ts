@@ -1,5 +1,6 @@
 import { useCallback, useContext } from 'react'
 import { SafeContext } from '@/SafeProvider.js'
+import { AuthenticationError } from '@/errors/AuthenticationError.js'
 
 export type UseConnectSignerReturnType = {
   connect: (signer: string) => Promise<void>
@@ -16,7 +17,7 @@ export function useAuthenticate(): UseConnectSignerReturnType {
   const connect = useCallback(
     async (signer: string) => {
       if (!signer) {
-        throw new Error('Signer must not be empty')
+        throw new AuthenticationError('Failed to connect because signer is empty')
       }
       return setSigner(signer)
     },
@@ -25,7 +26,7 @@ export function useAuthenticate(): UseConnectSignerReturnType {
 
   const disconnect = useCallback(async () => {
     if (!signerClient) {
-      throw new Error('Signer not connected')
+      throw new AuthenticationError('Failed to disconnect because no signer is connected')
     }
     return setSigner(undefined)
   }, [setSigner])

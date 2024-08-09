@@ -2,6 +2,7 @@ import { createContext, createElement, useCallback, useEffect, useMemo, useState
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createConfig, WagmiProvider } from 'wagmi'
 import { createSafeClient, SafeClient, SafeKitConfig } from '@safe-global/safe-kit'
+import { InitializeSafeProviderError } from '@/errors/InitializeSafeProviderError.js'
 import { SafeConfig } from '@/types/index.js'
 
 export type SafeContextType = {
@@ -33,10 +34,14 @@ export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>)
   const [publicClient, setPublicClient] = useState<SafeClient>()
   const [signerClient, setSignerClient] = useState<SafeClient>()
 
-  const wagmiConfig = createConfig({
-    chains: [config.chain],
-    transports: { [config.chain.id]: config.transport }
-  })
+  const wagmiConfig = useMemo(
+    () =>
+      createConfig({
+        chains: [config.chain],
+        transports: { [config.chain.id]: config.transport }
+      }),
+    [config.chain, config.transport]
+  )
 
   const publicClientConfig = useMemo<SafeKitConfig>(
     () => ({
@@ -53,22 +58,34 @@ export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>)
     Promise.all([
       createSafeClient(publicClientConfig).then(setPublicClient),
       config.signer ? setSigner(config.signer) : Promise.resolve()
-    ]).then(() => {
-      setInitialized(true)
-    })
+    ])
+      .then(() => {
+        setInitialized(true)
+      })
+      .catch((err) => {
+        throw new InitializeSafeProviderError('Failed to initialize clients.', err)
+      })
   }, [publicClientConfig])
 
   const setSigner = useCallback(
     async (signer: string | undefined) => {
       if (signer) {
-        const newSignerClient = await createSafeClient({ ...publicClientConfig, signer })
-        setSignerClient(newSignerClient)
+        try {
+          const newSignerClient = await createSafeClient({ ...publicClientConfig, signer })
+          setSignerClient(newSignerClient)
+        } catch (err) {
+          throw new InitializeSafeProviderError('Failed to initialize signer client.', err)
+        }
       } else if (signerClient) {
         setSignerClient(undefined)
       }
     },
     [signerClient, publicClientConfig]
   )
+
+  if (!config.provider) {
+    throw new InitializeSafeProviderError('Provider not set in config.')
+  }
 
   const props = {
     value: { initialized, config, setConfig, setSigner, publicClient, signerClient }

@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import { SafeContext } from '@/SafeProvider.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
+import { MissingSafeProviderError } from '@/errors/MissingSafeProviderError.js'
 
 export type UseConfigParams<Config extends SafeConfig = SafeConfig> = ConfigParam<Config>
 export type UseConfigReturnType<Config extends SafeConfig = SafeConfig> = [
@@ -27,7 +28,7 @@ export function useConfig(params?: UseConfigParams): UseConfigReturnType {
   }
 
   if (!contextConfig) {
-    throw new Error('`useConfig` must be used within `SafeProvider`.')
+    throw new MissingSafeProviderError('`useConfig` must be used within `SafeProvider`.')
   }
 
   return [contextConfig, setConfig]
