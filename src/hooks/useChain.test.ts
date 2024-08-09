@@ -54,6 +54,6 @@ describe('useChain', () => {
 
     const error = catchHookError(() => useChain())
 
-    expect(error?.message).toEqual('`useChain` must be used within `SafeProvider`.')
+    expect(error?.message).toEqual('No chain found for the given config.')
   })
 })
