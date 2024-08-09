@@ -21,7 +21,13 @@ export function useSignerClient(params: UseSignerClientParams = {}): UseSignerCl
 
   useEffect(() => {
     if (params.config && hasConfigChanged) {
-      createSafeClient(params.config).then(setSignerClient)
+      createSafeClient({
+        signer: params.config.signer,
+        provider: params.config.provider,
+        ...(params.config.safeAddress
+          ? { safeAddress: params.config.safeAddress }
+          : { safeOptions: params.config.safeOptions })
+      }).then(setSignerClient)
     }
   }, [params.config, hasConfigChanged])
 

@@ -15,13 +15,19 @@ export type UseSafeClientReturnType = SafeClient | undefined
  */
 export function usePublicClient(params: UseSafeClientParams = {}): UseSafeClientReturnType {
   const { publicClient: publicClientContext } = useContext(SafeContext)
-  const hasConfigChanged = useCompareObject(params.config)
-
   const [publicClient, setPublicClient] = useState<SafeClient>()
+
+  const hasConfigChanged = useCompareObject(params.config)
 
   useEffect(() => {
     if (params.config && hasConfigChanged) {
-      createSafeClient({ ...params.config, signer: undefined }).then(setPublicClient)
+      createSafeClient({
+        signer: undefined,
+        provider: params.config.provider,
+        ...(params.config.safeAddress
+          ? { safeAddress: params.config.safeAddress }
+          : { safeOptions: params.config.safeOptions })
+      }).then(setPublicClient)
     }
   }, [params.config, hasConfigChanged])
 
