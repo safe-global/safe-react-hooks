@@ -35,17 +35,39 @@ describe('useSignerAddress', () => {
 
       await waitFor(() => expect(result.current).toEqual(accounts[0]))
 
-      expect(safeClientMock.protocolKit.getSafeProvider).toHaveBeenCalledTimes(1)
-      expect(getSignerAddressMock).toHaveBeenCalledTimes(1)
+      expect(safeClientMock.protocolKit.getSafeProvider).toHaveBeenCalledTimes(2)
+      expect(getSignerAddressMock).toHaveBeenCalledTimes(2)
     })
   })
 
   it('should return `undefined` if no signer is configured', async () => {
+    useSignerClientSpy.mockReturnValueOnce(undefined)
+
     const { result } = renderHook(() => useSignerAddress())
 
     expect(useSignerClientSpy).toHaveBeenCalledTimes(1)
     expect(useSignerClientSpy).toHaveBeenCalledWith({ config: undefined })
 
     await waitFor(() => expect(result.current).toEqual(undefined))
+  })
+
+  it('should update returned value to `undefined` if signerClient changes to undefined on rerender', async () => {
+    const { result, rerender } = renderHook(() => useSignerAddress())
+
+    await waitFor(() => expect(result.current).toEqual(accounts[0]))
+
+    expect(useSignerClientSpy).toHaveBeenCalledTimes(2)
+    expect(useSignerClientSpy).toHaveBeenNthCalledWith(1, { config: undefined })
+    expect(useSignerClientSpy).toHaveBeenNthCalledWith(2, { config: undefined })
+
+    useSignerClientSpy.mockReturnValueOnce(undefined)
+    useSignerClientSpy.mockReturnValueOnce(undefined)
+
+    rerender()
+    await waitFor(() => expect(result.current).toEqual(undefined))
+
+    expect(useSignerClientSpy).toHaveBeenCalledTimes(4)
+    expect(useSignerClientSpy).toHaveBeenNthCalledWith(3, { config: undefined })
+    expect(useSignerClientSpy).toHaveBeenNthCalledWith(4, { config: undefined })
   })
 })
