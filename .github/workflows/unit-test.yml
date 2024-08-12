@@ -19,6 +19,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
 
+      # START: Temporary steps to install sdk-starter-kit
       # This is only temporary until the `sdk-starter-kit` is public
       - name: Checkout safe-core-sdk
         uses: actions/checkout@v4
@@ -27,6 +28,13 @@ jobs:
           ref: sdk-starter-kit
           path: './safe-core-sdk'
 
+      - name: Yarn install safe-core-sdk
+        run: yarn --cwd ./safe-core-sdk install
+
+      - name: Build safe-core-sdk
+        run: yarn --cwd ./safe-core-sdk build
+      # END: Temporary steps to install sdk-starter-kit
+    
       - name: Yarn install
         run: yarn install --frozen-lockfile
 
