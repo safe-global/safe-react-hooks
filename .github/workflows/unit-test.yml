@@ -19,6 +19,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
 
+      # This is only temporary until the `sdk-starter-kit` is public
+      - name: Checkout safe-core-sdk
+        uses: actions/checkout@v4
+        with:
+          repository: safe-global/safe-core-sdk
+          ref: sdk-starter-kit
+          path: './safe-core-sdk'
+
       - name: Yarn install
         run: yarn install --frozen-lockfile
 
