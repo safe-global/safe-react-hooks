@@ -1,5 +1,5 @@
 import {  waitFor } from '@testing-library/react'
-import { SafeClient } from '@safe-global/safe-kit'
+import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useSafeInfo } from '@/hooks/useSafeInfo.js'
 import * as usePublicClient from '@/hooks/usePublicClient.js'
 import * as useConfig from '@/hooks/useConfig.js'

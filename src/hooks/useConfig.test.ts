@@ -1,4 +1,4 @@
-import * as safeKit from '@safe-global/safe-kit'
+import * as sdkStarterKit from '@safe-global/sdk-starter-kit'
 import { waitFor } from '@testing-library/dom'
 import { useConfig } from '@/hooks/useConfig.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
@@ -6,8 +6,8 @@ import { catchHookError, renderHookInSafeProvider } from '@test/utils.js'
 import * as createClient from '@/createClient.js'
 
 describe('useConfig', () => {
-  const publicClientMock = { safeClient: 'public' } as unknown as safeKit.SafeClient
-  const signerClientMock = { safeClient: 'signer' } as unknown as safeKit.SafeClient
+  const publicClientMock = { safeClient: 'public' } as unknown as sdkStarterKit.SafeClient
+  const signerClientMock = { safeClient: 'signer' } as unknown as sdkStarterKit.SafeClient
 
   const createPublicClientSpy = jest.spyOn(createClient, 'createPublicClient')
   const createSignerClientSpy = jest.spyOn(createClient, 'createSignerClient')

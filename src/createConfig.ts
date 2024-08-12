@@ -1,4 +1,4 @@
-import type { SafeKitConfig } from '@safe-global/safe-kit'
+import type { SdkStarterKitConfig } from '@safe-global/sdk-starter-kit'
 import { Chain as ChainType, custom, http } from 'viem'
 import { CreateConfigParams, SafeConfig } from '@/types/index.js'
 import { isString } from '@/utils.js'
@@ -9,8 +9,8 @@ import { isString } from '@/utils.js'
  * @returns Config object
  */
 export function createConfig<
-  Provider extends SafeKitConfig['provider'] = SafeKitConfig['provider'],
-  Signer extends SafeKitConfig['signer'] = SafeKitConfig['signer'],
+  Provider extends SdkStarterKitConfig['provider'] = SdkStarterKitConfig['provider'],
+  Signer extends SdkStarterKitConfig['signer'] = SdkStarterKitConfig['signer'],
   Chain extends ChainType = ChainType
 >({
   provider,

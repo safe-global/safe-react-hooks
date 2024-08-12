@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { type SafeClient } from '@safe-global/safe-kit'
+import { type SafeClient } from '@safe-global/sdk-starter-kit'
 import type { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { SafeContext } from '@/SafeProvider.js'
 import { useCompareObject } from '@/hooks/helpers/useCompare.js'

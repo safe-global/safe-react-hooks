@@ -1,6 +1,6 @@
 import { act } from 'react'
 import { waitFor } from '@testing-library/react'
-import { SafeClient } from '@safe-global/safe-kit'
+import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useAuthenticate } from '@/hooks/useAuthenticate.js'
 import { renderHookInMockedSafeProvider } from '@test/utils.js'
 import { signerPrivateKeys } from '@test/fixtures.js'

@@ -1,5 +1,5 @@
 import type { SafeConfig, SafeConfigWithSigner } from '@/types/index.js'
-import { createSafeClient } from '@safe-global/safe-kit'
+import { createSafeClient } from '@safe-global/sdk-starter-kit'
 
 const getPublicClientConfig = ({ provider, safeAddress, safeOptions }: SafeConfig) => ({
   signer: undefined,

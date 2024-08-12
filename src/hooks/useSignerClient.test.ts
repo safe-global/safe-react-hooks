@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import { SafeClient } from '@safe-global/safe-kit'
+import { SafeClient } from '@safe-global/sdk-starter-kit'
 import * as createClient from '@/createClient.js'
 import { useSignerClient, UseSignerClientParams } from '@/hooks/useSignerClient.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'

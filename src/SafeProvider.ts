@@ -1,7 +1,7 @@
 import { createContext, createElement, useCallback, useEffect, useMemo, useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createConfig, WagmiProvider } from 'wagmi'
-import { SafeClient } from '@safe-global/safe-kit'
+import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { InitializeSafeProviderError } from '@/errors/InitializeSafeProviderError.js'
 import type { SafeConfig } from '@/types/index.js'
 import { isSafeConfigWithSigner } from '@/types/guards.js'

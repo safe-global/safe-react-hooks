@@ -1,13 +1,13 @@
-import * as safeKit from '@safe-global/safe-kit'
+import * as sdkStarterKit from '@safe-global/sdk-starter-kit'
 import { createPublicClient, createSignerClient } from '@/createClient.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { signerPrivateKeys } from '@test/fixtures.js'
 
 describe('createClient', () => {
-  const safeClientMock = { safe: 'client' } as unknown as safeKit.SafeClient
+  const safeClientMock = { safe: 'client' } as unknown as sdkStarterKit.SafeClient
 
   const createSafeClientSpy = jest
-    .spyOn(safeKit, 'createSafeClient')
+    .spyOn(sdkStarterKit, 'createSafeClient')
     .mockResolvedValue(safeClientMock)
 
   afterEach(() => {

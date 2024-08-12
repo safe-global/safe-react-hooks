@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom'
 import { sepolia } from 'viem/chains'
-import { SafeClient } from '@safe-global/safe-kit'
+import { SafeClient } from '@safe-global/sdk-starter-kit'
 import * as useBalance from '@/hooks/useBalance.js'
 import * as useChain from '@/hooks/useChain.js'
 import * as useSafeInfo from '@/hooks/useSafeInfo.js'

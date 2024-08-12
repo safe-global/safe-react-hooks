@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react'
-import { SafeClient } from '@safe-global/safe-kit'
+import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useSignerAddress } from '@/hooks/useSignerAddress.js'
 import * as useSignerClient from '@/hooks/useSignerClient.js'
 import { configPredictedSafe } from '@test/config.js'
