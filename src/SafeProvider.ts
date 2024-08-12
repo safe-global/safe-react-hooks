@@ -24,6 +24,7 @@ export const SafeContext = createContext<SafeContextType>({
   publicClient: undefined,
   signerClient: undefined
 })
+
 export type SafeProviderProps = {
   config: SafeConfig
 }

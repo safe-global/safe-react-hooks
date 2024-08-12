@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
 import type { Address } from 'viem'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClient } from '@/hooks/useSignerClient.js'
+import { useAsyncMemo } from '@/hooks/helpers/useAsyncMemo.js'
 
 export type UseSignerAddressParams = ConfigParam<SafeConfigWithSigner>
 export type UseSignerAddressReturnType = Address | undefined
@@ -14,15 +14,12 @@ export type UseSignerAddressReturnType = Address | undefined
  */
 export function useSignerAddress(params: UseSignerAddressParams = {}): UseSignerAddressReturnType {
   const signerClient = useSignerClient({ config: params.config })
-  const [signerAddress, setSignerAddress] = useState<UseSignerAddressReturnType>()
 
-  useEffect(() => {
-    if (signerClient) {
-      signerClient?.protocolKit.getSafeProvider().getSignerAddress().then(setSignerAddress)
-    } else {
-      setSignerAddress(undefined)
-    }
-  }, [signerClient])
+  const signerAddress = useAsyncMemo(
+    async () =>
+      signerClient ? signerClient.protocolKit.getSafeProvider().getSignerAddress() : undefined,
+    [signerClient]
+  )
 
   return signerAddress
 }
