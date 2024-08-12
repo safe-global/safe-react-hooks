@@ -2,9 +2,6 @@ import type { SafeKitConfig } from '@safe-global/safe-kit'
 import type { Address, CustomTransport, HttpTransport } from 'viem'
 import type { Chain as ChainType } from 'viem/chains'
 
-// This is a helper type that makes a property required.
-export type RequiredProp<T, K extends keyof T> = T & { [P in K]-?: Exclude<T[P], undefined> }
-
 export type EIP1193Provider = Exclude<SafeKitConfig['provider'], string>
 
 export type CreateConfigParams<
@@ -20,6 +17,8 @@ export type SafeConfig<
 > = SafeKitConfig & { chain: Chain; provider: Provider; signer: Signer } & (Provider extends string
     ? { transport: HttpTransport }
     : { transport: CustomTransport })
+
+export type SafeConfigWithSigner = SafeConfig & { signer: string }
 
 export type ConfigParam<Config extends SafeConfig = SafeConfig> = {
   config?: Config

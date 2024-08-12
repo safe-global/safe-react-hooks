@@ -1,18 +1,19 @@
 import { waitFor } from '@testing-library/react'
-import * as safeKit from '@safe-global/safe-kit'
-import { usePublicClient } from '@/hooks/usePublicClient.js'
+import { SafeClient } from '@safe-global/safe-kit'
+import * as createClient from '@/createClient.js'
+import { usePublicClient, UseSafeClientParams } from '@/hooks/usePublicClient.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { renderHookInSafeProvider } from '@test/utils.js'
 
 describe('usePublicClient', () => {
-  const publicClientMock = { safeClient: 'public' } as unknown as safeKit.SafeClient
-  const signerClientMock = { safeClient: 'signer' } as unknown as safeKit.SafeClient
+  const publicClientExistingSafeMock = { safeClient: 'existing' } as unknown as SafeClient
+  const publicClientPredictedSafeMock = { safeClient: 'predicted' } as unknown as SafeClient
 
-  const createSafeClientSpy = jest.spyOn(safeKit, 'createSafeClient')
+  const createPublicClientSpy = jest.spyOn(createClient, 'createPublicClient')
 
   beforeEach(() => {
-    createSafeClientSpy.mockImplementation(({ signer }) =>
-      Promise.resolve(signer ? signerClientMock : publicClientMock)
+    createPublicClientSpy.mockImplementation(({ safeOptions }) =>
+      Promise.resolve(safeOptions ? publicClientPredictedSafeMock : publicClientExistingSafeMock)
     )
   })
 
@@ -20,49 +21,76 @@ describe('usePublicClient', () => {
     jest.clearAllMocks()
   })
 
-  it('should return a SafeClient instance', async () => {
+  it('should return the SafeClient instance from the nearest SafeProvider', async () => {
     const { result } = renderHookInSafeProvider(() => usePublicClient(), {
       config: configExistingSafe
     })
 
-    const { provider, safeAddress } = configExistingSafe
+    await waitFor(() => expect(result.current).toMatchObject(publicClientExistingSafeMock))
 
-    await waitFor(() => expect(result.current).toMatchObject(publicClientMock))
+    expect(createPublicClientSpy).toHaveBeenCalledTimes(1)
+    expect(createPublicClientSpy).toHaveBeenCalledWith(configExistingSafe)
 
-    expect(createSafeClientSpy).toHaveBeenCalledTimes(1)
-    expect(createSafeClientSpy).toHaveBeenCalledWith({
-      provider,
-      safeAddress,
-      signer: undefined
-    })
-
-    expect(result.current).toMatchObject(publicClientMock)
+    expect(result.current).toMatchObject(publicClientExistingSafeMock)
   })
 
-  it('should accept a config to override the one from the SafeProvider', async () => {
-    const { result } = renderHookInSafeProvider(
-      () => usePublicClient({ config: configPredictedSafe }),
-      {
-        config: configExistingSafe
-      }
-    )
+  describe('if a config param is passed to the hook', () => {
+    it('should create a new SafeClient instance and return it instead of the one from the context', async () => {
+      const { result } = renderHookInSafeProvider(
+        () => usePublicClient({ config: configPredictedSafe }),
+        { config: configExistingSafe }
+      )
 
-    await waitFor(() => expect(result.current).toMatchObject(publicClientMock))
+      await waitFor(() => expect(result.current).toMatchObject(publicClientPredictedSafeMock))
 
-    expect(createSafeClientSpy).toHaveBeenCalledTimes(2)
+      expect(createPublicClientSpy).toHaveBeenCalledTimes(2)
+      expect(createPublicClientSpy).toHaveBeenNthCalledWith(1, configPredictedSafe)
+      expect(createPublicClientSpy).toHaveBeenNthCalledWith(2, configExistingSafe)
 
-    expect(createSafeClientSpy).toHaveBeenCalledWith({
-      provider: configExistingSafe.provider,
-      safeAddress: configExistingSafe.safeAddress,
-      signer: undefined
+      expect(result.current).toMatchObject(publicClientPredictedSafeMock)
     })
 
-    expect(createSafeClientSpy).toHaveBeenCalledWith({
-      provider: configPredictedSafe.provider,
-      safeOptions: configPredictedSafe.safeOptions,
-      signer: undefined
+    it('should create a new SafeClient client if the passed config changes', async () => {
+      const { result, rerender } = renderHookInSafeProvider(
+        ({ config = configPredictedSafe }: UseSafeClientParams = {}) => usePublicClient({ config }),
+        { config: configExistingSafe }
+      )
+
+      await waitFor(() => expect(result.current).toMatchObject(publicClientPredictedSafeMock))
+
+      expect(createPublicClientSpy).toHaveBeenCalledTimes(2)
+
+      const newConfig = { ...configExistingSafe, provider: 'newProvider' }
+      rerender({ config: newConfig })
+
+      await waitFor(() => expect(result.current).toMatchObject(publicClientExistingSafeMock))
+
+      expect(createPublicClientSpy).toHaveBeenCalledTimes(3)
+      expect(createPublicClientSpy).toHaveBeenNthCalledWith(3, newConfig)
+
+      expect(result.current).toMatchObject(publicClientExistingSafeMock)
     })
 
-    expect(result.current).toMatchObject(publicClientMock)
+    it('should NOT create a new SafeClient client if the config param matches the one from previous render', async () => {
+      const { result, rerender } = renderHookInSafeProvider(
+        ({ config = configPredictedSafe }: UseSafeClientParams = {}) => usePublicClient({ config }),
+        { config: configExistingSafe }
+      )
+
+      await waitFor(() => expect(result.current).toMatchObject(publicClientPredictedSafeMock))
+
+      expect(createPublicClientSpy).toHaveBeenCalledTimes(2)
+
+      const newConfig = { ...configPredictedSafe }
+
+      expect(newConfig === configPredictedSafe).toBe(false)
+
+      rerender({ config: newConfig })
+
+      await waitFor(() => expect(result.current).toMatchObject(publicClientPredictedSafeMock))
+
+      expect(createPublicClientSpy).toHaveBeenCalledTimes(2)
+      expect(result.current).toMatchObject(publicClientPredictedSafeMock)
+    })
   })
 })

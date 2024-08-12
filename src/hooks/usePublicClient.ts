@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
-import { createSafeClient, type SafeClient } from '@safe-global/safe-kit'
+import { type SafeClient } from '@safe-global/safe-kit'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 import { SafeContext } from '@/SafeProvider.js'
 import { useCompareObject } from '@/hooks/helpers/useCompare.js'
+import { createPublicClient } from '@/createClient.js'
 
 export type UseSafeClientParams = ConfigParam<SafeConfig>
 export type UseSafeClientReturnType = SafeClient | undefined
@@ -21,13 +22,7 @@ export function usePublicClient(params: UseSafeClientParams = {}): UseSafeClient
 
   useEffect(() => {
     if (params.config && hasConfigChanged) {
-      createSafeClient({
-        signer: undefined,
-        provider: params.config.provider,
-        ...(params.config.safeAddress
-          ? { safeAddress: params.config.safeAddress }
-          : { safeOptions: params.config.safeOptions })
-      }).then(setPublicClient)
+      createPublicClient(params.config).then(setPublicClient)
     }
   }, [params.config, hasConfigChanged])
 

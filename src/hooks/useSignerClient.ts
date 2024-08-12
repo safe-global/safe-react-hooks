@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from 'react'
-import { createSafeClient, type SafeClient } from '@safe-global/safe-kit'
-import type { ConfigParam, SafeConfig, RequiredProp } from '@/types/index.js'
+import { type SafeClient } from '@safe-global/safe-kit'
+import type { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { SafeContext } from '@/SafeProvider.js'
 import { useCompareObject } from '@/hooks/helpers/useCompare.js'
+import { createSignerClient } from '@/createClient.js'
 
-export type UseSignerClientParams = ConfigParam<RequiredProp<SafeConfig, 'signer'>>
+export type UseSignerClientParams = ConfigParam<SafeConfigWithSigner>
 export type UseSignerClientReturnType = SafeClient | undefined
 
 /**
@@ -21,13 +22,7 @@ export function useSignerClient(params: UseSignerClientParams = {}): UseSignerCl
 
   useEffect(() => {
     if (params.config && hasConfigChanged) {
-      createSafeClient({
-        signer: params.config.signer,
-        provider: params.config.provider,
-        ...(params.config.safeAddress
-          ? { safeAddress: params.config.safeAddress }
-          : { safeOptions: params.config.safeOptions })
-      }).then(setSignerClient)
+      createSignerClient(params.config).then(setSignerClient)
     }
   }, [params.config, hasConfigChanged])
 

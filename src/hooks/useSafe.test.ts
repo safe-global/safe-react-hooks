@@ -1,6 +1,6 @@
-import * as safeKit from '@safe-global/safe-kit'
 import { waitFor } from '@testing-library/dom'
 import { sepolia } from 'viem/chains'
+import { SafeClient } from '@safe-global/safe-kit'
 import * as useBalance from '@/hooks/useBalance.js'
 import * as useChain from '@/hooks/useChain.js'
 import * as useSafeInfo from '@/hooks/useSafeInfo.js'
@@ -9,21 +9,23 @@ import { useSafe } from '@/hooks/useSafe.js'
 import { configExistingSafe } from '@test/config.js'
 import { accounts, balanceData, safeInfo } from '@test/fixtures.js'
 import { catchHookError, renderHookInSafeProvider } from '@test/utils.js'
+import * as createClient from '@/createClient.js'
 
 describe('useSafe', () => {
+  const publicClientMock = { safeClient: 'public' } as unknown as SafeClient
+  const signerClientMock = { safeClient: 'signer' } as unknown as SafeClient
+
   const useChainSpy = jest.spyOn(useChain, 'useChain')
   const useBalanceSpy = jest.spyOn(useBalance, 'useBalance')
   const useSafeInfoSpy = jest.spyOn(useSafeInfo, 'useSafeInfo')
   const useSignerAddressSpy = jest.spyOn(useSignerAddress, 'useSignerAddress')
-  const createSafeClientSpy = jest.spyOn(safeKit, 'createSafeClient')
 
-  const publicClientMock = { safeClient: 'public' } as unknown as safeKit.SafeClient
-  const signerClientMock = { safeClient: 'signer' } as unknown as safeKit.SafeClient
+  const createPublicClientSpy = jest.spyOn(createClient, 'createPublicClient')
+  const createSignerClientSpy = jest.spyOn(createClient, 'createSignerClient')
 
   beforeEach(() => {
-    createSafeClientSpy.mockImplementation(({ signer }) =>
-      Promise.resolve(signer ? signerClientMock : publicClientMock)
-    )
+    createPublicClientSpy.mockResolvedValue(publicClientMock)
+    createSignerClientSpy.mockResolvedValue(signerClientMock)
   })
 
   afterEach(() => {

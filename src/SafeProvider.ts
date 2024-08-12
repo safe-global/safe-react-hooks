@@ -1,9 +1,11 @@
 import { createContext, createElement, useCallback, useEffect, useMemo, useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createConfig, WagmiProvider } from 'wagmi'
-import { createSafeClient, SafeClient, SafeKitConfig } from '@safe-global/safe-kit'
+import { SafeClient } from '@safe-global/safe-kit'
 import { InitializeSafeProviderError } from '@/errors/InitializeSafeProviderError.js'
-import { SafeConfig } from '@/types/index.js'
+import type { SafeConfig } from '@/types/index.js'
+import { isSafeConfigWithSigner } from '@/types/guards.js'
+import { createPublicClient, createSignerClient } from '@/createClient.js'
 
 export type SafeContextType = {
   initialized: boolean
@@ -43,21 +45,10 @@ export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>)
     [config.chain, config.transport]
   )
 
-  const publicClientConfig = useMemo<SafeKitConfig>(
-    () => ({
-      signer: undefined,
-      provider: config.provider,
-      ...(config.safeAddress
-        ? { safeAddress: config.safeAddress }
-        : { safeOptions: config.safeOptions })
-    }),
-    [config.provider, config.safeAddress, config.safeOptions]
-  )
-
   useEffect(() => {
     Promise.all([
-      createSafeClient(publicClientConfig).then(setPublicClient),
-      config.signer ? setSigner(config.signer) : Promise.resolve()
+      createPublicClient(config).then(setPublicClient),
+      isSafeConfigWithSigner(config) ? setSigner(config.signer) : Promise.resolve()
     ])
       .then(() => {
         setInitialized(true)
@@ -65,13 +56,13 @@ export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>)
       .catch((err) => {
         throw new InitializeSafeProviderError('Failed to initialize clients.', err)
       })
-  }, [publicClientConfig])
+  }, [config])
 
   const setSigner = useCallback(
     async (signer: string | undefined) => {
       if (signer) {
         try {
-          const newSignerClient = await createSafeClient({ ...publicClientConfig, signer })
+          const newSignerClient = await createSignerClient({ ...config, signer })
           setSignerClient(newSignerClient)
         } catch (err) {
           throw new InitializeSafeProviderError('Failed to initialize signer client.', err)
@@ -80,7 +71,7 @@ export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>)
         setSignerClient(undefined)
       }
     },
-    [signerClient, publicClientConfig]
+    [config, signerClient]
   )
 
   if (!config.provider) {

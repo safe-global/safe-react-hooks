@@ -2,7 +2,8 @@ import { act, createElement, Fragment, useContext, useState } from 'react'
 import * as tanstack from '@tanstack/react-query'
 import { render, screen, waitFor } from '@testing-library/react'
 import * as wagmi from 'wagmi'
-import * as safeKit from '@safe-global/safe-kit'
+import { SafeClient } from '@safe-global/safe-kit'
+import * as createClient from '@/createClient.js'
 import { SafeContext, SafeProvider } from '@/SafeProvider.js'
 import { SafeConfig } from '@/types/index.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
@@ -64,19 +65,19 @@ const renderSafeProvider = (config: SafeConfig, testingCompProps: TestingCompone
   render(createElement(SafeProvider, { config }, createElement(TestingComponent, testingCompProps)))
 
 describe('SafeProvider', () => {
-  const publicClientMock = { safeClient: 'public' } as unknown as safeKit.SafeClient
-  const signerClientMock = { safeClient: 'signer' } as unknown as safeKit.SafeClient
+  const publicClientMock = { safeClient: 'public' } as unknown as SafeClient
+  const signerClientMock = { safeClient: 'signer' } as unknown as SafeClient
 
   const createConfigWagmiSpy = jest.spyOn(wagmi, 'createConfig')
-  const createSafeClientSpy = jest.spyOn(safeKit, 'createSafeClient')
   const wagmiProviderSpy = jest.spyOn(wagmi, 'WagmiProvider')
   const queryClientProviderSpy = jest.spyOn(tanstack, 'QueryClientProvider')
+  const createPublicClientSpy = jest.spyOn(createClient, 'createPublicClient')
+  const createSignerClientSpy = jest.spyOn(createClient, 'createSignerClient')
 
   beforeEach(() => {
     queryClientProviderSpy.mockImplementation(({ children }) => children as JSX.Element)
-    createSafeClientSpy.mockImplementation(({ signer }) =>
-      Promise.resolve(signer ? signerClientMock : publicClientMock)
-    )
+    createPublicClientSpy.mockResolvedValue(publicClientMock)
+    createSignerClientSpy.mockResolvedValue(signerClientMock)
   })
 
   afterEach(() => {
@@ -127,32 +128,23 @@ describe('SafeProvider', () => {
     expect(screen.getByTestId('publicClient').textContent).toEqual(JSON.stringify(publicClientMock))
     expect(screen.getByTestId('signerClient').textContent).toEqual('')
 
-    expect(createSafeClientSpy).toHaveBeenCalledTimes(1)
-    expect(createSafeClientSpy).toHaveBeenCalledWith({
-      signer: undefined,
-      provider: configExistingSafe.provider,
-      safeAddress: configExistingSafe.safeAddress
-    })
+    expect(createPublicClientSpy).toHaveBeenCalledTimes(1)
+    expect(createPublicClientSpy).toHaveBeenCalledWith(configExistingSafe)
   })
 
   it('should also create a signer SafeClient instance if `signer` prop present in config', async () => {
-    renderSafeProvider({ ...configExistingSafe, signer: signerPrivateKeys[0] })
+    const config = { ...configExistingSafe, signer: signerPrivateKeys[0] }
+    renderSafeProvider(config)
 
     await waitFor(() => screen.getByTestId('initialized').textContent === 'true')
     expect(screen.getByTestId('publicClient').textContent).toEqual(JSON.stringify(publicClientMock))
     expect(screen.getByTestId('signerClient').textContent).toEqual(JSON.stringify(signerClientMock))
 
-    expect(createSafeClientSpy).toHaveBeenCalledTimes(2)
-    expect(createSafeClientSpy).toHaveBeenCalledWith({
-      signer: undefined,
-      provider: configExistingSafe.provider,
-      safeAddress: configExistingSafe.safeAddress
-    })
-    expect(createSafeClientSpy).toHaveBeenCalledWith({
-      signer: signerPrivateKeys[0],
-      provider: configExistingSafe.provider,
-      safeAddress: configExistingSafe.safeAddress
-    })
+    expect(createPublicClientSpy).toHaveBeenCalledTimes(1)
+    expect(createPublicClientSpy).toHaveBeenCalledWith(config)
+
+    expect(createSignerClientSpy).toHaveBeenCalledTimes(1)
+    expect(createSignerClientSpy).toHaveBeenCalledWith(config)
   })
 
   it('should throw if `provider` prop in config is empty', () => {
@@ -171,7 +163,8 @@ describe('SafeProvider', () => {
 
       await waitFor(() => screen.getByTestId('initialized').textContent === 'true')
 
-      expect(createSafeClientSpy).toHaveBeenCalledTimes(1)
+      expect(createPublicClientSpy).toHaveBeenCalledTimes(1)
+      expect(createSignerClientSpy).toHaveBeenCalledTimes(0)
 
       act(() => screen.getByTestId('setConfig').click())
 
@@ -185,17 +178,11 @@ describe('SafeProvider', () => {
         JSON.stringify(signerClientMock)
       )
 
-      expect(createSafeClientSpy).toHaveBeenCalledTimes(3)
-      expect(createSafeClientSpy).toHaveBeenCalledWith({
-        signer: undefined,
-        provider: configToSet.provider,
-        safeOptions: configToSet.safeOptions
-      })
-      expect(createSafeClientSpy).toHaveBeenCalledWith({
-        signer: configToSet.signer,
-        provider: configToSet.provider,
-        safeOptions: configToSet.safeOptions
-      })
+      expect(createPublicClientSpy).toHaveBeenCalledTimes(2)
+      expect(createPublicClientSpy).toHaveBeenNthCalledWith(2, configToSet)
+
+      expect(createSignerClientSpy).toHaveBeenCalledTimes(1)
+      expect(createSignerClientSpy).toHaveBeenCalledWith(configToSet)
     })
   })
 
@@ -209,7 +196,7 @@ describe('SafeProvider', () => {
           screen.getByTestId('initialized').textContent === 'true'
       )
 
-      expect(createSafeClientSpy).toHaveBeenCalledTimes(1)
+      expect(createPublicClientSpy).toHaveBeenCalledTimes(1)
 
       act(() => screen.getByTestId('setSigner').click())
 
@@ -220,11 +207,12 @@ describe('SafeProvider', () => {
         JSON.stringify(signerClientMock)
       )
 
-      expect(createSafeClientSpy).toHaveBeenCalledTimes(2)
-      expect(createSafeClientSpy).toHaveBeenCalledWith({
-        signer: signerPrivateKeys[0],
-        provider: configExistingSafe.provider,
-        safeAddress: configExistingSafe.safeAddress
+      expect(createPublicClientSpy).toHaveBeenCalledTimes(1)
+
+      expect(createSignerClientSpy).toHaveBeenCalledTimes(1)
+      expect(createSignerClientSpy).toHaveBeenCalledWith({
+        ...configExistingSafe,
+        signer: signerPrivateKeys[0]
       })
     })
 
@@ -235,29 +223,32 @@ describe('SafeProvider', () => {
       )
 
       await waitFor(() => screen.getByTestId('initialized').textContent === 'true')
+
       expect(screen.getByTestId('signerClient').textContent).toEqual(
         JSON.stringify(signerClientMock)
       )
 
-      expect(createSafeClientSpy).toHaveBeenCalledTimes(2)
+      expect(createPublicClientSpy).toHaveBeenCalledTimes(1)
+      expect(createSignerClientSpy).toHaveBeenCalledTimes(1)
 
       act(() => screen.getByTestId('setSigner').click())
 
       await waitFor(() => screen.getByTestId('signerClient').textContent === '')
       expect(screen.getByTestId('signerClient').textContent).toEqual('')
 
-      expect(createSafeClientSpy).toHaveBeenCalledTimes(2)
+      expect(createSignerClientSpy).toHaveBeenCalledTimes(1)
     })
 
-    it('should throw if `createSafeClient` throws', async () => {
+    it('should throw if `createSignerClient` throws', async () => {
       renderSafeProvider(configExistingSafe, { signerToSet: signerPrivateKeys[0] })
 
       await waitFor(() => screen.getByTestId('initialized').textContent === 'true')
       expect(screen.getByTestId('signerClient').textContent).toEqual('')
 
-      expect(createSafeClientSpy).toHaveBeenCalledTimes(1)
+      expect(createPublicClientSpy).toHaveBeenCalledTimes(1)
+      expect(createSignerClientSpy).toHaveBeenCalledTimes(0)
 
-      createSafeClientSpy.mockRejectedValueOnce(new Error('Signer client error'))
+      createSignerClientSpy.mockRejectedValueOnce(new Error('Signer client error'))
 
       act(() => screen.getByTestId('setSigner').click())
 
@@ -270,7 +261,7 @@ describe('SafeProvider', () => {
         'InitializeSafeProviderError: Failed to initialize signer client.'
       )
 
-      expect(createSafeClientSpy).toHaveBeenCalledTimes(2)
+      expect(createSignerClientSpy).toHaveBeenCalledTimes(1)
     })
   })
 })

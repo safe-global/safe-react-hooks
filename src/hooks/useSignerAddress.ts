@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import type { Address } from 'viem'
-import { ConfigParam, SafeConfig, RequiredProp } from '@/types/index.js'
+import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClient } from '@/hooks/useSignerClient.js'
 
-export type UseSignerAddressParams = ConfigParam<RequiredProp<SafeConfig, 'signer'>>
+export type UseSignerAddressParams = ConfigParam<SafeConfigWithSigner>
 export type UseSignerAddressReturnType = Address | undefined
 
 /**

@@ -3,17 +3,18 @@ import { waitFor } from '@testing-library/dom'
 import { useConfig } from '@/hooks/useConfig.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { catchHookError, renderHookInSafeProvider } from '@test/utils.js'
+import * as createClient from '@/createClient.js'
 
 describe('useConfig', () => {
-  const createSafeClientSpy = jest.spyOn(safeKit, 'createSafeClient')
-
   const publicClientMock = { safeClient: 'public' } as unknown as safeKit.SafeClient
   const signerClientMock = { safeClient: 'signer' } as unknown as safeKit.SafeClient
 
+  const createPublicClientSpy = jest.spyOn(createClient, 'createPublicClient')
+  const createSignerClientSpy = jest.spyOn(createClient, 'createSignerClient')
+
   beforeEach(() => {
-    createSafeClientSpy.mockImplementation(({ signer }) =>
-      Promise.resolve(signer ? signerClientMock : publicClientMock)
-    )
+    createPublicClientSpy.mockResolvedValue(publicClientMock)
+    createSignerClientSpy.mockResolvedValue(signerClientMock)
   })
 
   afterEach(() => {
