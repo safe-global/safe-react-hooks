@@ -5,8 +5,8 @@ import { SafeContext } from '@/SafeProvider.js'
 import { useCompareObject } from '@/hooks/helpers/useCompare.js'
 import { createPublicClient } from '@/createClient.js'
 
-export type UseSafeClientParams = ConfigParam<SafeConfig>
-export type UseSafeClientReturnType = SafeClient | undefined
+export type UsePubicClientParams = ConfigParam<SafeConfig>
+export type UsePublicClientReturnType = SafeClient | undefined
 
 /**
  * Hook to get a SafeClient instance with public capabilities which do not require a signer.
@@ -14,7 +14,7 @@ export type UseSafeClientReturnType = SafeClient | undefined
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns SafeClient instance or `undefined` if the SafeClient is not initialized yet.
  */
-export function usePublicClient(params: UseSafeClientParams = {}): UseSafeClientReturnType {
+export function usePublicClient(params: UsePubicClientParams = {}): UsePublicClientReturnType {
   const { publicClient: publicClientContext } = useContext(SafeContext)
   const [publicClient, setPublicClient] = useState<SafeClient>()
 

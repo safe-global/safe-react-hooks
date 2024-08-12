@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/safe-kit'
 import * as createClient from '@/createClient.js'
-import { usePublicClient, UseSafeClientParams } from '@/hooks/usePublicClient.js'
+import { usePublicClient, UsePubicClientParams } from '@/hooks/usePublicClient.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { renderHookInSafeProvider } from '@test/utils.js'
 
@@ -52,7 +52,7 @@ describe('usePublicClient', () => {
 
     it('should create a new SafeClient client if the passed config changes', async () => {
       const { result, rerender } = renderHookInSafeProvider(
-        ({ config = configPredictedSafe }: UseSafeClientParams = {}) => usePublicClient({ config }),
+        ({ config = configPredictedSafe }: UsePubicClientParams = {}) => usePublicClient({ config }),
         { config: configExistingSafe }
       )
 
@@ -73,7 +73,7 @@ describe('usePublicClient', () => {
 
     it('should NOT create a new SafeClient client if the config param matches the one from previous render', async () => {
       const { result, rerender } = renderHookInSafeProvider(
-        ({ config = configPredictedSafe }: UseSafeClientParams = {}) => usePublicClient({ config }),
+        ({ config = configPredictedSafe }: UsePubicClientParams = {}) => usePublicClient({ config }),
         { config: configExistingSafe }
       )
 
