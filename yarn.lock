@@ -1028,36 +1028,36 @@
     "@parcel/watcher-win32-ia32" "2.4.1"
     "@parcel/watcher-win32-x64" "2.4.1"
 
-"@safe-global/api-kit@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@safe-global/api-kit/-/api-kit-2.4.3.tgz#5bde12efa15c98e96037880718d86a00d155f7d1"
-  integrity sha512-kIbRMYWQiVUqIpu65GYTiHQgYDne9CZJ7JREmtrLQh11n3K7+LxNmHT6HW1VfVj/5Es8fAQlwrBukbTy0AQwLw==
+"@safe-global/api-kit@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@safe-global/api-kit/-/api-kit-2.4.4.tgz#f53799f4e9373f4001db783c85728c11e1eb3241"
+  integrity sha512-5Px4OZEikamGgmoqIOstMSr6blmJws2yN7LBoCtCqt4RM9Aa9cFp1jZlENvXITSSAFiUhGa3vK8+OAmbhq2nvQ==
   dependencies:
-    "@safe-global/protocol-kit" "^4.0.3"
+    "@safe-global/protocol-kit" "^4.0.4"
     "@safe-global/safe-core-sdk-types" "^5.0.3"
     ethers "^6.13.1"
     node-fetch "^2.7.0"
 
-"@safe-global/protocol-kit@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@safe-global/protocol-kit/-/protocol-kit-4.0.3.tgz#d8195bd4d7839dd816bac4211bd08813e1ad3780"
-  integrity sha512-r/HguW5jRqC7dXa+2uy2k233b3XKASrnjOuF7ZFtybXqxRMCuAjptM1Veqmhj+/olLRuh7toupwEtRTYepBgMQ==
+"@safe-global/protocol-kit@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@safe-global/protocol-kit/-/protocol-kit-4.0.4.tgz#e116edae5a4d242815ebaa55b7e9e7c1f55ee1fe"
+  integrity sha512-ZqlAMGnCtMt0bPhqipN65y7zKTUAMHcoPb1lQ5QgC9NJLmDR/TfpEiLddxZMXquZhKAH/r4nuRHUrfaX2NENeg==
   dependencies:
     "@noble/hashes" "^1.3.3"
     "@safe-global/safe-core-sdk-types" "^5.0.3"
-    "@safe-global/safe-deployments" "^1.37.1"
+    "@safe-global/safe-deployments" "^1.37.3"
     abitype "^1.0.2"
     ethereumjs-util "^7.1.5"
     ethers "^6.13.1"
     semver "^7.6.2"
 
-"@safe-global/relay-kit@^3.0.3":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@safe-global/relay-kit/-/relay-kit-3.0.3.tgz#8cabc2b706c7b97ae419ef18a6f6b05ed9e7bd22"
-  integrity sha512-ZhH2uKumfkjNUx+5e0Rfwb25GtX4VpYvSiqqkLpebTgPs7y5rMkjYxCJdzvHIuIbP21KVzgjrOiZG4waddH46w==
+"@safe-global/relay-kit@^3.0.4":
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/@safe-global/relay-kit/-/relay-kit-3.0.4.tgz#01409d231df8793ad91b558465ba4827163b8364"
+  integrity sha512-24z8jvZ5dS/xfpUY3exEYZhTXi2QMorRw7K0FZ5QhzUiI36wkKuElfPQfPQLwRTJ0CtFluSCEsjXNcZa5gzZpg==
   dependencies:
     "@gelatonetwork/relay-sdk" "^5.5.0"
-    "@safe-global/protocol-kit" "^4.0.3"
+    "@safe-global/protocol-kit" "^4.0.4"
     "@safe-global/safe-core-sdk-types" "^5.0.3"
     "@safe-global/safe-modules-deployments" "^2.1.1"
     ethers "^6.13.1"
@@ -1085,10 +1085,10 @@
   dependencies:
     abitype "^1.0.2"
 
-"@safe-global/safe-deployments@^1.37.1":
-  version "1.37.2"
-  resolved "https://registry.yarnpkg.com/@safe-global/safe-deployments/-/safe-deployments-1.37.2.tgz#d63947bf631d63f5991f3732fad08b17b7264505"
-  integrity sha512-kWRim5vY9W/yNKUUehUQDhCHz7NWzXjhkpMDvvnrrkEn9U461zwCcmJmPVnPrjnaY4dPpJsGZSzUuU4+uxH+vg==
+"@safe-global/safe-deployments@^1.37.3":
+  version "1.37.3"
+  resolved "https://registry.yarnpkg.com/@safe-global/safe-deployments/-/safe-deployments-1.37.3.tgz#ded9fa6bb04f0e8972c00c481badcf513d590b0b"
+  integrity sha512-EtbiOJVGe697+GcbHtfo75NYpp+hTlIIBqL2ETPLGoQBHoxo9HWbGX/6ZkVxsZv/NN4nKawyMi+MvpUkH9VXGg==
   dependencies:
     semver "^7.6.2"
 
