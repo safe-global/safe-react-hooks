@@ -21,6 +21,7 @@ jobs:
 
       # START: Temporary steps to install sdk-starter-kit
       # This is only temporary until the `sdk-starter-kit` is public
+      # TODO: Remove these steps when the `sdk-starter-kit` is published to npm
       - name: Checkout safe-core-sdk
         uses: actions/checkout@v4
         with:
