@@ -1,10 +1,12 @@
 import { useContext } from 'react'
+import {
+  useAuthenticate,
+  useBalance,
+  useChain,
+  useSafeInfo,
+  useSignerAddress
+} from '@/hooks/index.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
-import { useBalance } from '@/hooks/useBalance.js'
-import { useChain } from '@/hooks/useChain.js'
-import { useSafeInfo } from '@/hooks/useSafeInfo.js'
-import { useSignerAddress } from '@/hooks/useSignerAddress.js'
-import { useAuthenticate } from '@/hooks/useAuthenticate.js'
 import { MissingSafeProviderError } from '@/errors/MissingSafeProviderError.js'
 import { SafeContext } from '@/SafeProvider.js'
 
@@ -22,6 +24,7 @@ export function useSafe() {
   }
 
   const { connect, disconnect } = useAuthenticate()
+
   return {
     initialized,
     connect,
