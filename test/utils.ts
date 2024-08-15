@@ -35,6 +35,7 @@ export function renderHookInMockedSafeProvider<Result, Props>(
 ) {
   const contextValue = {
     isInitialized: false,
+    isConnected: false,
     config: undefined,
     setConfig: () => {},
     setSigner: () => Promise.resolve(),

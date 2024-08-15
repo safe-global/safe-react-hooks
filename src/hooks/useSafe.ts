@@ -17,16 +17,17 @@ export type UseSafeParams = ConfigParam<SafeConfig>
  * @returns Object wrapping the Safe hooks.
  */
 export function useSafe() {
-  const { initialized, config } = useContext(SafeContext)
+  const { isInitialized, config } = useContext(SafeContext)
 
   if (!config) {
     throw new MissingSafeProviderError('`useSafe` must be used within `SafeProvider`.')
   }
 
-  const { connect, disconnect } = useAuthenticate()
+  const { connect, disconnect, isConnected } = useAuthenticate()
 
   return {
-    initialized,
+    isInitialized,
+    isConnected,
     connect,
     disconnect,
     getBalance: useBalance,
