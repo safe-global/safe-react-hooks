@@ -14,7 +14,7 @@ jest.mock('@tanstack/react-query')
 type TestingComponentProps = { signerToSet?: string; configToSet?: SafeConfig }
 
 const TestingComponent = ({ signerToSet = undefined, configToSet }: TestingComponentProps) => {
-  const { isInitialized, config, setConfig, setSigner, publicClient, signerClient } =
+  const { isInitialized, isConnecting, config, setConfig, setSigner, publicClient, signerClient } =
     useContext(SafeContext)
   const [error, setError] = useState<Error>()
 
@@ -33,6 +33,11 @@ const TestingComponent = ({ signerToSet = undefined, configToSet }: TestingCompo
       'p',
       { 'data-testid': 'isInitialized', key: 'isInitialized' },
       isInitialized.toString()
+    ),
+    createElement(
+      'p',
+      { 'data-testid': 'isConnecting', key: 'isConnecting' },
+      isConnecting.toString()
     ),
     createElement('p', { 'data-testid': 'config', key: 'config' }, JSON.stringify(config)),
     createElement(
@@ -89,6 +94,7 @@ describe('SafeProvider', () => {
 
     await waitFor(() => screen.getByTestId('isInitialized').textContent === 'true')
     expect(screen.getByTestId('isInitialized').textContent).toEqual('true')
+    expect(screen.getByTestId('isConnecting').textContent).toEqual('false')
 
     expect(createConfigWagmiSpy).toHaveBeenCalledTimes(1)
     expect(createConfigWagmiSpy).toHaveBeenCalledWith({
@@ -96,7 +102,7 @@ describe('SafeProvider', () => {
       transports: { [configExistingSafe.chain.id]: configExistingSafe.transport }
     })
 
-    expect(queryClientProviderSpy).toHaveBeenCalledTimes(2)
+    expect(queryClientProviderSpy).toHaveBeenCalledTimes(3)
     expect(queryClientProviderSpy).toHaveBeenCalledWith(
       {
         client: expect.any(tanstack.QueryClient),
@@ -105,7 +111,7 @@ describe('SafeProvider', () => {
       {}
     )
 
-    expect(wagmiProviderSpy).toHaveBeenCalledTimes(2)
+    expect(wagmiProviderSpy).toHaveBeenCalledTimes(3)
     expect(wagmiProviderSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         config: createConfigWagmiSpy.mock.results[0].value
