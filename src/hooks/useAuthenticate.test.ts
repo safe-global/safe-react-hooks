@@ -11,16 +11,19 @@ describe('useAuthenticate', () => {
   const setSignerMock = jest.fn(() => Promise.resolve())
 
   const renderUseAuthenticate = async (context: Partial<SafeContextType> = {}) => {
-    const renderResult = renderHookInMockedSafeProvider(() => useAuthenticate(), {
+    const renderOptions = {
       signerClient: signerClientMock,
       setSigner: setSignerMock,
       ...context
-    })
+    }
+
+    const renderResult = renderHookInMockedSafeProvider(() => useAuthenticate(), renderOptions)
 
     await waitFor(() =>
       expect(renderResult.result.current).toEqual({
         connect: expect.any(Function),
-        disconnect: expect.any(Function)
+        disconnect: expect.any(Function),
+        isConnected: !!renderOptions.signerClient
       })
     )
 

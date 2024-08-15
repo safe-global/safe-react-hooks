@@ -14,7 +14,7 @@ jest.mock('@tanstack/react-query')
 type TestingComponentProps = { signerToSet?: string; configToSet?: SafeConfig }
 
 const TestingComponent = ({ signerToSet = undefined, configToSet }: TestingComponentProps) => {
-  const { initialized, config, setConfig, setSigner, publicClient, signerClient } =
+  const { isInitialized, config, setConfig, setSigner, publicClient, signerClient } =
     useContext(SafeContext)
   const [error, setError] = useState<Error>()
 
@@ -31,8 +31,8 @@ const TestingComponent = ({ signerToSet = undefined, configToSet }: TestingCompo
   return createElement(Fragment, null, [
     createElement(
       'p',
-      { 'data-testid': 'initialized', key: 'initialized' },
-      initialized.toString()
+      { 'data-testid': 'isInitialized', key: 'isInitialized' },
+      isInitialized.toString()
     ),
     createElement('p', { 'data-testid': 'config', key: 'config' }, JSON.stringify(config)),
     createElement(
@@ -87,8 +87,8 @@ describe('SafeProvider', () => {
   it('should render WagmiProvider, QueryClientProvider and children', async () => {
     renderSafeProvider(configExistingSafe)
 
-    await waitFor(() => screen.getByTestId('initialized').textContent === 'true')
-    expect(screen.getByTestId('initialized').textContent).toEqual('true')
+    await waitFor(() => screen.getByTestId('isInitialized').textContent === 'true')
+    expect(screen.getByTestId('isInitialized').textContent).toEqual('true')
 
     expect(createConfigWagmiSpy).toHaveBeenCalledTimes(1)
     expect(createConfigWagmiSpy).toHaveBeenCalledWith({
@@ -117,14 +117,14 @@ describe('SafeProvider', () => {
   it('should store passed config object in context', async () => {
     renderSafeProvider(configExistingSafe)
 
-    await waitFor(() => screen.getByTestId('initialized').textContent === 'true')
+    await waitFor(() => screen.getByTestId('isInitialized').textContent === 'true')
     expect(screen.getByTestId('config').textContent).toEqual(JSON.stringify(configExistingSafe))
   })
 
   it('should create a public SafeClient instance', async () => {
     renderSafeProvider(configExistingSafe)
 
-    await waitFor(() => screen.getByTestId('initialized').textContent === 'true')
+    await waitFor(() => screen.getByTestId('isInitialized').textContent === 'true')
     expect(screen.getByTestId('publicClient').textContent).toEqual(JSON.stringify(publicClientMock))
     expect(screen.getByTestId('signerClient').textContent).toEqual('')
 
@@ -136,7 +136,7 @@ describe('SafeProvider', () => {
     const config = { ...configExistingSafe, signer: signerPrivateKeys[0] }
     renderSafeProvider(config)
 
-    await waitFor(() => screen.getByTestId('initialized').textContent === 'true')
+    await waitFor(() => screen.getByTestId('isInitialized').textContent === 'true')
     expect(screen.getByTestId('publicClient').textContent).toEqual(JSON.stringify(publicClientMock))
     expect(screen.getByTestId('signerClient').textContent).toEqual(JSON.stringify(signerClientMock))
 
@@ -161,7 +161,7 @@ describe('SafeProvider', () => {
 
       renderSafeProvider(configExistingSafe, { configToSet })
 
-      await waitFor(() => screen.getByTestId('initialized').textContent === 'true')
+      await waitFor(() => screen.getByTestId('isInitialized').textContent === 'true')
 
       expect(createPublicClientSpy).toHaveBeenCalledTimes(1)
       expect(createSignerClientSpy).toHaveBeenCalledTimes(0)
@@ -193,7 +193,7 @@ describe('SafeProvider', () => {
       await waitFor(
         () =>
           screen.getByTestId('signerClient').textContent === '' &&
-          screen.getByTestId('initialized').textContent === 'true'
+          screen.getByTestId('isInitialized').textContent === 'true'
       )
 
       expect(createPublicClientSpy).toHaveBeenCalledTimes(1)
@@ -222,7 +222,7 @@ describe('SafeProvider', () => {
         { signerToSet: undefined }
       )
 
-      await waitFor(() => screen.getByTestId('initialized').textContent === 'true')
+      await waitFor(() => screen.getByTestId('isInitialized').textContent === 'true')
 
       expect(screen.getByTestId('signerClient').textContent).toEqual(
         JSON.stringify(signerClientMock)
@@ -242,7 +242,7 @@ describe('SafeProvider', () => {
     it('should throw if `createSignerClient` throws', async () => {
       renderSafeProvider(configExistingSafe, { signerToSet: signerPrivateKeys[0] })
 
-      await waitFor(() => screen.getByTestId('initialized').textContent === 'true')
+      await waitFor(() => screen.getByTestId('isInitialized').textContent === 'true')
       expect(screen.getByTestId('signerClient').textContent).toEqual('')
 
       expect(createPublicClientSpy).toHaveBeenCalledTimes(1)

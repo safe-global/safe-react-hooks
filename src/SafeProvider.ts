@@ -8,7 +8,7 @@ import { isSafeConfigWithSigner } from '@/types/guards.js'
 import { createPublicClient, createSignerClient } from '@/createClient.js'
 
 export type SafeContextType = {
-  initialized: boolean
+  isInitialized: boolean
   config: SafeConfig | undefined
   setConfig: (config: SafeConfig) => void
   setSigner: (signer: string | undefined) => Promise<void>
@@ -17,7 +17,7 @@ export type SafeContextType = {
 }
 
 export const SafeContext = createContext<SafeContextType>({
-  initialized: false,
+  isInitialized: false,
   config: undefined,
   setConfig: () => {},
   setSigner: () => Promise.resolve(),
@@ -32,8 +32,8 @@ export type SafeProviderProps = {
 const queryClient = new QueryClient()
 
 export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>) {
-  const [initialized, setInitialized] = useState(false)
   const [config, setConfig] = useState(params.config)
+  const [isInitialized, setIsInitialized] = useState(false)
   const [publicClient, setPublicClient] = useState<SafeClient>()
   const [signerClient, setSignerClient] = useState<SafeClient>()
 
@@ -52,7 +52,7 @@ export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>)
       isSafeConfigWithSigner(config) ? setSigner(config.signer) : Promise.resolve()
     ])
       .then(() => {
-        setInitialized(true)
+        setIsInitialized(true)
       })
       .catch((err) => {
         throw new InitializeSafeProviderError('Failed to initialize clients.', err)
@@ -80,7 +80,7 @@ export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>)
   }
 
   const props = {
-    value: { initialized, config, setConfig, setSigner, publicClient, signerClient }
+    value: { isInitialized, config, setConfig, setSigner, publicClient, signerClient }
   }
 
   return createElement(

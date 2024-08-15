@@ -34,7 +34,7 @@ export function renderHookInMockedSafeProvider<Result, Props>(
   options: RenderHookOptions<Props> = {}
 ) {
   const contextValue = {
-    initialized: false,
+    isInitialized: false,
     config: undefined,
     setConfig: () => {},
     setSigner: () => Promise.resolve(),
