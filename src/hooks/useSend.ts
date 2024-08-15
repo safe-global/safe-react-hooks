@@ -1,9 +1,9 @@
 import { useMutation, UseMutationReturnType } from 'wagmi/query'
 import { UseMutateAsyncFunction, UseMutateFunction } from '@tanstack/react-query'
 import { TransactionBase } from '@safe-global/safe-core-sdk-types'
+import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClient } from '@/hooks/useSignerClient.js'
-import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 
 type SendVariables = { transactions: TransactionBase[] }
 
@@ -14,10 +14,10 @@ export type UseSendReturnType = UseMutationReturnType<SafeClientResult, Error, S
 }
 
 /**
- * TODO
+ * Hook to send or propose transactions.
  * @param params Parameters to customize the hook behavior.
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
- * @returns TODO
+ * @returns Object containing the mutation state and the send function.
  */
 export function useSend(params: UseSendParams = {}): UseSendReturnType {
   const signerClient = useSignerClient({ config: params.config })
@@ -34,9 +34,10 @@ export function useSend(params: UseSendParams = {}): UseSendReturnType {
     return signerClient.send({ transactions })
   }
 
-  const mutationKey = ['sendTransaction']
-
-  const { mutate, mutateAsync, ...result } = useMutation({ mutationFn, mutationKey })
+  const { mutate, mutateAsync, ...result } = useMutation({
+    mutationFn,
+    mutationKey: ['sendTransaction']
+  })
 
   return { ...result, send: mutate, sendAsync: mutateAsync }
 }
