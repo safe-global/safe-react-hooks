@@ -14,7 +14,7 @@ export type UseSendReturnType = UseMutationReturnType<SafeClientResult, Error, S
 }
 
 /**
- * Hook to send or propose transactions.
+ * Hook to send or propose a multisig transaction.
  * @param params Parameters to customize the hook behavior.
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns Object containing the mutation state and the send function.
