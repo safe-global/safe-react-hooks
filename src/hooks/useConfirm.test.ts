@@ -1,21 +1,19 @@
 import * as wagmiQuery from 'wagmi/query'
 import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
-import { useSend } from '@/hooks/useSend.js'
+import { useConfirm } from '@/hooks/useConfirm.js'
 import * as useSignerClient from '@/hooks/useSignerClient.js'
 import { configExistingSafe } from '@test/config.js'
-import { ethereumTxHash, safeAddress, signerPrivateKeys } from '@test/fixtures.js'
+import { ethereumTxHash, safeAddress, safeTxHash, signerPrivateKeys } from '@test/fixtures.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 
-describe('useSend', () => {
-  const transactionMock = { to: '0xABC', value: '0', data: '0x987' }
-
-  const sendResponseMock = {
+describe('useConfirm', () => {
+  const confirmResponseMock = {
     safeAddress: safeAddress,
-    description: 'Transaction sent',
+    description: 'Transaction confirmed',
     status: 'EXECUTED',
     transactions: {
-      safeTxHash: undefined,
+      safeTxHash: safeTxHash,
       ethereumTxHash: ethereumTxHash
     },
     messages: undefined,
@@ -26,8 +24,8 @@ describe('useSend', () => {
   const useSignerClientSpy = jest.spyOn(useSignerClient, 'useSignerClient')
   const useMutationSpy = jest.spyOn(wagmiQuery, 'useMutation')
 
-  const sendMock = jest.fn().mockResolvedValue(sendResponseMock)
-  const safeClientMock = { send: sendMock }
+  const confirmMock = jest.fn().mockResolvedValue(confirmResponseMock)
+  const safeClientMock = { confirm: confirmMock }
 
   beforeEach(() => {
     useSignerClientSpy.mockReturnValue(safeClientMock as unknown as SafeClient)
@@ -41,17 +39,17 @@ describe('useSend', () => {
     ['without config parameter', { config: undefined }],
     ['with config parameter', { config: { ...configExistingSafe, signer: signerPrivateKeys[0] } }]
   ])('should initialize signer client correctly when being called %s', async (_label, params) => {
-    const { result } = renderHookInQueryClientProvider(() => useSend(params))
+    const { result } = renderHookInQueryClientProvider(() => useConfirm(params))
     await waitFor(() => expect(result.current.isIdle).toEqual(true))
 
     expect(useSignerClientSpy).toHaveBeenCalledTimes(1)
     expect(useSignerClientSpy).toHaveBeenCalledWith(params)
 
-    expect(sendMock).toHaveBeenCalledTimes(0)
+    expect(confirmMock).toHaveBeenCalledTimes(0)
   })
 
-  it('should return mutation result object with `send` and `sendAsync` functions', async () => {
-    const { result } = renderHookInQueryClientProvider(() => useSend())
+  it('should return mutation result object with `confirm` and `confirmAsync` functions', async () => {
+    const { result } = renderHookInQueryClientProvider(() => useConfirm())
     await waitFor(() => expect(result.current.isIdle).toEqual(true))
 
     expect(result.current).toEqual({
@@ -69,26 +67,26 @@ describe('useSend', () => {
       isError: false,
       isIdle: true,
       reset: expect.any(Function),
-      send: expect.any(Function),
-      sendAsync: expect.any(Function)
+      confirm: expect.any(Function),
+      confirmAsync: expect.any(Function)
     })
 
     expect(useMutationSpy).toHaveBeenCalledTimes(1)
     expect(useMutationSpy).toHaveBeenCalledWith({
       mutationFn: expect.any(Function),
-      mutationKey: ['sendTransaction']
+      mutationKey: ['confirmTransaction']
     })
 
-    expect(sendMock).toHaveBeenCalledTimes(0)
+    expect(confirmMock).toHaveBeenCalledTimes(0)
   })
 
-  describe('send', () => {
-    it('should call `send` from signer client', async () => {
-      const { result } = renderHookInQueryClientProvider(() => useSend())
+  describe('cofirm', () => {
+    it('should call `cofirm` from signer client', async () => {
+      const { result } = renderHookInQueryClientProvider(() => useConfirm())
 
-      await waitFor(() => expect(result.current.send).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current.confirm).toEqual(expect.any(Function)))
 
-      result.current.send({ transactions: [transactionMock] })
+      result.current.confirm({ safeTxHash })
 
       await waitFor(() => expect(result.current.isSuccess).toEqual(true))
 
@@ -96,21 +94,21 @@ describe('useSend', () => {
       expect(result.current.isPending).toEqual(false)
       expect(result.current.isError).toEqual(false)
       expect(result.current.isSuccess).toEqual(true)
-      expect(result.current.data).toEqual(sendResponseMock)
+      expect(result.current.data).toEqual(confirmResponseMock)
       expect(result.current.error).toEqual(null)
 
-      expect(sendMock).toHaveBeenCalledTimes(1)
-      expect(sendMock).toHaveBeenCalledWith({ transactions: [transactionMock] })
+      expect(confirmMock).toHaveBeenCalledTimes(1)
+      expect(confirmMock).toHaveBeenCalledWith({ safeTxHash })
     })
 
     it('should return error if signer client is not connected', async () => {
       useSignerClientSpy.mockReturnValueOnce(undefined)
 
-      const { result } = renderHookInQueryClientProvider(() => useSend())
+      const { result } = renderHookInQueryClientProvider(() => useConfirm())
 
-      await waitFor(() => expect(result.current.send).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current.confirm).toEqual(expect.any(Function)))
 
-      result.current.send({ transactions: [transactionMock] })
+      result.current.confirm({ safeTxHash })
 
       await waitFor(() => expect(result.current.isError).toEqual(true))
 
@@ -121,15 +119,15 @@ describe('useSend', () => {
       expect(result.current.data).toEqual(undefined)
       expect(result.current.error).toEqual(new Error('Signer client is not available'))
 
-      expect(sendMock).toHaveBeenCalledTimes(0)
+      expect(confirmMock).toHaveBeenCalledTimes(0)
     })
 
-    it('should return error if passed transaction list is empty', async () => {
-      const { result } = renderHookInQueryClientProvider(() => useSend())
+    it('should return error if passed `safeTxHash` is an empty string', async () => {
+      const { result } = renderHookInQueryClientProvider(() => useConfirm())
 
-      await waitFor(() => expect(result.current.send).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current.confirm).toEqual(expect.any(Function)))
 
-      result.current.send({ transactions: [] })
+      result.current.confirm({ safeTxHash: '' })
 
       await waitFor(() => expect(result.current.isError).toEqual(true))
 
@@ -138,50 +136,50 @@ describe('useSend', () => {
       expect(result.current.isError).toEqual(true)
       expect(result.current.isSuccess).toEqual(false)
       expect(result.current.data).toEqual(undefined)
-      expect(result.current.error).toEqual(new Error('No transactions provided'))
+      expect(result.current.error).toEqual(new Error('`safeTxHash` parameter must not be empty'))
 
-      expect(sendMock).toHaveBeenCalledTimes(0)
+      expect(confirmMock).toHaveBeenCalledTimes(0)
     })
   })
 
-  describe('sendAsync', () => {
-    it('should call `send` from signer client and resolve with result', async () => {
-      const { result } = renderHookInQueryClientProvider(() => useSend())
+  describe('confirmAsync', () => {
+    it('should call `confirm` from signer client and resolve with result', async () => {
+      const { result } = renderHookInQueryClientProvider(() => useConfirm())
 
-      await waitFor(() => expect(result.current.sendAsync).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current.confirmAsync).toEqual(expect.any(Function)))
 
-      const sendResult = await result.current.sendAsync({ transactions: [transactionMock] })
+      const sendResult = await result.current.confirmAsync({ safeTxHash })
 
-      expect(sendResult).toEqual(sendResponseMock)
+      expect(sendResult).toEqual(confirmResponseMock)
 
-      expect(sendMock).toHaveBeenCalledTimes(1)
-      expect(sendMock).toHaveBeenCalledWith({ transactions: [transactionMock] })
+      expect(confirmMock).toHaveBeenCalledTimes(1)
+      expect(confirmMock).toHaveBeenCalledWith({ safeTxHash })
     })
 
     it('should return error if signer client is not connected', async () => {
       useSignerClientSpy.mockReturnValueOnce(undefined)
 
-      const { result } = renderHookInQueryClientProvider(() => useSend())
+      const { result } = renderHookInQueryClientProvider(() => useConfirm())
 
-      await waitFor(() => expect(result.current.sendAsync).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current.confirmAsync).toEqual(expect.any(Function)))
 
-      expect(() => result.current.sendAsync({ transactions: [transactionMock] })).rejects.toThrow(
+      expect(() => result.current.confirmAsync({ safeTxHash })).rejects.toThrow(
         'Signer client is not available'
       )
 
-      expect(sendMock).toHaveBeenCalledTimes(0)
+      expect(confirmMock).toHaveBeenCalledTimes(0)
     })
 
-    it('should return error if passed transaction list is empty', async () => {
-      const { result } = renderHookInQueryClientProvider(() => useSend())
+    it('should return error if passed `safeTxHash` is an empty string', async () => {
+      const { result } = renderHookInQueryClientProvider(() => useConfirm())
 
-      await waitFor(() => expect(result.current.sendAsync).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current.confirmAsync).toEqual(expect.any(Function)))
 
-      expect(() => result.current.sendAsync({ transactions: [] })).rejects.toThrow(
-        'No transactions provided'
+      expect(() => result.current.confirmAsync({ safeTxHash: '' })).rejects.toThrow(
+        '`safeTxHash` parameter must not be empty'
       )
 
-      expect(sendMock).toHaveBeenCalledTimes(0)
+      expect(confirmMock).toHaveBeenCalledTimes(0)
     })
   })
 })

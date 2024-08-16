@@ -31,7 +31,7 @@ export function useConfirm(params: UseConfirmParams = {}): UseConfirmReturnType 
     }
 
     if (!safeTxHash.length) {
-      throw new Error('safeTxHash must not be empty')
+      throw new Error('`safeTxHash` parameter must not be empty')
     }
 
     return signerClient.confirm({ safeTxHash })
