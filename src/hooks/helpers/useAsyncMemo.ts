@@ -15,7 +15,7 @@ export function useAsyncMemo<T>(factory: () => Promise<T>, deps: DependencyList)
         setResult(newResult)
       }
     })
-  }, [...deps, factory, result])
+  }, [...deps, factory])
 
   return result
 }
