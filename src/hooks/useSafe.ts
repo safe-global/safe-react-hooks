@@ -1,15 +1,37 @@
+import { useContext } from 'react'
+import {
+  useAuthenticate,
+  useBalance,
+  useChain,
+  useSafeInfo,
+  useSignerAddress
+} from '@/hooks/index.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
-import { useBalance } from '@/hooks/useBalance.js'
-import { useChain } from '@/hooks/useChain.js'
-import { useSafeInfo } from '@/hooks/useSafeInfo.js'
+import { MissingSafeProviderError } from '@/errors/MissingSafeProviderError.js'
+import { SafeContext } from '@/SafeProvider.js'
 
 export type UseSafeParams = ConfigParam<SafeConfig>
 
-export function useSafe(params: UseSafeParams = {}) {
-  const { config } = params
+/**
+ * Top-level hook to get Safe-related information.
+ * @returns Object wrapping the Safe hooks.
+ */
+export function useSafe() {
+  const { initialized, config } = useContext(SafeContext)
+
+  if (!config) {
+    throw new MissingSafeProviderError('`useSafe` must be used within `SafeProvider`.')
+  }
+
+  const { connect, disconnect } = useAuthenticate()
+
   return {
-    getBalance: () => useBalance({ config }),
-    getChain: () => useChain({ config }),
-    getSafeInfo: () => useSafeInfo({ config })
+    initialized,
+    connect,
+    disconnect,
+    getBalance: useBalance,
+    getChain: useChain,
+    getSafeInfo: useSafeInfo,
+    getSignerAddress: useSignerAddress
   }
 }

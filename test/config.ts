@@ -1,18 +1,18 @@
 import { createConfig } from '@/index.js'
 import { sepolia } from 'viem/chains'
-import { accounts, rpcProvider, safeAddress, signerPrivateKeys } from './fixtures.js'
+import { accounts, rpcProvider, safeAddress } from './fixtures.js'
 
 export const configParamsExistingSafe = {
   chain: sepolia,
   provider: rpcProvider,
-  signer: signerPrivateKeys[0],
+  signer: undefined,
   safeAddress: safeAddress
 }
 
 export const configParamsPredictedSafe = {
   chain: sepolia,
   provider: rpcProvider,
-  signer: signerPrivateKeys[0],
+  signer: undefined,
   safeOptions: {
     owners: accounts,
     threshold: 1

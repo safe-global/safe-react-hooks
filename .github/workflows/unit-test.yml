@@ -1,0 +1,52 @@
+name: Unit Tests
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - development
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: yarn
+
+      # START: Temporary steps to install sdk-starter-kit
+      # This is only temporary until the `sdk-starter-kit` is public
+      # TODO: Remove these steps when the `sdk-starter-kit` is published to npm
+      - name: Checkout safe-core-sdk
+        uses: actions/checkout@v4
+        with:
+          repository: safe-global/safe-core-sdk
+          ref: development
+          path: './safe-core-sdk'
+
+      - name: Yarn install safe-core-sdk
+        run: yarn --cwd ./safe-core-sdk install
+
+      - name: Build safe-core-sdk
+        run: yarn --cwd ./safe-core-sdk build
+      # END: Temporary steps to install sdk-starter-kit
+    
+      - name: Yarn install
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+
+      - name: Test
+        run: yarn coverage
+
+      - name: Upload coverage report
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          files: coverage/lcov.info

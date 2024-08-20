@@ -5,11 +5,12 @@ import { Hex } from 'viem'
 
 export const safeAddress = '0x5AFEf9a179dCE37C9ddf3AE4Cad4aa9dd6B814C2'
 
-export const signerPrivateKeys: Hex[] = [
-  '0xb0652ca4a8ab9b7021288c0a68f30b6b2f0589f54fea72a2b310b12c5337c451',
-  '0x78bfa62f4f7d2885cc83c68141308ac5e00f2c10e91b4375117c6101da618bd8',
-  '0xb9d12ee94ab3bea741947feb261dd77d72f6c83a5dde5b9c6a44a965609d1b7a'
-]
+export const signerPrivateKeys = [
+  '0xb0652ca4a8ab9b7021288c0a68f30b6b2f0589f54fea72a2b310b12c5337c451' as Hex,
+  '0x78bfa62f4f7d2885cc83c68141308ac5e00f2c10e91b4375117c6101da618bd8' as Hex,
+  '0xb9d12ee94ab3bea741947feb261dd77d72f6c83a5dde5b9c6a44a965609d1b7a' as Hex
+] as const
+
 export const accounts = signerPrivateKeys.map(privateKeyToAddress)
 
 export const safeInfo: SafeInfo = {
