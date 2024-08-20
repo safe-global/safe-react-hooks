@@ -27,7 +27,7 @@ export function useSafeInfo(params: UseSafeInfoParams = {}): UseSafeInfoReturnTy
       safeClient.protocolKit.getNonce(),
       safeClient.protocolKit.getThreshold(),
       safeClient.protocolKit.isSafeDeployed(),
-      safeClient.protocolKit.getOwners()
+      safeClient.protocolKit.getOwners().then((owners) => owners as Address[])
     ])
     return { address, nonce, threshold, isDeployed, owners }
   }, [safeClient])

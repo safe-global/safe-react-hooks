@@ -17,7 +17,12 @@ export function useSignerAddress(params: UseSignerAddressParams = {}): UseSigner
 
   const signerAddress = useAsyncMemo(
     async () =>
-      signerClient ? signerClient.protocolKit.getSafeProvider().getSignerAddress() : undefined,
+      signerClient
+        ? signerClient.protocolKit
+            .getSafeProvider()
+            .getSignerAddress()
+            .then((address) => address as Address)
+        : undefined,
     [signerClient]
   )
 
