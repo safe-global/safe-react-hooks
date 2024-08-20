@@ -4,16 +4,26 @@ import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClient } from '@/hooks/useSignerClient.js'
 
-type ConfirmVariables = { safeTxHash: string }
+type ConfirmTransactionVariables = { safeTxHash: string }
 
-export type UseConfirmParams = ConfigParam<SafeConfigWithSigner>
-export type UseConfirmReturnType = UseMutationReturnType<
+export type UseConfirmTransactionParams = ConfigParam<SafeConfigWithSigner>
+export type UseConfirmTransactionReturnType = UseMutationReturnType<
   SafeClientResult,
   Error,
-  ConfirmVariables
+  ConfirmTransactionVariables
 > & {
-  confirm: UseMutateFunction<SafeClientResult, Error, ConfirmVariables, unknown>
-  confirmAsync: UseMutateAsyncFunction<SafeClientResult, Error, ConfirmVariables, unknown>
+  confirmTransaction: UseMutateFunction<
+    SafeClientResult,
+    Error,
+    ConfirmTransactionVariables,
+    unknown
+  >
+  confirmTransactionAsync: UseMutateAsyncFunction<
+    SafeClientResult,
+    Error,
+    ConfirmTransactionVariables,
+    unknown
+  >
 }
 
 /**
@@ -22,10 +32,12 @@ export type UseConfirmReturnType = UseMutationReturnType<
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns Object containing the mutation state and the confirm function.
  */
-export function useConfirm(params: UseConfirmParams = {}): UseConfirmReturnType {
+export function useConfirmTransaction(
+  params: UseConfirmTransactionParams = {}
+): UseConfirmTransactionReturnType {
   const signerClient = useSignerClient({ config: params.config })
 
-  const mutationFn = ({ safeTxHash }: ConfirmVariables) => {
+  const mutationFn = ({ safeTxHash }: ConfirmTransactionVariables) => {
     if (!signerClient) {
       throw new Error('Signer client is not available')
     }
@@ -42,5 +54,5 @@ export function useConfirm(params: UseConfirmParams = {}): UseConfirmReturnType 
     mutationKey: ['confirmTransaction']
   })
 
-  return { ...result, confirm: mutate, confirmAsync: mutateAsync }
+  return { ...result, confirmTransaction: mutate, confirmTransactionAsync: mutateAsync }
 }
