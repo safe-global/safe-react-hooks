@@ -23,11 +23,11 @@ export function useSafe() {
     throw new MissingSafeProviderError('`useSafe` must be used within `SafeProvider`.')
   }
 
-  const { connect, disconnect, isConnected } = useAuthenticate()
+  const { connect, disconnect, isSignerConnected } = useAuthenticate()
 
   return {
     isInitialized,
-    isConnected,
+    isSignerConnected,
     connect,
     disconnect,
     getBalance: useBalance,

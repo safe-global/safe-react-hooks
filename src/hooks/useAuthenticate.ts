@@ -5,7 +5,7 @@ import { AuthenticationError } from '@/errors/AuthenticationError.js'
 export type UseConnectSignerReturnType = {
   connect: (signer: string) => Promise<void>
   disconnect: () => Promise<void>
-  isConnected: boolean
+  isSignerConnected: boolean
 }
 
 /**
@@ -32,7 +32,7 @@ export function useAuthenticate(): UseConnectSignerReturnType {
     return setSigner(undefined)
   }, [setSigner])
 
-  const isConnected = !!signerClient
+  const isSignerConnected = !!signerClient
 
-  return { connect, disconnect, isConnected }
+  return { connect, disconnect, isSignerConnected }
 }

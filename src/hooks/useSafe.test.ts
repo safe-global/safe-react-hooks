@@ -32,7 +32,7 @@ describe('useSafe', () => {
     jest.clearAllMocks()
   })
 
-  it('should return object containing functions to call other hooks and `isInitialized` + `isConnected` flags', async () => {
+  it('should return object containing functions to call other hooks and `isInitialized` + `isSignerConnected` flags', async () => {
     const { result } = renderHookInSafeProvider(() => useSafe(), { config: configExistingSafe })
 
     await waitFor(() => result.current.isInitialized === true)
@@ -45,7 +45,7 @@ describe('useSafe', () => {
       getSafeInfo: expect.any(Function),
       getSignerAddress: expect.any(Function),
       isInitialized: true,
-      isConnected: false
+      isSignerConnected: false
     })
   })
 

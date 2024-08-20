@@ -23,7 +23,7 @@ describe('useAuthenticate', () => {
       expect(renderResult.result.current).toEqual({
         connect: expect.any(Function),
         disconnect: expect.any(Function),
-        isConnected: !!renderOptions.signerClient
+        isSignerConnected: !!renderOptions.signerClient
       })
     )
 
