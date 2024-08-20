@@ -1,7 +1,7 @@
 import { GetBalanceData } from 'wagmi/query'
 import { privateKeyToAddress } from 'viem/accounts'
-import { EIP1193Provider, SafeInfo } from '@/index.js'
 import { Hex } from 'viem'
+import { EIP1193Provider, SafeInfo } from '@/index.js'
 
 export const safeAddress = '0x5AFEf9a179dCE37C9ddf3AE4Cad4aa9dd6B814C2'
 
@@ -31,3 +31,6 @@ export const balanceData: GetBalanceData = {
   symbol: 'ETH',
   value: 800000000000000000n
 }
+
+export const safeTxHash = '0x01bcd5ed292056cf2f2a6ed4bf9a49794b7f49f43b97b891d2605454297b2991'
+export const ethereumTxHash = '0x19020cb4e050fba1fefe80320a286ba329a4ef7485baf9a0c28692b404d9d13e'

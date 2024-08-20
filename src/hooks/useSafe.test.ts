@@ -32,10 +32,10 @@ describe('useSafe', () => {
     jest.clearAllMocks()
   })
 
-  it('should return object containing functions to call other hooks and `initialized` flag', async () => {
+  it('should return object containing functions to call other hooks and `isInitialized` + `isSignerConnected` flags', async () => {
     const { result } = renderHookInSafeProvider(() => useSafe(), { config: configExistingSafe })
 
-    await waitFor(() => result.current.initialized === true)
+    await waitFor(() => result.current.isInitialized === true)
 
     expect(result.current).toMatchObject({
       connect: expect.any(Function),
@@ -44,7 +44,8 @@ describe('useSafe', () => {
       getChain: expect.any(Function),
       getSafeInfo: expect.any(Function),
       getSignerAddress: expect.any(Function),
-      initialized: true
+      isInitialized: true,
+      isSignerConnected: false
     })
   })
 
@@ -62,7 +63,7 @@ describe('useSafe', () => {
         config: configExistingSafe
       })
 
-      await waitFor(() => result.current.initialized === true)
+      await waitFor(() => result.current.isInitialized === true)
 
       const { result: getBalanceResult } = renderHookInSafeProvider(
         () => result.current.getBalance(),
@@ -85,7 +86,7 @@ describe('useSafe', () => {
         config: configExistingSafe
       })
 
-      await waitFor(() => result.current.initialized === true)
+      await waitFor(() => result.current.isInitialized === true)
 
       const { result: getChainResult } = renderHookInSafeProvider(() => result.current.getChain(), {
         config: configExistingSafe
@@ -107,7 +108,7 @@ describe('useSafe', () => {
         config: configExistingSafe
       })
 
-      await waitFor(() => result.current.initialized === true)
+      await waitFor(() => result.current.isInitialized === true)
 
       const { result: getSafeInfoResult } = renderHookInSafeProvider(
         () => result.current.getSafeInfo(),
@@ -129,7 +130,7 @@ describe('useSafe', () => {
         config: configExistingSafe
       })
 
-      await waitFor(() => result.current.initialized === true)
+      await waitFor(() => result.current.isInitialized === true)
 
       const { result: getSignerAddressResult } = renderHookInSafeProvider(
         () => result.current.getSignerAddress(),
