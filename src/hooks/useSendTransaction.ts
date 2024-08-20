@@ -5,12 +5,21 @@ import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClient } from '@/hooks/useSignerClient.js'
 
-type SendVariables = { transactions: TransactionBase[] }
+type SendTransactionVariables = { transactions: TransactionBase[] }
 
-export type UseSendParams = ConfigParam<SafeConfigWithSigner>
-export type UseSendReturnType = UseMutationReturnType<SafeClientResult, Error, SendVariables> & {
-  send: UseMutateFunction<SafeClientResult, Error, SendVariables, unknown>
-  sendAsync: UseMutateAsyncFunction<SafeClientResult, Error, SendVariables, unknown>
+export type UseSendTransactionParams = ConfigParam<SafeConfigWithSigner>
+export type UseSendTransactionReturnType = UseMutationReturnType<
+  SafeClientResult,
+  Error,
+  SendTransactionVariables
+> & {
+  sendTransaction: UseMutateFunction<SafeClientResult, Error, SendTransactionVariables, unknown>
+  sendTransactionAsync: UseMutateAsyncFunction<
+    SafeClientResult,
+    Error,
+    SendTransactionVariables,
+    unknown
+  >
 }
 
 /**
@@ -19,10 +28,12 @@ export type UseSendReturnType = UseMutationReturnType<SafeClientResult, Error, S
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns Object containing the mutation state and the send function.
  */
-export function useSend(params: UseSendParams = {}): UseSendReturnType {
+export function useSendTransaction(
+  params: UseSendTransactionParams = {}
+): UseSendTransactionReturnType {
   const signerClient = useSignerClient({ config: params.config })
 
-  const mutationFn = ({ transactions = [] }: SendVariables) => {
+  const mutationFn = ({ transactions = [] }: SendTransactionVariables) => {
     if (!signerClient) {
       throw new Error('Signer client is not available')
     }
@@ -39,5 +50,5 @@ export function useSend(params: UseSendParams = {}): UseSendReturnType {
     mutationKey: ['sendTransaction']
   })
 
-  return { ...result, send: mutate, sendAsync: mutateAsync }
+  return { ...result, sendTransaction: mutate, sendTransactionAsync: mutateAsync }
 }
