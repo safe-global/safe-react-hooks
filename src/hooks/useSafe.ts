@@ -5,7 +5,8 @@ import {
   useChain,
   usePendingTransactions,
   useSafeInfo,
-  useSignerAddress
+  useSignerAddress,
+  useTransactions
 } from '@/hooks/index.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 import { MissingSafeProviderError } from '@/errors/MissingSafeProviderError.js'
@@ -34,6 +35,7 @@ export function useSafe() {
     getBalance: useBalance,
     getChain: useChain,
     getPendingTransactions: usePendingTransactions,
+    getTransactions: useTransactions,
     getSafeInfo: useSafeInfo,
     getSignerAddress: useSignerAddress
   }
