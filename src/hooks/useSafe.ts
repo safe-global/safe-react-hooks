@@ -3,6 +3,7 @@ import {
   useAuthenticate,
   useBalance,
   useChain,
+  usePendingTransactions,
   useSafeInfo,
   useSignerAddress
 } from '@/hooks/index.js'
@@ -32,6 +33,7 @@ export function useSafe() {
     disconnect,
     getBalance: useBalance,
     getChain: useChain,
+    getPendingTransactions: usePendingTransactions,
     getSafeInfo: useSafeInfo,
     getSignerAddress: useSignerAddress
   }
