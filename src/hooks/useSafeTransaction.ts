@@ -25,7 +25,7 @@ export function useSafeTransaction(params: UseSafeTransactionParams): UseSafeTra
     return safeClient.apiKit.getTransaction(params.safeTxHash)
   }, [safeClient])
 
-  const queryKey = useMemo(() => ['getTransaction', params.safeTxHash], [params.safeTxHash])
+  const queryKey = useMemo(() => ['getSafeTransaction', params.safeTxHash], [params.safeTxHash])
 
   return useQuery({ queryKey, queryFn: getTransaction })
 }

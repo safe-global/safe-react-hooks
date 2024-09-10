@@ -38,6 +38,9 @@ describe('useSafeTransaction', () => {
 
     expect(usePublicClientSpy).toHaveBeenCalledTimes(2)
     expect(usePublicClientSpy).toHaveBeenCalledWith({ config: undefined })
+
+    expect(publicClientMock.apiKit.getTransaction).toHaveBeenCalledTimes(1)
+    expect(publicClientMock.apiKit.getTransaction).toHaveBeenCalledWith(safeTxHash)
   })
 
   it('should accept a config to override the one from the SafeProvider', async () => {
@@ -54,6 +57,9 @@ describe('useSafeTransaction', () => {
 
     expect(usePublicClientSpy).toHaveBeenCalledTimes(2)
     expect(usePublicClientSpy).toHaveBeenCalledWith({ config: configPredictedSafe })
+
+    expect(publicClientMock.apiKit.getTransaction).toHaveBeenCalledTimes(1)
+    expect(publicClientMock.apiKit.getTransaction).toHaveBeenCalledWith(safeTxHash)
   })
 
   it('should return no data if request fails', async () => {
@@ -65,5 +71,8 @@ describe('useSafeTransaction', () => {
     expect(usePublicClientSpy).toHaveBeenCalledWith({ config: undefined })
 
     expect(result.current).toMatchObject({ data: undefined, status: 'pending' })
+
+    expect(publicClientMock.apiKit.getTransaction).toHaveBeenCalledTimes(1)
+    expect(publicClientMock.apiKit.getTransaction).toHaveBeenCalledWith(safeTxHash)
   })
 })
