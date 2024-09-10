@@ -3,11 +3,15 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { useConfig } from '@/hooks/useConfig.js'
 import { usePublicClient } from '@/hooks/usePublicClient.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
+import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useSafeInfo } from './useSafeInfo.js'
 
+type Transaction = Awaited<
+  ReturnType<SafeClient['apiKit']['getAllTransactions']>
+>['results'][number]
+
 export type UseTransactionsParams = ConfigParam<SafeConfig>
-// TODO: remove any
-export type UseTransactionsReturnType = UseQueryResult<any[]>
+export type UseTransactionsReturnType = UseQueryResult<Transaction[]>
 
 /**
  * Hook to get all executed transactions for the connected Safe.
