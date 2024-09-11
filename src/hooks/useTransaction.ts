@@ -3,17 +3,14 @@ import {
   useTransaction as useTransactionWagmi,
   UseTransactionReturnType as UseTransactionReturnTypeWagmi
 } from 'wagmi'
-import { type UseQueryResult } from '@tanstack/react-query'
-import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
-import { useSafeTransaction } from './useSafeTransaction.js'
+import { useSafeTransaction, UseSafeTransactionReturnType } from './useSafeTransaction.js'
 
 export type UseTransactionParams = ConfigParam<SafeConfig> &
   ({ safeTxHash: Hash; ethereumTxHash?: never } | { safeTxHash?: never; ethereumTxHash: Hash })
 
-export type UseTransactionReturnType =
-  | UseQueryResult<SafeMultisigTransactionResponse>
-  | UseTransactionReturnTypeWagmi
+export type UseTransactionReturnType<Params extends UseTransactionParams> =
+  Params['safeTxHash'] extends Hash ? UseSafeTransactionReturnType : UseTransactionReturnTypeWagmi
 
 /**
  * Hook to get the status of a specific transaction.
@@ -23,10 +20,12 @@ export type UseTransactionReturnType =
  * @param params.ethereumTxHash Hash of Ethereum transaction to be fetched.
  * @returns Query result object containing the transaction object.
  */
-export function useTransaction(params: UseTransactionParams): UseTransactionReturnType {
+export function useTransaction<Params extends UseTransactionParams>(
+  params: Params
+): UseTransactionReturnType<Params> {
   if (params.safeTxHash && isHash(params.safeTxHash)) {
-    return useSafeTransaction(params)
+    return useSafeTransaction(params) as UseTransactionReturnType<Params>
   }
 
-  return useTransactionWagmi({ hash: params.ethereumTxHash }) as UseTransactionReturnTypeWagmi
+  return useTransactionWagmi({ hash: params.ethereumTxHash }) as UseTransactionReturnType<Params>
 }

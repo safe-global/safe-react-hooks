@@ -248,7 +248,7 @@ describe('useSafe', () => {
       useTransactionSpy.mockReturnValue({
         data: safeTransaction,
         status: 'success'
-      } as useTransaction.UseTransactionReturnType)
+      })
 
       const { result } = await renderUseSafeHook()
 
