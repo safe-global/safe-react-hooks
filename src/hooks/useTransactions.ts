@@ -31,7 +31,7 @@ export function useTransactions(params: UseTransactionsParams = {}): UseTransact
 
     const response = await safeClient.apiKit.getAllTransactions(address)
     return response.results
-  }, [safeClient])
+  }, [safeClient, address])
 
   const queryKey = useMemo(() => ['getTransactions', config], [config])
 
