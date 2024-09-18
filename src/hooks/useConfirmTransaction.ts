@@ -3,6 +3,7 @@ import { UseMutateAsyncFunction, UseMutateFunction } from '@tanstack/react-query
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClient } from '@/hooks/useSignerClient.js'
+import { MutationKey, QueryKey } from '@/constants.js'
 
 type ConfirmTransactionVariables = { safeTxHash: string }
 
@@ -51,7 +52,7 @@ export function useConfirmTransaction(
 
   const { mutate, mutateAsync, ...result } = useMutation({
     mutationFn,
-    mutationKey: ['confirmTransaction']
+    mutationKey: [MutationKey.ConfirmTransaction]
   })
 
   return { ...result, confirmTransaction: mutate, confirmTransactionAsync: mutateAsync }

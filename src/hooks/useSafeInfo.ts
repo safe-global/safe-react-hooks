@@ -1,9 +1,10 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import type { Address } from 'viem'
 import type { ConfigParam, SafeConfig, SafeInfo } from '@/types/index.js'
 import { useConfig } from '@/hooks/useConfig.js'
 import { usePublicClient } from '@/hooks/usePublicClient.js'
+import { QueryKey } from '@/constants.js'
 
 export type UseSafeInfoParams = ConfigParam<SafeConfig>
 export type UseSafeInfoReturnType = UseQueryResult<SafeInfo>
@@ -32,7 +33,5 @@ export function useSafeInfo(params: UseSafeInfoParams = {}): UseSafeInfoReturnTy
     return { address, nonce, threshold, isDeployed, owners }
   }, [safeClient])
 
-  const queryKey = useMemo(() => ['safeInfo', config], [config])
-
-  return useQuery({ queryKey, queryFn: getSafeInfo })
+  return useQuery({ queryKey: [QueryKey.SafeInfo, config], queryFn: getSafeInfo })
 }

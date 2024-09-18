@@ -1,14 +1,10 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { useConfig } from '@/hooks/useConfig.js'
 import { usePublicClient } from '@/hooks/usePublicClient.js'
-import type { ConfigParam, SafeConfig } from '@/types/index.js'
-import { SafeClient } from '@safe-global/sdk-starter-kit'
-import { useSafeInfo } from './useSafeInfo.js'
-
-type Transaction = Awaited<
-  ReturnType<SafeClient['apiKit']['getAllTransactions']>
->['results'][number]
+import { useSafeInfo } from '@/hooks/useSafeInfo.js'
+import type { ConfigParam, SafeConfig, Transaction } from '@/types/index.js'
+import { QueryKey } from '@/constants.js'
 
 export type UseTransactionsParams = ConfigParam<SafeConfig>
 export type UseTransactionsReturnType = UseQueryResult<Transaction[]>
@@ -33,7 +29,5 @@ export function useTransactions(params: UseTransactionsParams = {}): UseTransact
     return response.results
   }, [safeClient, address])
 
-  const queryKey = useMemo(() => ['getTransactions', config], [config])
-
-  return useQuery({ queryKey, queryFn: getTransactions })
+  return useQuery({ queryKey: [QueryKey.Transactions, config], queryFn: getTransactions })
 }

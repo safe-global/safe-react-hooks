@@ -6,6 +6,7 @@ import * as useSignerClient from '@/hooks/useSignerClient.js'
 import { configExistingSafe } from '@test/config.js'
 import { ethereumTxHash, safeAddress, signerPrivateKeys } from '@test/fixtures.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
+import { MutationKey } from '@/constants.js'
 
 describe('useSendTransaction', () => {
   const transactionMock = { to: '0xABC', value: '0', data: '0x987' }
@@ -76,7 +77,7 @@ describe('useSendTransaction', () => {
     expect(useMutationSpy).toHaveBeenCalledTimes(1)
     expect(useMutationSpy).toHaveBeenCalledWith({
       mutationFn: expect.any(Function),
-      mutationKey: ['sendTransaction']
+      mutationKey: [MutationKey.SendTransaction]
     })
 
     expect(sendMock).toHaveBeenCalledTimes(0)

@@ -4,6 +4,7 @@ import { TransactionBase } from '@safe-global/safe-core-sdk-types'
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClient } from '@/hooks/useSignerClient.js'
+import { MutationKey } from '@/constants.js'
 
 type SendTransactionVariables = { transactions: TransactionBase[] }
 
@@ -47,7 +48,7 @@ export function useSendTransaction(
 
   const { mutate, mutateAsync, ...result } = useMutation({
     mutationFn,
-    mutationKey: ['sendTransaction']
+    mutationKey: [MutationKey.SendTransaction]
   })
 
   return { ...result, sendTransaction: mutate, sendTransactionAsync: mutateAsync }
