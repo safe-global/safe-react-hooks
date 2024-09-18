@@ -1,7 +1,7 @@
 import type { SdkStarterKitConfig } from '@safe-global/sdk-starter-kit'
 import { Chain as ChainType, custom, http } from 'viem'
 import { CreateConfigParams, SafeConfig } from '@/types/index.js'
-import { isString } from '@/utils.js'
+import { isString } from '@/types/guards.js'
 
 /**
  * Create a SafeConfig object for the given parameters.
