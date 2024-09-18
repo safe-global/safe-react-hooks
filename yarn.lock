@@ -905,10 +905,15 @@
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.2.tgz#6f26dbc8fbc7205873ce3cee2f690eba0d421b39"
   integrity sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ==
 
-"@noble/hashes@1.4.0", "@noble/hashes@^1.3.1", "@noble/hashes@^1.3.3", "@noble/hashes@^1.4.0", "@noble/hashes@~1.4.0":
+"@noble/hashes@1.4.0", "@noble/hashes@^1.3.1", "@noble/hashes@^1.4.0", "@noble/hashes@~1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.4.0.tgz#45814aa329f30e4fe0ba49426f49dfccdd066426"
   integrity sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==
+
+"@noble/hashes@^1.3.3":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.5.0.tgz#abadc5ca20332db2b1b2aa3e496e9af1213570b0"
+  integrity sha512-1j6kQFb7QRru7eKN3ZDvRcP13rugwdxZqCjbiAVZfIJwgj2A65UmT4TgARXGlXgnRkORLTDTrO19ZErt7+QXgA==
 
 "@noble/secp256k1@1.7.1":
   version "1.7.1"
@@ -1028,38 +1033,39 @@
     "@parcel/watcher-win32-ia32" "2.4.1"
     "@parcel/watcher-win32-x64" "2.4.1"
 
-"@safe-global/api-kit@^2.4.4":
-  version "2.4.4"
-  resolved "https://registry.yarnpkg.com/@safe-global/api-kit/-/api-kit-2.4.4.tgz#f53799f4e9373f4001db783c85728c11e1eb3241"
-  integrity sha512-5Px4OZEikamGgmoqIOstMSr6blmJws2yN7LBoCtCqt4RM9Aa9cFp1jZlENvXITSSAFiUhGa3vK8+OAmbhq2nvQ==
+"@safe-global/api-kit@^2.4.3":
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/@safe-global/api-kit/-/api-kit-2.4.5.tgz#e2fb5d9b0949c8f8726e4e9f3343031ff38802b5"
+  integrity sha512-kMV6snDLSuoXLpEHKDbbURBda8iaMMDZp19uDj4d34smIUIPLE6XHpjXR+1S6i+GkaJH/kdIrCe6v4/ip/BjpQ==
   dependencies:
-    "@safe-global/protocol-kit" "^4.0.4"
-    "@safe-global/safe-core-sdk-types" "^5.0.3"
+    "@safe-global/protocol-kit" "^4.1.0"
+    "@safe-global/safe-core-sdk-types" "^5.1.0"
     ethers "^6.13.1"
     node-fetch "^2.7.0"
 
-"@safe-global/protocol-kit@^4.0.4":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@safe-global/protocol-kit/-/protocol-kit-4.0.4.tgz#e116edae5a4d242815ebaa55b7e9e7c1f55ee1fe"
-  integrity sha512-ZqlAMGnCtMt0bPhqipN65y7zKTUAMHcoPb1lQ5QgC9NJLmDR/TfpEiLddxZMXquZhKAH/r4nuRHUrfaX2NENeg==
+"@safe-global/protocol-kit@^4.0.3", "@safe-global/protocol-kit@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@safe-global/protocol-kit/-/protocol-kit-4.1.0.tgz#8ab41e179c559840f0cd6b6ae296438dabe1793f"
+  integrity sha512-WAGXEn6UvKGlEYNqcWUasLZ4240sVWBg8T2SsfHoTs8Im0x2i48CNNZ5Mw9x+oKqhWs/Q9frNG6JcycN19LDRw==
   dependencies:
     "@noble/hashes" "^1.3.3"
-    "@safe-global/safe-core-sdk-types" "^5.0.3"
+    "@safe-global/safe-core-sdk-types" "^5.1.0"
     "@safe-global/safe-deployments" "^1.37.3"
+    "@safe-global/safe-modules-deployments" "^2.2.1"
     abitype "^1.0.2"
     ethereumjs-util "^7.1.5"
     ethers "^6.13.1"
     semver "^7.6.2"
 
-"@safe-global/relay-kit@^3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@safe-global/relay-kit/-/relay-kit-3.0.4.tgz#01409d231df8793ad91b558465ba4827163b8364"
-  integrity sha512-24z8jvZ5dS/xfpUY3exEYZhTXi2QMorRw7K0FZ5QhzUiI36wkKuElfPQfPQLwRTJ0CtFluSCEsjXNcZa5gzZpg==
+"@safe-global/relay-kit@^3.0.3":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@safe-global/relay-kit/-/relay-kit-3.1.0.tgz#0323a318708b7f04bd076829c99feadd796e95c2"
+  integrity sha512-1kXAZmuYj0lw9Ab7SmYnhqKC7hSunpemDAVvhtXEM4CfI1pUStn5pGDAyJv0ASzt/xyXqtgtw52G+USz87vMdQ==
   dependencies:
     "@gelatonetwork/relay-sdk" "^5.5.0"
-    "@safe-global/protocol-kit" "^4.0.4"
-    "@safe-global/safe-core-sdk-types" "^5.0.3"
-    "@safe-global/safe-modules-deployments" "^2.1.1"
+    "@safe-global/protocol-kit" "^4.1.0"
+    "@safe-global/safe-core-sdk-types" "^5.1.0"
+    "@safe-global/safe-modules-deployments" "^2.2.1"
     ethers "^6.13.1"
 
 "@safe-global/safe-apps-provider@0.18.3":
@@ -1085,10 +1091,17 @@
   dependencies:
     abitype "^1.0.2"
 
+"@safe-global/safe-core-sdk-types@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@safe-global/safe-core-sdk-types/-/safe-core-sdk-types-5.1.0.tgz#af8d877b9af231242d023c7182f78ff4223bc3f4"
+  integrity sha512-UzXR4zWmVzux25FcIm4H049QhZZpVpIBL5HE+V0p5gHpArZROL+t24fZmsKUf403CtBxIJM5zZSVQL0nFJi+IQ==
+  dependencies:
+    abitype "^1.0.2"
+
 "@safe-global/safe-deployments@^1.37.3":
-  version "1.37.3"
-  resolved "https://registry.yarnpkg.com/@safe-global/safe-deployments/-/safe-deployments-1.37.3.tgz#ded9fa6bb04f0e8972c00c481badcf513d590b0b"
-  integrity sha512-EtbiOJVGe697+GcbHtfo75NYpp+hTlIIBqL2ETPLGoQBHoxo9HWbGX/6ZkVxsZv/NN4nKawyMi+MvpUkH9VXGg==
+  version "1.37.7"
+  resolved "https://registry.yarnpkg.com/@safe-global/safe-deployments/-/safe-deployments-1.37.7.tgz#35ccbb7f4cb0bb19be71403344930ba1ffd76cfe"
+  integrity sha512-vbmkWJoJsZ3btMl7PBMUIO/LGsQj4kB29zAuTMOLgb7GmN6avhqPcHKOIjbEKXisxvkVeUYZJWqCiKbZxnvGVA==
   dependencies:
     semver "^7.6.2"
 
@@ -1097,10 +1110,10 @@
   resolved "https://registry.yarnpkg.com/@safe-global/safe-gateway-typescript-sdk/-/safe-gateway-typescript-sdk-3.22.1.tgz#4d5dac21c6e044b68b13b53468633ec771f30e3b"
   integrity sha512-YApSpx+3h6uejrJVh8PSqXRRAwmsWz8PZERObMGJNC9NPoMhZG/Rvqb2UWmVLrjFh880rqutsB+GrTmJP351PA==
 
-"@safe-global/safe-modules-deployments@^2.1.1":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@safe-global/safe-modules-deployments/-/safe-modules-deployments-2.2.0.tgz#bb42c8010bbde65892fe438aaf8959e17c8654d6"
-  integrity sha512-ZzNhMf8Xxods3TrY7kSrescnicHQRFH7eYx7TMKqVhxFScEiuYmivQMdV94ziF+Hot0xCcrrFeed657U/oXrJw==
+"@safe-global/safe-modules-deployments@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@safe-global/safe-modules-deployments/-/safe-modules-deployments-2.2.1.tgz#a8b88f2afc6ec04fed09968fe1e4990ed975c86e"
+  integrity sha512-H0XpusyXVcsTuRsQSq0FoBKqRfhZH87/1DrFEmXXPXmI3fJkvxq3KpTaTTqzcqoIe/J+erwVZQUYNfL68EcvAQ==
 
 "@safe-global/sdk-starter-kit@file:./safe-core-sdk/packages/sdk-starter-kit":
   version "1.0.0"
@@ -1109,7 +1122,7 @@
     "@safe-global/protocol-kit" "^4.0.3"
     "@safe-global/relay-kit" "^3.0.3"
     "@safe-global/safe-core-sdk-types" "^5.0.3"
-    viem "^2.15.1"
+    ethers "^6.13.1"
 
 "@scure/base@^1.1.3", "@scure/base@~1.1.6":
   version "1.1.7"
@@ -1402,9 +1415,9 @@
     "@babel/types" "^7.20.7"
 
 "@types/bn.js@^5.1.0":
-  version "5.1.5"
-  resolved "https://registry.yarnpkg.com/@types/bn.js/-/bn.js-5.1.5.tgz#2e0dacdcce2c0f16b905d20ff87aedbc6f7b4bf0"
-  integrity sha512-V46N0zwKRF5Q00AZ6hWtN0T8gGmDUaUzLWQvHFo5yThtVwK/VCenFY3wXVbOvNfajEpsTfQM4IN9k/d6gUVX3A==
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/@types/bn.js/-/bn.js-5.1.6.tgz#9ba818eec0c85e4d3c679518428afdf611d03203"
+  integrity sha512-Xh8vSwUeMKeYYrj3cX4lGQgFSF/N03r+tv4AiLl1SucqV+uTQpxRcnM8AkXKHwYP9ZPXOYXRr2KPXpVlIvqh9w==
   dependencies:
     "@types/node" "*"
 
@@ -3047,9 +3060,9 @@ find-up@^4.0.0, find-up@^4.1.0:
     path-exists "^4.0.0"
 
 follow-redirects@^1.14.9:
-  version "1.15.6"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.6.tgz#7f815c0cda4249c74ff09e95ef97c23b5fd0399b"
-  integrity sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==
+  version "1.15.9"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.9.tgz#a604fa10e443bf98ca94228d9eebcc2e8a2c8ee1"
+  integrity sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==
 
 for-each@^0.3.3:
   version "0.3.3"
@@ -5571,21 +5584,6 @@ viem@^2.1.1, viem@^2.18.6:
   version "2.18.7"
   resolved "https://registry.yarnpkg.com/viem/-/viem-2.18.7.tgz#a7020b67ee14fd27f8c038efb4a4cf6cf5e55a4a"
   integrity sha512-0Xy5ypk+n4lYthsvC96jsZE97quKoq1t53RrbhKElmq84Dt705uUjQDgH0/LqAV02Oe6341M3jPTU9JLbs2K2Q==
-  dependencies:
-    "@adraffy/ens-normalize" "1.10.0"
-    "@noble/curves" "1.4.0"
-    "@noble/hashes" "1.4.0"
-    "@scure/bip32" "1.4.0"
-    "@scure/bip39" "1.3.0"
-    abitype "1.0.5"
-    isows "1.0.4"
-    webauthn-p256 "0.0.5"
-    ws "8.17.1"
-
-viem@^2.15.1:
-  version "2.18.4"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.18.4.tgz#6af97b68141faa68f624b7cded4956065432a078"
-  integrity sha512-JGdN+PgBnZMbm7fc9o0SfHvL0CKyfrlhBUtaz27V+PeHO43Kgc9Zd4WyIbM8Brafq4TvVcnriRFW/FVGOzwEJw==
   dependencies:
     "@adraffy/ens-normalize" "1.10.0"
     "@noble/curves" "1.4.0"

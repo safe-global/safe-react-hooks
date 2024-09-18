@@ -1,5 +1,5 @@
 import { useCallback, useContext } from 'react'
-import { SafeContext } from '@/SafeProvider.js'
+import { SafeContext } from '@/SafeContext.js'
 import { AuthenticationError } from '@/errors/AuthenticationError.js'
 
 export type UseConnectSignerReturnType = {

@@ -1,6 +1,7 @@
 import { createContext, createElement } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, RenderHookOptions } from '@testing-library/react'
+import { type SafeContextType, SafeContext } from '@/SafeContext.js'
 import * as safeProvider from '@/SafeProvider.js'
 
 /**
@@ -30,7 +31,7 @@ export function renderHookInSafeProvider<Result, Props>(
  */
 export function renderHookInMockedSafeProvider<Result, Props>(
   hook: (initialProps: Props) => Result,
-  context: Partial<safeProvider.SafeContextType> = {},
+  context: Partial<SafeContextType> = {},
   options: RenderHookOptions<Props> = {}
 ) {
   const contextValue = {
@@ -44,15 +45,15 @@ export function renderHookInMockedSafeProvider<Result, Props>(
     ...context
   }
 
-  const SafeContext = createContext<safeProvider.SafeContextType>(contextValue)
+  const SafeContextTemp = createContext<SafeContextType>(contextValue)
 
-  const OriginalSafeContext = safeProvider.SafeContext
-  ;(safeProvider as any).SafeContext = SafeContext
+  const OriginalSafeContext = SafeContext
+  ;(safeProvider as any).SafeContext = SafeContextTemp
 
   const renderResult = renderHook<Result, Props>(hook, {
     ...options,
     wrapper: ({ children }) =>
-      createElement(SafeContext.Provider, { value: contextValue }, children)
+      createElement(SafeContextTemp.Provider, { value: contextValue }, children)
   })
 
   ;(safeProvider as any).SafeContext = OriginalSafeContext

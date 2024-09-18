@@ -1,4 +1,4 @@
-import { createContext, createElement, useCallback, useEffect, useMemo, useState } from 'react'
+import { createElement, useCallback, useEffect, useMemo, useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createConfig, WagmiProvider } from 'wagmi'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
@@ -6,24 +6,7 @@ import { InitializeSafeProviderError } from '@/errors/InitializeSafeProviderErro
 import type { SafeConfig } from '@/types/index.js'
 import { isSafeConfigWithSigner } from '@/types/guards.js'
 import { createPublicClient, createSignerClient } from '@/createClient.js'
-
-export type SafeContextType = {
-  isInitialized: boolean
-  config: SafeConfig | undefined
-  setConfig: (config: SafeConfig) => void
-  setSigner: (signer: string | undefined) => Promise<void>
-  publicClient: SafeClient | undefined
-  signerClient: SafeClient | undefined
-}
-
-export const SafeContext = createContext<SafeContextType>({
-  isInitialized: false,
-  config: undefined,
-  setConfig: () => {},
-  setSigner: () => Promise.resolve(),
-  publicClient: undefined,
-  signerClient: undefined
-})
+import { SafeContext } from '@/SafeContext.js'
 
 export type SafeProviderProps = {
   config: SafeConfig
