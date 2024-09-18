@@ -4,7 +4,9 @@ import { TransactionBase } from '@safe-global/safe-core-sdk-types'
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClient } from '@/hooks/useSignerClient.js'
-import { MutationKey } from '@/constants.js'
+import { useWaitForTransaction } from '@/hooks/useWaitForTransaction.js'
+import { MutationKey, QueryKey } from '@/constants.js'
+import { invalidateQueries } from '@/queryClient.js'
 
 type SendTransactionVariables = { transactions: TransactionBase[] }
 
@@ -32,9 +34,12 @@ export type UseSendTransactionReturnType = UseMutationReturnType<
 export function useSendTransaction(
   params: UseSendTransactionParams = {}
 ): UseSendTransactionReturnType {
+  const { waitForTransactionReceipt, waitForTransactionIndexed } = useWaitForTransaction({
+    config: params.config
+  })
   const signerClient = useSignerClient({ config: params.config })
 
-  const mutationFn = ({ transactions = [] }: SendTransactionVariables) => {
+  const mutationFn = async ({ transactions = [] }: SendTransactionVariables) => {
     if (!signerClient) {
       throw new Error('Signer client is not available')
     }
@@ -43,7 +48,21 @@ export function useSendTransaction(
       throw new Error('No transactions provided')
     }
 
-    return signerClient.send({ transactions })
+    const result = await signerClient.send({ transactions })
+
+    if (result.transactions?.ethereumTxHash) {
+      await waitForTransactionReceipt(result.transactions.ethereumTxHash)
+
+      invalidateQueries([QueryKey.PendingTransactions, QueryKey.SafeInfo])
+
+      await waitForTransactionIndexed(result.transactions)
+
+      invalidateQueries([QueryKey.Transactions])
+    } else if (result.transactions?.safeTxHash) {
+      invalidateQueries([QueryKey.PendingTransactions])
+    }
+
+    return result
   }
 
   const { mutate, mutateAsync, ...result } = useMutation({

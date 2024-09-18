@@ -1,18 +1,17 @@
 import { createElement, useCallback, useEffect, useMemo, useState } from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { createConfig, WagmiProvider } from 'wagmi'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { InitializeSafeProviderError } from '@/errors/InitializeSafeProviderError.js'
 import type { SafeConfig } from '@/types/index.js'
 import { isSafeConfigWithSigner } from '@/types/guards.js'
 import { createPublicClient, createSignerClient } from '@/createClient.js'
+import { queryClient } from '@/queryClient.js'
 import { SafeContext } from '@/SafeContext.js'
 
 export type SafeProviderProps = {
   config: SafeConfig
 }
-
-const queryClient = new QueryClient()
 
 export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>) {
   const [config, setConfig] = useState(params.config)
@@ -64,7 +63,15 @@ export function SafeProvider(params: React.PropsWithChildren<SafeProviderProps>)
   }
 
   const props = {
-    value: { isInitialized, config, setConfig, setSigner, publicClient, signerClient }
+    value: {
+      isInitialized,
+      config,
+      wagmiConfig,
+      setConfig,
+      setSigner,
+      publicClient,
+      signerClient
+    }
   }
 
   return createElement(

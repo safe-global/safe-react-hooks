@@ -3,7 +3,9 @@ import { UseMutateAsyncFunction, UseMutateFunction } from '@tanstack/react-query
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClient } from '@/hooks/useSignerClient.js'
+import { useWaitForTransaction } from '@/hooks/useWaitForTransaction.js'
 import { MutationKey, QueryKey } from '@/constants.js'
+import { invalidateQueries } from '@/queryClient.js'
 
 type ConfirmTransactionVariables = { safeTxHash: string }
 
@@ -36,9 +38,13 @@ export type UseConfirmTransactionReturnType = UseMutationReturnType<
 export function useConfirmTransaction(
   params: UseConfirmTransactionParams = {}
 ): UseConfirmTransactionReturnType {
+  const { waitForTransactionReceipt, waitForTransactionIndexed } = useWaitForTransaction({
+    config: params.config
+  })
+
   const signerClient = useSignerClient({ config: params.config })
 
-  const mutationFn = ({ safeTxHash }: ConfirmTransactionVariables) => {
+  const mutationFn = async ({ safeTxHash }: ConfirmTransactionVariables) => {
     if (!signerClient) {
       throw new Error('Signer client is not available')
     }
@@ -47,7 +53,21 @@ export function useConfirmTransaction(
       throw new Error('`safeTxHash` parameter must not be empty')
     }
 
-    return signerClient.confirm({ safeTxHash })
+    const result = await signerClient.confirm({ safeTxHash })
+
+    if (result.transactions?.ethereumTxHash) {
+      await waitForTransactionReceipt(result.transactions.ethereumTxHash)
+
+      invalidateQueries([QueryKey.PendingTransactions, QueryKey.SafeInfo])
+
+      await waitForTransactionIndexed(result.transactions)
+
+      invalidateQueries([QueryKey.Transactions])
+    } else if (result.transactions?.safeTxHash) {
+      invalidateQueries([QueryKey.PendingTransactions])
+    }
+
+    return result
   }
 
   const { mutate, mutateAsync, ...result } = useMutation({

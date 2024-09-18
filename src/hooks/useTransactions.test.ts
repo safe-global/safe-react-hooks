@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useTransactions } from '@/hooks/useTransactions.js'
 import * as usePublicClient from '@/hooks/usePublicClient.js'
-import * as useSafeInfo from '@/hooks/useSafeInfo.js'
+import * as useAddress from '@/hooks/useSafeInfo/useAddress.js'
 import * as useConfig from '@/hooks/useConfig.js'
 import { safeAddress, safeTransaction } from '@test/fixtures.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
@@ -10,7 +10,7 @@ import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 
 describe('useTransactions', () => {
   const useConfigSpy = jest.spyOn(useConfig, 'useConfig')
-  const useSafeInfoSpy = jest.spyOn(useSafeInfo, 'useSafeInfo')
+  const useAddressSpy = jest.spyOn(useAddress, 'useAddress')
   const usePublicClientSpy = jest.spyOn(usePublicClient, 'usePublicClient')
   const publicClientMock = {
     apiKit: {
@@ -20,11 +20,7 @@ describe('useTransactions', () => {
 
   beforeEach(() => {
     useConfigSpy.mockReturnValue([configExistingSafe, () => {}])
-
-    useSafeInfoSpy.mockReturnValue({
-      data: { address: safeAddress }
-    } as useSafeInfo.UseSafeInfoReturnType)
-
+    useAddressSpy.mockReturnValue({ data: safeAddress } as useAddress.UseAddressReturnType)
     usePublicClientSpy.mockReturnValue(publicClientMock as unknown as SafeClient)
   })
 
@@ -88,8 +84,8 @@ describe('useTransactions', () => {
     expect(publicClientMock.apiKit.getAllTransactions).toHaveBeenCalledWith(safeAddress)
   })
 
-  it('should return no data if no Safe address provided by `useSafeInfo` hook', async () => {
-    useSafeInfoSpy.mockReturnValueOnce({ data: {} } as useSafeInfo.UseSafeInfoReturnType)
+  it('should return no data if no Safe address provided by `useAddress` hook', async () => {
+    useAddressSpy.mockReturnValueOnce({ data: undefined } as useAddress.UseAddressReturnType)
 
     const { result } = renderHookInQueryClientProvider(() => useTransactions())
 

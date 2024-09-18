@@ -2,9 +2,9 @@ import { useCallback } from 'react'
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { useConfig } from '@/hooks/useConfig.js'
 import { usePublicClient } from '@/hooks/usePublicClient.js'
-import { useSafeInfo } from '@/hooks/useSafeInfo.js'
 import type { ConfigParam, SafeConfig, Transaction } from '@/types/index.js'
 import { QueryKey } from '@/constants.js'
+import { useAddress } from '@/hooks/useSafeInfo/useAddress.js'
 
 export type UseTransactionsParams = ConfigParam<SafeConfig>
 export type UseTransactionsReturnType = UseQueryResult<Transaction[]>
@@ -17,7 +17,7 @@ export type UseTransactionsReturnType = UseQueryResult<Transaction[]>
  */
 export function useTransactions(params: UseTransactionsParams = {}): UseTransactionsReturnType {
   const [config] = useConfig({ config: params.config })
-  const { data: { address } = {} } = useSafeInfo({ config: params.config })
+  const { data: address } = useAddress({ config: params.config })
   const safeClient = usePublicClient({ config: params.config })
 
   const getTransactions = useCallback(async () => {
