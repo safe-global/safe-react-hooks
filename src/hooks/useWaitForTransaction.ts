@@ -2,7 +2,11 @@ import { useContext } from 'react'
 import { Hash } from 'viem'
 import { waitForTransactionReceipt as waitForTransactionReceiptWagmi } from 'wagmi/actions'
 import { ConfigParam, SafeConfig } from '@/types/index.js'
-import { isEthereumTransaction, isSafeModuleTransaction } from '@/types/guards.js'
+import {
+  isEthereumTransaction,
+  isSafeModuleTransaction,
+  isSafeMultisigTransaction
+} from '@/types/guards.js'
 import { poll } from '@/utils/poll.js'
 import { useAddress } from '@/hooks/useSafeInfo/useAddress.js'
 import { usePublicClient } from '@/hooks/usePublicClient.js'
@@ -76,7 +80,7 @@ export function useWaitForTransaction(
       () => publicClient.apiKit.getAllTransactions(address),
       (transactions) =>
         !transactions.results.some((tx) => {
-          if (isSafeModuleTransaction(tx)) {
+          if (isSafeModuleTransaction(tx) || isSafeMultisigTransaction(tx)) {
             return tx.transactionHash === ethereumTxHash
           }
           if (isEthereumTransaction(tx)) {
