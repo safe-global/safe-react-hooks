@@ -27,7 +27,6 @@ export async function poll<Result>(
  */
 export function wait(ms: number) {
   return new Promise((resolve) => {
-    console.log(`[POLL] waiting ${ms} ms...`)
     setTimeout(resolve, ms)
   })
 }
