@@ -4,7 +4,7 @@ import { useTransactions } from '@/hooks/useTransactions.js'
 import * as usePublicClient from '@/hooks/usePublicClient.js'
 import * as useAddress from '@/hooks/useSafeInfo/useAddress.js'
 import * as useConfig from '@/hooks/useConfig.js'
-import { safeAddress, safeTransaction } from '@test/fixtures.js'
+import { safeAddress, safeTransaction } from '@test/fixtures/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 

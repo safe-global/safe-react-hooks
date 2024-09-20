@@ -1,9 +1,7 @@
-import { useCallback } from 'react'
-import { useQuery, type UseQueryResult } from '@tanstack/react-query'
+import { type UseQueryResult } from '@tanstack/react-query'
 import type { Address } from 'viem'
+import { usePublicClientQuery } from '@/hooks/usePublicClientQuery.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
-import { useConfig } from '@/hooks/useConfig.js'
-import { usePublicClient } from '@/hooks/usePublicClient.js'
 import { QueryKey } from '@/constants.js'
 
 export type UseAddressParams = ConfigParam<SafeConfig>
@@ -16,16 +14,10 @@ export type UseAddressReturnType = UseQueryResult<Address>
  * @returns Query result object containing the Safe's address.
  */
 export function useAddress(params: UseAddressParams = {}): UseAddressReturnType {
-  const [config] = useConfig({ config: params.config })
-  const safeClient = usePublicClient({ config: params.config })
-
-  const getSafeAddress = useCallback(async (): Promise<Address | undefined> => {
-    if (!safeClient) {
-      throw new Error('SafeClient not initialized')
-    }
-
-    return safeClient.protocolKit.getAddress().then((address) => address as Address)
-  }, [safeClient])
-
-  return useQuery({ queryKey: [QueryKey.Address, config], queryFn: getSafeAddress })
+  return usePublicClientQuery({
+    ...params,
+    querySafeClientFn: (safeClient) =>
+      safeClient.protocolKit.getAddress().then((address) => address as Address),
+    queryKey: [QueryKey.Address]
+  })
 }

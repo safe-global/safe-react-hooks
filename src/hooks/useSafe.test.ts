@@ -4,7 +4,7 @@ import { SafeClient } from '@safe-global/sdk-starter-kit'
 import * as useAuthenticate from '@/hooks/useAuthenticate.js'
 import * as useBalance from '@/hooks/useBalance.js'
 import * as useChain from '@/hooks/useChain.js'
-import * as useSafeInfo from '@/hooks/useSafeInfo.js'
+import * as useSafeInfo from '@/hooks/useSafeInfo/index.js'
 import * as useSignerAddress from '@/hooks/useSignerAddress.js'
 import * as useTransaction from '@/hooks/useTransaction.js'
 import * as usePendingTransactions from '@/hooks/usePendingTransactions.js'
@@ -18,7 +18,7 @@ import {
   safeTransaction,
   safeTxHash,
   signerPrivateKeys
-} from '@test/fixtures.js'
+} from '@test/fixtures/index.js'
 import { catchHookError, renderHookInSafeProvider } from '@test/utils.js'
 import * as createClient from '@/createClient.js'
 

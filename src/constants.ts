@@ -2,6 +2,10 @@ export enum QueryKey {
   PendingTransactions = 'pendingTransactions',
   Transactions = 'transactions',
   Address = 'address',
+  Nonce = 'nonce',
+  Threshold = 'threshold',
+  IsDeployed = 'isDeployed',
+  Owners = 'owners',
   SafeInfo = 'safeInfo'
 }
 

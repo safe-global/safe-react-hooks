@@ -4,7 +4,7 @@ import * as createClient from '@/createClient.js'
 import { useSignerClient, UseSignerClientParams } from '@/hooks/useSignerClient.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { renderHookInSafeProvider } from '@test/utils.js'
-import { signerPrivateKeys } from '@test/fixtures.js'
+import { signerPrivateKeys } from '@test/fixtures/index.js'
 
 describe('useSignerClient', () => {
   const signerClientExistingSafeMock = { safeClient: 'existing' } as unknown as SafeClient

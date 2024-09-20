@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react'
 import { useBalance, UseBalanceReturnType } from '@/hooks/useBalance.js'
 import * as useAddress from '@/hooks/useSafeInfo/useAddress.js'
 import { configExistingSafe } from '@test/config.js'
-import { balanceData, safeAddress } from '@test/fixtures.js'
+import { balanceData, safeAddress } from '@test/fixtures/index.js'
 
 describe('useBalance', () => {
   const mockBalanceResult = { data: balanceData }

@@ -8,7 +8,7 @@ import { SafeProvider } from '@/SafeProvider.js'
 import { SafeContext } from '@/SafeContext.js'
 import { SafeConfig } from '@/types/index.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
-import { signerPrivateKeys } from '@test/fixtures.js'
+import { signerPrivateKeys } from '@test/fixtures/index.js'
 
 jest.mock('@tanstack/react-query')
 

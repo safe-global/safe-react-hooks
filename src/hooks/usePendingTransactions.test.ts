@@ -3,7 +3,7 @@ import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { usePendingTransactions } from '@/hooks/usePendingTransactions.js'
 import * as usePublicClient from '@/hooks/usePublicClient.js'
 import * as useConfig from '@/hooks/useConfig.js'
-import { safeTransaction } from '@test/fixtures.js'
+import { safeTransaction } from '@test/fixtures/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 

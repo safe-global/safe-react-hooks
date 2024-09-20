@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useSafeTransaction } from '@/hooks/useSafeTransaction.js'
 import * as usePublicClient from '@/hooks/usePublicClient.js'
-import { safeTxHash, safeTransaction } from '@test/fixtures.js'
+import { safeTxHash, safeTransaction } from '@test/fixtures/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { configPredictedSafe } from '@test/config.js'
 

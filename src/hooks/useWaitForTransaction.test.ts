@@ -10,7 +10,7 @@ import {
 import * as usePublicClient from '@/hooks/usePublicClient.js'
 import * as useAddress from '@/hooks/useSafeInfo/useAddress.js'
 import { renderHookInMockedSafeProvider } from '@test/utils.js'
-import { ethereumTxHash, safeAddress, safeTxHash } from '@test/fixtures.js'
+import { ethereumTxHash, safeAddress, safeTxHash } from '@test/fixtures/index.js'
 import { SafeContextType } from '@/SafeContext.js'
 import { configExistingSafe } from '@test/config.js'
 

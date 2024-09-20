@@ -3,7 +3,7 @@ import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useAuthenticate } from '@/hooks/useAuthenticate.js'
 import { renderHookInMockedSafeProvider } from '@test/utils.js'
-import { signerPrivateKeys } from '@test/fixtures.js'
+import { signerPrivateKeys } from '@test/fixtures/index.js'
 import { SafeContextType } from '@/SafeContext.js'
 
 describe('useAuthenticate', () => {

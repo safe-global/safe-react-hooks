@@ -6,7 +6,7 @@ import { useSendTransaction } from '@/hooks/useSendTransaction.js'
 import * as useWaitForTransaction from '@/hooks/useWaitForTransaction.js'
 import * as useSignerClient from '@/hooks/useSignerClient.js'
 import { configExistingSafe } from '@test/config.js'
-import { ethereumTxHash, safeAddress, safeTxHash, signerPrivateKeys } from '@test/fixtures.js'
+import { ethereumTxHash, safeAddress, safeTxHash, signerPrivateKeys } from '@test/fixtures/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey, QueryKey } from '@/constants.js'
 import { queryClient } from '@/queryClient.js'
@@ -138,14 +138,24 @@ describe('useSendTransaction', () => {
       expect(waitForTransactionIndexedMock).toHaveBeenCalledTimes(1)
       expect(waitForTransactionIndexedMock).toHaveBeenCalledWith(sendResponseMock.transactions)
 
-      expect(invalidateQueriesSpy).toHaveBeenCalledTimes(3)
-      expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(1, {
-        queryKey: [QueryKey.PendingTransactions]
-      })
-      expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(2, {
-        queryKey: [QueryKey.SafeInfo]
-      })
+      expect(invalidateQueriesSpy).toHaveBeenCalledTimes(8)
+
       expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(3, {
+        queryKey: [QueryKey.Address]
+      })
+      expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(4, {
+        queryKey: [QueryKey.Nonce]
+      })
+      expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(5, {
+        queryKey: [QueryKey.Threshold]
+      })
+      expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(6, {
+        queryKey: [QueryKey.IsDeployed]
+      })
+      expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(7, {
+        queryKey: [QueryKey.Owners]
+      })
+      expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(8, {
         queryKey: [QueryKey.Transactions]
       })
     })
