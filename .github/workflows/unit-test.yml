@@ -33,7 +33,7 @@ jobs:
         run: yarn --cwd ./safe-core-sdk install
 
       - name: Yarn link types-kit
-        run: yarn link --cwd ./safe-core-sdk/packages/types-kit; yarn link @safe-global/types-kit
+        run: yarn link --cwd ./safe-core-sdk/packages/types-kit; yarn link --cwd ./safe-core-sdk/packages/sdk-starter-kit @safe-global/types-kit
 
       - name: Build safe-core-sdk
         run: yarn --cwd ./safe-core-sdk build
