@@ -26,14 +26,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: safe-global/safe-core-sdk
-          ref: development
+          ref: e4126a12d7e9a1d6743afaaa2d1db16ff4c43a29
           path: './safe-core-sdk'
 
       - name: Yarn install safe-core-sdk
         run: yarn --cwd ./safe-core-sdk install
-
-      - name: Yarn link types-kit
-        run: yarn link --cwd ./safe-core-sdk/packages/types-kit; yarn link --cwd ./safe-core-sdk/packages/sdk-starter-kit @safe-global/types-kit
 
       - name: Build safe-core-sdk
         run: yarn --cwd ./safe-core-sdk build
