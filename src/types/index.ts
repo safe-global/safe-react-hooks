@@ -1,7 +1,9 @@
 import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types'
-import type { SafeClient, SdkStarterKitConfig } from '@safe-global/sdk-starter-kit'
+import type { SdkStarterKitConfig } from '@safe-global/sdk-starter-kit'
 import type { Address, CustomTransport, HttpTransport } from 'viem'
 import type { Chain as ChainType } from 'viem/chains'
+
+export * from './guards.js'
 
 export type EIP1193Provider = Exclude<SdkStarterKitConfig['provider'], string>
 
@@ -35,12 +37,30 @@ export type SafeInfo = {
   threshold: number
 }
 
-export type PendingTransaction = SafeMultisigTransactionResponse
+export type SafeModuleTransaction = {
+  readonly created?: string
+  readonly executionDate: string
+  readonly blockNumber?: number
+  readonly isSuccessful?: boolean
+  readonly transactionHash?: string
+  readonly safe: string
+  readonly module: string
+  readonly to: string
+  readonly value: string
+  readonly data: string
+  readonly operation: number
+  readonly dataDecoded?: string
+}
 
-export type Transaction = Awaited<
-  ReturnType<SafeClient['apiKit']['getAllTransactions']>
->['results'][number]
+export type SafeMultisigTransaction = SafeMultisigTransactionResponse
 
-export type SafeModuleTransaction = Transaction & { txType: 'MODULE_TRANSACTION' }
-export type SafeMultisigTransaction = Transaction & { txType: 'MULTISIG_TRANSACTION' }
-export type EthereumTransaction = Transaction & { txType: 'ETHEREUM_TRANSACTION' }
+export type EthereumTransaction = {
+  readonly executionDate: string
+  readonly to: string
+  readonly data: string
+  readonly txHash: string
+  readonly blockNumber?: number
+  readonly from: string
+}
+
+export type Transaction = SafeModuleTransaction | SafeMultisigTransaction | EthereumTransaction

@@ -3,8 +3,7 @@ import {
   SafeConfig,
   SafeConfigWithSigner,
   SafeModuleTransaction,
-  SafeMultisigTransaction,
-  Transaction
+  SafeMultisigTransaction
 } from '@/types/index.js'
 
 export function isString(x: any): x is string {
@@ -15,20 +14,27 @@ export function isSafeConfigWithSigner(config: SafeConfig): config is SafeConfig
   return config.signer != null
 }
 
-export function isSafeModuleTransaction(
-  transaction: Transaction
-): transaction is SafeModuleTransaction {
-  return transaction.txType === 'MODULE_TRANSACTION'
+export function isSafeModuleTransaction(transaction: any): transaction is SafeModuleTransaction {
+  return transaction.to != null && transaction.safe != null && transaction.module != null
 }
 
 export function isSafeMultisigTransaction(
-  transaction: Transaction
+  transaction: any
 ): transaction is SafeMultisigTransaction {
-  return transaction.txType === 'MULTISIG_TRANSACTION'
+  return (
+    transaction?.safeTxHash != null &&
+    transaction.nonce != null &&
+    transaction.safe != null &&
+    transaction.to != null &&
+    transaction.submissionDate != null
+  )
 }
 
-export function isEthereumTransaction(
-  transaction: Transaction
-): transaction is EthereumTransaction {
-  return transaction.txType === 'ETHEREUM_TRANSACTION'
+export function isEthereumTransaction(transaction: any): transaction is EthereumTransaction {
+  return (
+    transaction.executionDate != null &&
+    transaction.to != null &&
+    transaction.txHash != null &&
+    transaction.from != null
+  )
 }

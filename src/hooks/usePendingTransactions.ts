@@ -2,11 +2,11 @@ import { useCallback } from 'react'
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { useConfig } from '@/hooks/useConfig.js'
 import { usePublicClient } from '@/hooks/usePublicClient.js'
-import type { ConfigParam, PendingTransaction, SafeConfig } from '@/types/index.js'
+import type { ConfigParam, SafeConfig, SafeMultisigTransaction } from '@/types/index.js'
 import { QueryKey } from '@/constants.js'
 
 export type UsePendingTransactionsParams = ConfigParam<SafeConfig>
-export type UsePendingTransactionsReturnType = UseQueryResult<PendingTransaction[]>
+export type UsePendingTransactionsReturnType = UseQueryResult<SafeMultisigTransaction[]>
 
 /**
  * Hook to get all pending transactions for the connected Safe.
