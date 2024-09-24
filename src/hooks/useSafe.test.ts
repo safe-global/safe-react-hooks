@@ -15,7 +15,7 @@ import {
   accounts,
   balanceData,
   safeInfo,
-  safeTransaction,
+  safeMultisigTransaction,
   safeTxHash,
   signerPrivateKeys
 } from '@test/fixtures/index.js'
@@ -202,7 +202,7 @@ describe('useSafe', () => {
   describe('getPendingTransactions', () => {
     it(`should internally call "usePendingTransactions" hook`, async () => {
       usePendingTransactionsSpy.mockReturnValue({
-        data: [safeTransaction],
+        data: [safeMultisigTransaction],
         status: 'success'
       } as usePendingTransactions.UsePendingTransactionsReturnType)
 
@@ -215,7 +215,7 @@ describe('useSafe', () => {
 
       await waitFor(() => getPendingTransactionsResult.current.data?.length)
 
-      expect(getPendingTransactionsResult.current.data).toEqual([safeTransaction])
+      expect(getPendingTransactionsResult.current.data).toEqual([safeMultisigTransaction])
       expect(usePendingTransactionsSpy).toHaveBeenCalledTimes(1)
       expect(usePendingTransactionsSpy).toHaveBeenCalledWith()
     })
@@ -224,7 +224,7 @@ describe('useSafe', () => {
   describe('getTransactions', () => {
     it(`should internally call "useTransactions" hook`, async () => {
       useTransactionsSpy.mockReturnValue({
-        data: [safeTransaction],
+        data: [safeMultisigTransaction],
         status: 'success'
       } as useTransactions.UseTransactionsReturnType)
 
@@ -237,7 +237,7 @@ describe('useSafe', () => {
 
       await waitFor(() => getTransactionsResult.current.data?.length)
 
-      expect(getTransactionsResult.current.data).toEqual([safeTransaction])
+      expect(getTransactionsResult.current.data).toEqual([safeMultisigTransaction])
       expect(useTransactionsSpy).toHaveBeenCalledTimes(1)
       expect(useTransactionsSpy).toHaveBeenCalledWith()
     })
@@ -246,7 +246,7 @@ describe('useSafe', () => {
   describe('getTransaction', () => {
     it(`should internally call "useTransaction" hook`, async () => {
       useTransactionSpy.mockReturnValue({
-        data: safeTransaction,
+        data: safeMultisigTransaction,
         status: 'success'
       })
 
@@ -259,7 +259,7 @@ describe('useSafe', () => {
 
       await waitFor(() => getTransactionResult.current.data != null)
 
-      expect(getTransactionResult.current.data).toEqual(safeTransaction)
+      expect(getTransactionResult.current.data).toEqual(safeMultisigTransaction)
       expect(useTransactionSpy).toHaveBeenCalledTimes(1)
       expect(useTransactionSpy).toHaveBeenCalledWith({ safeTxHash })
     })

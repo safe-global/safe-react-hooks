@@ -3,7 +3,7 @@ import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { usePendingTransactions } from '@/hooks/usePendingTransactions.js'
 import * as usePublicClient from '@/hooks/usePublicClient.js'
 import * as useConfig from '@/hooks/useConfig.js'
-import { safeTransaction } from '@test/fixtures/index.js'
+import { safeMultisigTransaction } from '@test/fixtures/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 
@@ -11,7 +11,9 @@ describe('usePendingTransactions', () => {
   const useConfigSpy = jest.spyOn(useConfig, 'useConfig')
   const usePublicClientSpy = jest.spyOn(usePublicClient, 'usePublicClient')
   const publicClientMock = {
-    getPendingTransactions: jest.fn().mockResolvedValue({ results: [safeTransaction], count: 1 })
+    getPendingTransactions: jest
+      .fn()
+      .mockResolvedValue({ results: [safeMultisigTransaction], count: 1 })
   }
 
   beforeEach(() => {
@@ -30,7 +32,7 @@ describe('usePendingTransactions', () => {
 
     await waitFor(() =>
       expect(result.current).toMatchObject({
-        data: [safeTransaction],
+        data: [safeMultisigTransaction],
         status: 'success'
       })
     )
@@ -52,7 +54,7 @@ describe('usePendingTransactions', () => {
     expect(usePublicClientSpy).toHaveBeenCalledWith({ config: configPredictedSafe })
 
     await waitFor(() =>
-      expect(result.current).toMatchObject({ data: [safeTransaction], status: 'success' })
+      expect(result.current).toMatchObject({ data: [safeMultisigTransaction], status: 'success' })
     )
 
     expect(usePublicClientSpy).toHaveBeenCalledTimes(2)

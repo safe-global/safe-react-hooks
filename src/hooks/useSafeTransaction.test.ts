@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useSafeTransaction } from '@/hooks/useSafeTransaction.js'
 import * as usePublicClient from '@/hooks/usePublicClient.js'
-import { safeTxHash, safeTransaction } from '@test/fixtures/index.js'
+import { safeTxHash, safeMultisigTransaction } from '@test/fixtures/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { configPredictedSafe } from '@test/config.js'
 
@@ -10,7 +10,7 @@ describe('useSafeTransaction', () => {
   const usePublicClientSpy = jest.spyOn(usePublicClient, 'usePublicClient')
   const publicClientMock = {
     apiKit: {
-      getTransaction: jest.fn().mockResolvedValue(safeTransaction)
+      getTransaction: jest.fn().mockResolvedValue(safeMultisigTransaction)
     }
   }
 
@@ -31,7 +31,7 @@ describe('useSafeTransaction', () => {
     expect(result.current).toMatchObject({ data: undefined, status: 'pending' })
 
     await waitFor(() =>
-      expect(result.current).toMatchObject({ data: safeTransaction, status: 'success' })
+      expect(result.current).toMatchObject({ data: safeMultisigTransaction, status: 'success' })
     )
 
     expect(publicClientMock.apiKit.getTransaction).toHaveBeenCalledTimes(1)
@@ -52,7 +52,7 @@ describe('useSafeTransaction', () => {
     expect(usePublicClientSpy).toHaveBeenCalledWith({ config: configPredictedSafe })
 
     await waitFor(() =>
-      expect(result.current).toMatchObject({ data: safeTransaction, status: 'success' })
+      expect(result.current).toMatchObject({ data: safeMultisigTransaction, status: 'success' })
     )
 
     expect(usePublicClientSpy).toHaveBeenCalledTimes(2)

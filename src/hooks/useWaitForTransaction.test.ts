@@ -10,7 +10,13 @@ import {
 import * as usePublicClient from '@/hooks/usePublicClient.js'
 import * as useAddress from '@/hooks/useSafeInfo/useAddress.js'
 import { renderHookInMockedSafeProvider } from '@test/utils.js'
-import { ethereumTxHash, safeAddress, safeTxHash } from '@test/fixtures/index.js'
+import {
+  ethereumTxHash,
+  safeAddress,
+  safeModuleTransaction,
+  safeMultisigTransaction,
+  safeTxHash
+} from '@test/fixtures/index.js'
 import { SafeContextType } from '@/SafeContext.js'
 import { configExistingSafe } from '@test/config.js'
 
@@ -129,15 +135,10 @@ describe('useWaitForTransaction', () => {
     })
 
     it('should poll `getAllTransactions` until the transaction is found if `ethereumTxHash` is passed but not `safeTxHash`', async () => {
-      getAllTransactionsMock.mockResolvedValueOnce({
-        results: [{ txHash: '0x123', txType: 'ETHEREUM_TRANSACTION' }]
-      })
-      getAllTransactionsMock.mockResolvedValueOnce({
-        results: [
-          { transactionHash: ethereumTxHash, txType: 'MODULE_TRANSACTION' },
-          { txHash: '0x123', txType: 'ETHEREUM_TRANSACTION' }
-        ]
-      })
+      const otherTx = { ...safeMultisigTransaction, transactionHash: '0x456' }
+
+      getAllTransactionsMock.mockResolvedValueOnce({ results: [otherTx] })
+      getAllTransactionsMock.mockResolvedValueOnce({ results: [safeModuleTransaction, otherTx] })
 
       const { result } = await renderUseWaitForTransaction({}, { pollingInterval: 0 })
 

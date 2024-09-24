@@ -3,20 +3,20 @@ import { waitFor } from '@testing-library/react'
 import { UseQueryResult } from '@tanstack/react-query'
 import { useTransaction } from '@/hooks/useTransaction.js'
 import * as useSafeTransaction from '@/hooks/useSafeTransaction.js'
-import { ethereumTxHash, safeTransaction, safeTxHash } from '@test/fixtures/index.js'
+import { ethereumTxHash, safeMultisigTransaction, safeTxHash } from '@test/fixtures/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types'
 import { configPredictedSafe } from '@test/config.js'
 
 describe('useTransaction', () => {
-  const mockTransactionResult = { data: safeTransaction, status: 'success' }
+  const mockTransactionResult = { data: safeMultisigTransaction, status: 'success' }
 
   const useSafeTransactionSpy = jest.spyOn(useSafeTransaction, 'useSafeTransaction')
   const useTransactionWagmiSpy = jest.spyOn(wagmi, 'useTransaction')
 
   beforeEach(() => {
     useSafeTransactionSpy.mockReturnValue({
-      data: safeTransaction,
+      data: safeMultisigTransaction,
       status: 'success'
     } as UseQueryResult<SafeMultisigTransactionResponse>)
 
@@ -37,7 +37,7 @@ describe('useTransaction', () => {
       expect(useSafeTransactionSpy).toHaveBeenCalledWith({ config: undefined, safeTxHash })
 
       await waitFor(() =>
-        expect(result.current).toMatchObject({ data: safeTransaction, status: 'success' })
+        expect(result.current).toMatchObject({ data: safeMultisigTransaction, status: 'success' })
       )
     })
 
@@ -53,7 +53,7 @@ describe('useTransaction', () => {
       })
 
       await waitFor(() =>
-        expect(result.current).toMatchObject({ data: safeTransaction, status: 'success' })
+        expect(result.current).toMatchObject({ data: safeMultisigTransaction, status: 'success' })
       )
     })
   })
@@ -66,7 +66,7 @@ describe('useTransaction', () => {
       expect(useTransactionWagmiSpy).toHaveBeenCalledWith({ hash: ethereumTxHash })
 
       await waitFor(() =>
-        expect(result.current).toMatchObject({ data: safeTransaction, status: 'success' })
+        expect(result.current).toMatchObject({ data: safeMultisigTransaction, status: 'success' })
       )
     })
   })
