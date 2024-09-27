@@ -5,7 +5,7 @@ import { useSendTransaction } from '@/hooks/useSendTransaction.js'
 import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { MutationKey } from '@/constants.js'
 
-type UpdateThresholdVariables = { threshold: number }
+export type UpdateThresholdVariables = { threshold: number }
 
 export type UseUpdateThresholdParams = ConfigParam<SafeConfigWithSigner>
 export type UseUpdateThresholdReturnType = Omit<
@@ -37,7 +37,7 @@ export function useUpdateThreshold(
     UpdateThresholdVariables
   >({
     ...params,
-    mutationKey: [MutationKey.AddOwner],
+    mutationKey: [MutationKey.UpdateThreshold],
     mutationSafeClientFn: async (signerClient, { threshold }) => {
       const updateThresholdTx = await signerClient.protocolKit.createChangeThresholdTx(threshold)
       return sendTransactionAsync({ transactions: [updateThresholdTx] })
