@@ -11,7 +11,7 @@ import {
   useTransactions
 } from '@/hooks/index.js'
 import { MissingSafeProviderError } from '@/errors/MissingSafeProviderError.js'
-import { SafeContext } from '@/SafeProvider.js'
+import { SafeContext } from '@/SafeContext.js'
 
 export type UseReturnType = UseConnectSignerReturnType & {
   isInitialized: boolean

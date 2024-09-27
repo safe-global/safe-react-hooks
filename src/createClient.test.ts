@@ -1,7 +1,7 @@
 import * as sdkStarterKit from '@safe-global/sdk-starter-kit'
 import { createPublicClient, createSignerClient } from '@/createClient.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
-import { signerPrivateKeys } from '@test/fixtures.js'
+import { signerPrivateKeys } from '@test/fixtures/index.js'
 
 describe('createClient', () => {
   const safeClientMock = { safe: 'client' } as unknown as sdkStarterKit.SafeClient

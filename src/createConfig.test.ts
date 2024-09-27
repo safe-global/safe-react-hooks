@@ -1,7 +1,7 @@
 import * as viem from 'viem'
 import { createConfig } from '@/createConfig.js'
 import { configParamsExistingSafe, configParamsPredictedSafe } from '@test/config.js'
-import { eip1193Provider } from '@test/fixtures.js'
+import { eip1193Provider } from '@test/fixtures/index.js'
 
 describe('createConfig', () => {
   const httpTransportSpy = jest.spyOn(viem, 'http').mockReturnValue('httpTransport' as any)

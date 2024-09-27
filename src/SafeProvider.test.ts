@@ -4,10 +4,11 @@ import { render, screen, waitFor } from '@testing-library/react'
 import * as wagmi from 'wagmi'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
 import * as createClient from '@/createClient.js'
-import { SafeContext, SafeProvider } from '@/SafeProvider.js'
+import { SafeProvider } from '@/SafeProvider.js'
+import { SafeContext } from '@/SafeContext.js'
 import { SafeConfig } from '@/types/index.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
-import { signerPrivateKeys } from '@test/fixtures.js'
+import { signerPrivateKeys } from '@test/fixtures/index.js'
 
 jest.mock('@tanstack/react-query')
 

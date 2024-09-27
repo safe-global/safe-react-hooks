@@ -3,7 +3,7 @@ import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useSignerAddress } from '@/hooks/useSignerAddress.js'
 import * as useSignerClient from '@/hooks/useSignerClient.js'
 import { configPredictedSafe } from '@test/config.js'
-import { accounts, signerPrivateKeys } from '@test/fixtures.js'
+import { accounts, signerPrivateKeys } from '@test/fixtures/index.js'
 
 describe('useSignerAddress', () => {
   const useSignerClientSpy = jest.spyOn(useSignerClient, 'useSignerClient')

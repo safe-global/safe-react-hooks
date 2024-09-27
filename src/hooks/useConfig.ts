@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { SafeContext } from '@/SafeProvider.js'
+import { SafeContext } from '@/SafeContext.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 import { MissingSafeProviderError } from '@/errors/MissingSafeProviderError.js'
 

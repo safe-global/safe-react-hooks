@@ -1,6 +1,9 @@
+import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types'
 import type { SdkStarterKitConfig } from '@safe-global/sdk-starter-kit'
 import type { Address, CustomTransport, HttpTransport } from 'viem'
 import type { Chain as ChainType } from 'viem/chains'
+
+export * from './guards.js'
 
 export type EIP1193Provider = Exclude<SdkStarterKitConfig['provider'], string>
 
@@ -14,9 +17,11 @@ export type SafeConfig<
   Provider extends SdkStarterKitConfig['provider'] = SdkStarterKitConfig['provider'],
   Signer extends SdkStarterKitConfig['signer'] = SdkStarterKitConfig['signer'],
   Chain extends ChainType = ChainType
-> = SdkStarterKitConfig & { chain: Chain; provider: Provider; signer: Signer } & (Provider extends string
-    ? { transport: HttpTransport }
-    : { transport: CustomTransport })
+> = SdkStarterKitConfig & {
+  chain: Chain
+  provider: Provider
+  signer: Signer
+} & (Provider extends string ? { transport: HttpTransport } : { transport: CustomTransport })
 
 export type SafeConfigWithSigner = SafeConfig & { signer: string }
 
@@ -31,3 +36,31 @@ export type SafeInfo = {
   owners: Address[]
   threshold: number
 }
+
+export type SafeModuleTransaction = {
+  readonly created?: string
+  readonly executionDate: string
+  readonly blockNumber?: number
+  readonly isSuccessful?: boolean
+  readonly transactionHash?: string
+  readonly safe: string
+  readonly module: string
+  readonly to: string
+  readonly value: string
+  readonly data: string
+  readonly operation: number
+  readonly dataDecoded?: string
+}
+
+export type SafeMultisigTransaction = SafeMultisigTransactionResponse
+
+export type EthereumTransaction = {
+  readonly executionDate: string
+  readonly to: string
+  readonly data: string
+  readonly txHash: string
+  readonly blockNumber?: number
+  readonly from: string
+}
+
+export type Transaction = SafeModuleTransaction | SafeMultisigTransaction | EthereumTransaction

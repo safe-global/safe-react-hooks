@@ -1,21 +1,18 @@
 import * as wagmi from 'wagmi'
 import { renderHook } from '@testing-library/react'
 import { useBalance, UseBalanceReturnType } from '@/hooks/useBalance.js'
-import * as useSafeInfo from '@/hooks/useSafeInfo.js'
+import * as useAddress from '@/hooks/useSafeInfo/useAddress.js'
 import { configExistingSafe } from '@test/config.js'
-import { balanceData, safeAddress } from '@test/fixtures.js'
+import { balanceData, safeAddress } from '@test/fixtures/index.js'
 
 describe('useBalance', () => {
   const mockBalanceResult = { data: balanceData }
 
   const useBalanceWagmiSpy = jest.spyOn(wagmi, 'useBalance')
-  const useSafeInfoSpy = jest.spyOn(useSafeInfo, 'useSafeInfo')
+  const useAddressSpy = jest.spyOn(useAddress, 'useAddress')
 
   beforeEach(() => {
-    useSafeInfoSpy.mockReturnValue({
-      data: { address: safeAddress }
-    } as useSafeInfo.UseSafeInfoReturnType)
-
+    useAddressSpy.mockReturnValue({ data: safeAddress } as useAddress.UseAddressReturnType)
     useBalanceWagmiSpy.mockReturnValue(mockBalanceResult as UseBalanceReturnType)
   })
 
@@ -23,29 +20,29 @@ describe('useBalance', () => {
     jest.clearAllMocks()
   })
 
-  it('should return the balance for the Safe provided by `useSafeInfo`', () => {
+  it('should return the balance for the Safe provided by `useAddress`', () => {
     const { result } = renderHook(() => useBalance())
 
     expect(result.current).toEqual(mockBalanceResult)
 
-    expect(useSafeInfoSpy).toHaveBeenCalledTimes(1)
-    expect(useSafeInfoSpy).toHaveBeenCalledWith({ config: undefined })
+    expect(useAddressSpy).toHaveBeenCalledTimes(1)
+    expect(useAddressSpy).toHaveBeenCalledWith({ config: undefined })
 
     expect(useBalanceWagmiSpy).toHaveBeenCalledTimes(1)
     expect(useBalanceWagmiSpy).toHaveBeenCalledWith({ address: safeAddress })
   })
 
   it('should return the balance for the Safe using the passed config', () => {
-    useSafeInfoSpy.mockReturnValueOnce({
-      data: { address: configExistingSafe.safeAddress }
-    } as useSafeInfo.UseSafeInfoReturnType)
+    useAddressSpy.mockReturnValueOnce({
+      data: configExistingSafe.safeAddress
+    } as useAddress.UseAddressReturnType)
 
     const result = renderHook(() => useBalance({ config: configExistingSafe }))
 
     expect(result.result.current).toEqual(mockBalanceResult)
 
-    expect(useSafeInfoSpy).toHaveBeenCalledTimes(1)
-    expect(useSafeInfoSpy).toHaveBeenCalledWith({ config: configExistingSafe })
+    expect(useAddressSpy).toHaveBeenCalledTimes(1)
+    expect(useAddressSpy).toHaveBeenCalledWith({ config: configExistingSafe })
 
     expect(useBalanceWagmiSpy).toHaveBeenCalledTimes(1)
     expect(useBalanceWagmiSpy).toHaveBeenCalledWith({ address: configExistingSafe.safeAddress })
