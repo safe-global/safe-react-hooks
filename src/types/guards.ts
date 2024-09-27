@@ -5,10 +5,17 @@ import {
   SafeModuleTransaction,
   SafeMultisigTransaction
 } from '@/types/index.js'
+import { SafeTransaction } from '@safe-global/safe-core-sdk-types'
 
 export function isString(x: any): x is string {
   return typeof x === 'string'
 }
+
+export const isSafeTransaction = (tx: any): tx is SafeTransaction =>
+  tx.data !== undefined &&
+  tx.data.to !== undefined &&
+  tx.data.value !== undefined &&
+  tx.data.data !== undefined
 
 export function isSafeConfigWithSigner(config: SafeConfig): config is SafeConfigWithSigner {
   return config.signer != null
