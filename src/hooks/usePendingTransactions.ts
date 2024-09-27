@@ -1,7 +1,6 @@
-import { useCallback } from 'react'
-import { useQuery, type UseQueryResult } from '@tanstack/react-query'
-import { useConfig } from '@/hooks/useConfig.js'
-import { usePublicClient } from '@/hooks/usePublicClient.js'
+import { type UseQueryResult } from '@tanstack/react-query'
+import { useIsDeployed } from '@/hooks/useSafeInfo/useIsDeployed.js'
+import { usePublicClientQuery } from '@/hooks/usePublicClientQuery.js'
 import type { ConfigParam, SafeConfig, SafeMultisigTransaction } from '@/types/index.js'
 import { QueryKey } from '@/constants.js'
 
@@ -17,20 +16,18 @@ export type UsePendingTransactionsReturnType = UseQueryResult<SafeMultisigTransa
 export function usePendingTransactions(
   params: UsePendingTransactionsParams = {}
 ): UsePendingTransactionsReturnType {
-  const [config] = useConfig({ config: params.config })
-  const safeClient = usePublicClient({ config: params.config })
+  const { data: isDeployed } = useIsDeployed({ config: params.config })
 
-  const getPendingTransactions = useCallback(async () => {
-    if (!safeClient) {
-      throw new Error('SafeClient not initialized')
-    }
+  return usePublicClientQuery({
+    ...params,
+    querySafeClientFn: async (safeClient) => {
+      if (!isDeployed) {
+        throw new Error('Safe is not deployed')
+      }
 
-    const response = await safeClient.getPendingTransactions()
-    return response.results
-  }, [safeClient])
-
-  return useQuery({
-    queryKey: [QueryKey.PendingTransactions, config],
-    queryFn: getPendingTransactions
+      const { results } = await safeClient.getPendingTransactions()
+      return results
+    },
+    queryKey: [QueryKey.PendingTransactions]
   })
 }
