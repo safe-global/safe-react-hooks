@@ -35,11 +35,12 @@ export function useSafe(): UseReturnType {
     throw new MissingSafeProviderError('`useSafe` must be used within `SafeProvider`.')
   }
 
-  const { connect, disconnect, isSignerConnected } = useAuthenticate()
+  const { connect, disconnect, isSignerConnected, isOwnerConnected } = useAuthenticate()
 
   return {
     isInitialized,
     isSignerConnected,
+    isOwnerConnected,
     connect,
     disconnect,
     getBalance: useBalance,

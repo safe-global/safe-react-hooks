@@ -56,7 +56,7 @@ describe('useSafe', () => {
     jest.clearAllMocks()
   })
 
-  it('should return object containing functions to call other hooks and `isInitialized` + `isSignerConnected` flags', async () => {
+  it('should return object containing functions to call other hooks and `isInitialized`, `isOwnerConnected` + `isSignerConnected` flags', async () => {
     const { result } = await renderUseSafeHook()
 
     expect(result.current).toMatchObject({
@@ -70,7 +70,8 @@ describe('useSafe', () => {
       getTransaction: expect.any(Function),
       getTransactions: expect.any(Function),
       isInitialized: true,
-      isSignerConnected: false
+      isSignerConnected: false,
+      isOwnerConnected: false
     })
   })
 
@@ -87,7 +88,8 @@ describe('useSafe', () => {
     useAuthenticateSpy.mockReturnValue({
       connect: connectMock,
       disconnect: disconnectMock,
-      isSignerConnected: false
+      isSignerConnected: false,
+      isOwnerConnected: false
     })
 
     describe('connect', () => {

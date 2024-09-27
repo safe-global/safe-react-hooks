@@ -1,11 +1,14 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 import { SafeContext } from '@/SafeContext.js'
+import { useOwners } from '@/hooks/useSafeInfo/useOwners.js'
+import { useSignerAddress } from '@/hooks/useSignerAddress.js'
 import { AuthenticationError } from '@/errors/AuthenticationError.js'
 
 export type UseConnectSignerReturnType = {
   connect: (signer: string) => Promise<void>
   disconnect: () => Promise<void>
   isSignerConnected: boolean
+  isOwnerConnected: boolean
 }
 
 /**
@@ -14,6 +17,8 @@ export type UseConnectSignerReturnType = {
  */
 export function useAuthenticate(): UseConnectSignerReturnType {
   const { signerClient, setSigner } = useContext(SafeContext)
+  const { data: owners } = useOwners()
+  const signerAddress = useSignerAddress()
 
   const connect = useCallback(
     async (signer: string) => {
@@ -32,7 +37,12 @@ export function useAuthenticate(): UseConnectSignerReturnType {
     return setSigner(undefined)
   }, [setSigner])
 
-  const isSignerConnected = !!signerClient
+  const isSignerConnected = !!signerAddress
 
-  return { connect, disconnect, isSignerConnected }
+  const isOwnerConnected = useMemo(
+    () => !!owners && !!signerAddress && owners.includes(signerAddress),
+    [owners, signerAddress]
+  )
+
+  return { connect, disconnect, isSignerConnected, isOwnerConnected }
 }
