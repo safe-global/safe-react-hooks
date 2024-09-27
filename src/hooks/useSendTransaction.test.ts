@@ -1,23 +1,15 @@
 import { waitForTransactionReceipt } from 'wagmi/actions'
-import * as tanstackReactQuery from '@tanstack/react-query'
 import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useSendTransaction } from '@/hooks/useSendTransaction.js'
 import * as useWaitForTransaction from '@/hooks/useWaitForTransaction.js'
-import * as useSignerClient from '@/hooks/useSignerClient.js'
+import * as useSignerClientMutation from '@/hooks/useSignerClientMutation.js'
 import { configExistingSafe } from '@test/config.js'
 import { ethereumTxHash, safeAddress, safeTxHash, signerPrivateKeys } from '@test/fixtures/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey, QueryKey } from '@/constants.js'
 import { queryClient } from '@/queryClient.js'
-
-// This is necessary to set a spy on the `useMutation` function without getting the following error:
-// "TypeError: Cannot redefine property: useMutation"
-jest.mock('@tanstack/react-query', () => ({
-  __esModule: true,
-  // @ts-ignore
-  ...jest.requireActual('@tanstack/react-query')
-}))
+import { useMutation } from '@tanstack/react-query'
 
 describe('useSendTransaction', () => {
   const transactionMock = { to: '0xABC', value: '0', data: '0x987' }
@@ -36,12 +28,11 @@ describe('useSendTransaction', () => {
   }
 
   const useWaitForTransactionSpy = jest.spyOn(useWaitForTransaction, 'useWaitForTransaction')
-  const useSignerClientSpy = jest.spyOn(useSignerClient, 'useSignerClient')
-  const useMutationSpy = jest.spyOn(tanstackReactQuery, 'useMutation')
+  const useSignerClientMutationSpy = jest.spyOn(useSignerClientMutation, 'useSignerClientMutation')
   const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries')
 
   const sendMock = jest.fn().mockResolvedValue(sendResponseMock)
-  const safeClientMock = { send: sendMock }
+  const signerClientMock = { send: sendMock } as unknown as SafeClient
 
   const waitForTransactionReceiptMock = jest.fn(
     () =>
@@ -56,7 +47,20 @@ describe('useSendTransaction', () => {
       waitForTransactionIndexed: waitForTransactionIndexedMock,
       waitForTransactionReceipt: waitForTransactionReceiptMock
     })
-    useSignerClientSpy.mockReturnValue(safeClientMock as unknown as SafeClient)
+    useSignerClientMutationSpy.mockImplementation(
+      <SafeClientResult, SendTransactionVariables>({
+        mutationSafeClientFn,
+        mutationKey
+      }: useSignerClientMutation.UseSignerClientMutationParams<
+        SafeClientResult,
+        SendTransactionVariables
+      >) =>
+        useMutation({
+          mutationKey,
+          mutationFn: (params: SendTransactionVariables) =>
+            mutationSafeClientFn(signerClientMock, params)
+        })
+    )
   })
 
   afterEach(() => {
@@ -66,12 +70,16 @@ describe('useSendTransaction', () => {
   it.each([
     ['without config parameter', { config: undefined }],
     ['with config parameter', { config: { ...configExistingSafe, signer: signerPrivateKeys[0] } }]
-  ])('should initialize signer client correctly when being called %s', async (_label, params) => {
+  ])('should initialize correctly when being called %s', async (_label, params) => {
     const { result } = renderHookInQueryClientProvider(() => useSendTransaction(params))
     await waitFor(() => expect(result.current.isIdle).toEqual(true))
 
-    expect(useSignerClientSpy).toHaveBeenCalledTimes(1)
-    expect(useSignerClientSpy).toHaveBeenCalledWith(params)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(1)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
+      ...params,
+      mutationKey: [MutationKey.SendTransaction],
+      mutationSafeClientFn: expect.any(Function)
+    })
 
     expect(sendMock).toHaveBeenCalledTimes(0)
   })
@@ -99,44 +107,57 @@ describe('useSendTransaction', () => {
       sendTransactionAsync: expect.any(Function)
     })
 
-    expect(useMutationSpy).toHaveBeenCalledTimes(1)
-    expect(useMutationSpy).toHaveBeenCalledWith({
-      mutationFn: expect.any(Function),
-      mutationKey: [MutationKey.SendTransaction]
-    })
-
     expect(sendMock).toHaveBeenCalledTimes(0)
   })
 
-  describe('sendTransaction', () => {
-    it('should call `send` from signer client', async () => {
+  it.each<'sendTransaction' | 'sendTransactionAsync'>(['sendTransaction', 'sendTransactionAsync'])(
+    'calling `%s` should call `send` from signer client with the provided data',
+    async (fnName) => {
       const { result } = renderHookInQueryClientProvider(() => useSendTransaction())
 
-      await waitFor(() => expect(result.current.sendTransaction).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current[fnName]).toEqual(expect.any(Function)))
 
-      result.current.sendTransaction({ transactions: [transactionMock] })
+      expect(sendMock).toHaveBeenCalledTimes(0)
 
-      await waitFor(() => expect(result.current.isSuccess).toEqual(true))
+      const sendResult = await result.current[fnName]({
+        transactions: [transactionMock]
+      })
 
-      expect(result.current.isIdle).toEqual(false)
-      expect(result.current.isPending).toEqual(false)
-      expect(result.current.isError).toEqual(false)
-      expect(result.current.isSuccess).toEqual(true)
-      expect(result.current.data).toEqual(sendResponseMock)
-      expect(result.current.error).toEqual(null)
+      if (fnName === 'sendTransactionAsync') {
+        expect(sendResult).toEqual(sendResponseMock)
+      }
+
+      await waitFor(() => expect(result.current.isSuccess).toBeTruthy())
+
+      expect(result.current).toMatchObject({
+        isSuccess: true,
+        isIdle: false,
+        isPending: false,
+        isError: false,
+        data: sendResponseMock
+      })
 
       expect(sendMock).toHaveBeenCalledTimes(1)
       expect(sendMock).toHaveBeenCalledWith({ transactions: [transactionMock] })
-    })
+    }
+  )
 
-    it('should invalidate queries for SafeInfo, PendingTransactions + Transactions if result contains `ethereumTxHash`', async () => {
+  it.each<'sendTransaction' | 'sendTransactionAsync'>(['sendTransaction', 'sendTransactionAsync'])(
+    'calling `%s` should invalidate queries for SafeInfo, PendingTransactions + Transactions if result contains `ethereumTxHash`',
+    async (fnName) => {
       const { result } = renderHookInQueryClientProvider(() => useSendTransaction())
 
-      await waitFor(() => expect(result.current.sendTransaction).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current[fnName]).toEqual(expect.any(Function)))
 
-      result.current.sendTransaction({ transactions: [transactionMock] })
+      const sendResult = await result.current[fnName]({
+        transactions: [transactionMock]
+      })
 
-      await waitFor(() => expect(result.current.isSuccess).toEqual(true))
+      if (fnName === 'sendTransactionAsync') {
+        expect(sendResult).toEqual(sendResponseMock)
+      }
+
+      await waitFor(() => expect(result.current.isSuccess).toBeTruthy())
 
       expect(waitForTransactionReceiptMock).toHaveBeenCalledTimes(1)
       expect(waitForTransactionReceiptMock).toHaveBeenCalledWith(
@@ -166,18 +187,28 @@ describe('useSendTransaction', () => {
       expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(8, {
         queryKey: [QueryKey.Transactions]
       })
-    })
+    }
+  )
 
-    it('should invalidate queries for PendingTransactions if result contains `safeTxHash`', async () => {
-      sendMock.mockResolvedValueOnce({ ...sendResponseMock, transactions: { safeTxHash } })
+  it.each<'sendTransaction' | 'sendTransactionAsync'>(['sendTransaction', 'sendTransactionAsync'])(
+    'calling `%s` should invalidate queries for PendingTransactions if result contains `safeTxHash`',
+    async (fnName) => {
+      const sendResponseWithSafeTxHash = { ...sendResponseMock, transactions: { safeTxHash } }
+      sendMock.mockResolvedValueOnce(sendResponseWithSafeTxHash)
 
       const { result } = renderHookInQueryClientProvider(() => useSendTransaction())
 
-      await waitFor(() => expect(result.current.sendTransaction).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current[fnName]).toEqual(expect.any(Function)))
 
-      result.current.sendTransaction({ transactions: [transactionMock] })
+      const sendResult = await result.current[fnName]({
+        transactions: [transactionMock]
+      })
 
-      await waitFor(() => expect(result.current.isSuccess).toEqual(true))
+      if (fnName === 'sendTransactionAsync') {
+        expect(sendResult).toEqual(sendResponseWithSafeTxHash)
+      }
+
+      await waitFor(() => expect(result.current.isSuccess).toBeTruthy())
 
       expect(waitForTransactionReceiptMock).not.toHaveBeenCalled()
       expect(waitForTransactionIndexedMock).not.toHaveBeenCalled()
@@ -186,89 +217,41 @@ describe('useSendTransaction', () => {
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
         queryKey: [QueryKey.PendingTransactions]
       })
-    })
+    }
+  )
 
-    it('should return error if signer client is not connected', async () => {
-      useSignerClientSpy.mockReturnValueOnce(undefined)
-
-      const { result } = renderHookInQueryClientProvider(() => useSendTransaction())
-
-      await waitFor(() => expect(result.current.sendTransaction).toEqual(expect.any(Function)))
-
-      result.current.sendTransaction({ transactions: [transactionMock] })
-
-      await waitFor(() => expect(result.current.isError).toEqual(true))
-
-      expect(result.current.isIdle).toEqual(false)
-      expect(result.current.isPending).toEqual(false)
-      expect(result.current.isError).toEqual(true)
-      expect(result.current.isSuccess).toEqual(false)
-      expect(result.current.data).toEqual(undefined)
-      expect(result.current.error).toEqual(new Error('Signer client is not available'))
-
-      expect(sendMock).toHaveBeenCalledTimes(0)
-    })
-
-    it('should return error if passed transaction list is empty', async () => {
-      const { result } = renderHookInQueryClientProvider(() => useSendTransaction())
-
-      await waitFor(() => expect(result.current.sendTransaction).toEqual(expect.any(Function)))
-
-      result.current.sendTransaction({ transactions: [] })
-
-      await waitFor(() => expect(result.current.isError).toEqual(true))
-
-      expect(result.current.isIdle).toEqual(false)
-      expect(result.current.isPending).toEqual(false)
-      expect(result.current.isError).toEqual(true)
-      expect(result.current.isSuccess).toEqual(false)
-      expect(result.current.data).toEqual(undefined)
-      expect(result.current.error).toEqual(new Error('No transactions provided'))
-
-      expect(sendMock).toHaveBeenCalledTimes(0)
-    })
-  })
-
-  describe('sendTransactionAsync', () => {
-    it('should call `send` from signer client and resolve with result', async () => {
-      const { result } = renderHookInQueryClientProvider(() => useSendTransaction())
-
-      await waitFor(() => expect(result.current.sendTransactionAsync).toEqual(expect.any(Function)))
-
-      const sendResult = await result.current.sendTransactionAsync({
-        transactions: [transactionMock]
-      })
-
-      expect(sendResult).toEqual(sendResponseMock)
-
-      expect(sendMock).toHaveBeenCalledTimes(1)
-      expect(sendMock).toHaveBeenCalledWith({ transactions: [transactionMock] })
-    })
-
-    it('should return error if signer client is not connected', async () => {
-      useSignerClientSpy.mockReturnValueOnce(undefined)
+  it.each<'sendTransaction' | 'sendTransactionAsync'>(['sendTransaction', 'sendTransactionAsync'])(
+    'calling `%s` should return error data if the `send` request fails',
+    async (fnName) => {
+      const error = new Error('Send transaction failed :(')
+      sendMock.mockRejectedValueOnce(error)
 
       const { result } = renderHookInQueryClientProvider(() => useSendTransaction())
 
-      await waitFor(() => expect(result.current.sendTransactionAsync).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current[fnName]).toEqual(expect.any(Function)))
 
-      expect(() =>
-        result.current.sendTransactionAsync({ transactions: [transactionMock] })
-      ).rejects.toThrow('Signer client is not available')
+      if (fnName === 'sendTransactionAsync') {
+        await expect(() => result.current[fnName]({ transactions: [] })).rejects.toThrow(error)
+      } else {
+        result.current[fnName]({
+          transactions: [transactionMock]
+        })
 
-      expect(sendMock).toHaveBeenCalledTimes(0)
-    })
+        await waitFor(() => expect(result.current.isError).toEqual(true))
 
-    it('should return error if passed transaction list is empty', async () => {
-      const { result } = renderHookInQueryClientProvider(() => useSendTransaction())
+        expect(result.current).toMatchObject({
+          isSuccess: false,
+          isIdle: false,
+          isPending: false,
+          isError: true,
+          data: undefined,
+          error
+        })
+      }
 
-      await waitFor(() => expect(result.current.sendTransactionAsync).toEqual(expect.any(Function)))
-
-      expect(() => result.current.sendTransactionAsync({ transactions: [] })).rejects.toThrow(
-        'No transactions provided'
-      )
-
-      expect(sendMock).toHaveBeenCalledTimes(0)
-    })
-  })
+      expect(waitForTransactionReceiptMock).not.toHaveBeenCalled()
+      expect(waitForTransactionIndexedMock).not.toHaveBeenCalled()
+      expect(invalidateQueriesSpy).not.toHaveBeenCalled()
+    }
+  )
 })
