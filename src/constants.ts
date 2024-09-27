@@ -13,5 +13,6 @@ export enum MutationKey {
   SendTransaction = 'sendTransaction',
   ConfirmTransaction = 'confirmTransaction',
   UpdateThreshold = 'updateThreshold',
-  AddOwner = 'addOwner'
+  AddOwner = 'addOwner',
+  RemoveOwner = 'removeOwner'
 }
