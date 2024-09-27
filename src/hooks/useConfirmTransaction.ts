@@ -1,5 +1,9 @@
-import { useMutation, UseMutationReturnType } from 'wagmi/query'
-import { UseMutateAsyncFunction, UseMutateFunction } from '@tanstack/react-query'
+import {
+  UseMutateAsyncFunction,
+  UseMutateFunction,
+  useMutation,
+  UseMutationResult
+} from '@tanstack/react-query'
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClient } from '@/hooks/useSignerClient.js'
@@ -10,10 +14,9 @@ import { invalidateQueries } from '@/queryClient.js'
 type ConfirmTransactionVariables = { safeTxHash: string }
 
 export type UseConfirmTransactionParams = ConfigParam<SafeConfigWithSigner>
-export type UseConfirmTransactionReturnType = UseMutationReturnType<
-  SafeClientResult,
-  Error,
-  ConfirmTransactionVariables
+export type UseConfirmTransactionReturnType = Omit<
+  UseMutationResult<SafeClientResult, Error, ConfirmTransactionVariables>,
+  'mutate' | 'mutateAsync'
 > & {
   confirmTransaction: UseMutateFunction<
     SafeClientResult,

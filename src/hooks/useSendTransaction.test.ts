@@ -1,5 +1,5 @@
 import { waitForTransactionReceipt } from 'wagmi/actions'
-import * as wagmiQuery from 'wagmi/query'
+import * as tanstackReactQuery from '@tanstack/react-query'
 import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useSendTransaction } from '@/hooks/useSendTransaction.js'
@@ -10,6 +10,14 @@ import { ethereumTxHash, safeAddress, safeTxHash, signerPrivateKeys } from '@tes
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey, QueryKey } from '@/constants.js'
 import { queryClient } from '@/queryClient.js'
+
+// This is necessary to set a spy on the `useMutation` function without getting the following error:
+// "TypeError: Cannot redefine property: useMutation"
+jest.mock('@tanstack/react-query', () => ({
+  __esModule: true,
+  // @ts-ignore
+  ...jest.requireActual('@tanstack/react-query')
+}))
 
 describe('useSendTransaction', () => {
   const transactionMock = { to: '0xABC', value: '0', data: '0x987' }
@@ -29,7 +37,7 @@ describe('useSendTransaction', () => {
 
   const useWaitForTransactionSpy = jest.spyOn(useWaitForTransaction, 'useWaitForTransaction')
   const useSignerClientSpy = jest.spyOn(useSignerClient, 'useSignerClient')
-  const useMutationSpy = jest.spyOn(wagmiQuery, 'useMutation')
+  const useMutationSpy = jest.spyOn(tanstackReactQuery, 'useMutation')
   const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries')
 
   const sendMock = jest.fn().mockResolvedValue(sendResponseMock)
