@@ -1,14 +1,9 @@
-import {
-  UseMutateAsyncFunction,
-  UseMutateFunction,
-  useMutation,
-  UseMutationResult
-} from '@tanstack/react-query'
+import { UseMutateAsyncFunction, UseMutateFunction, UseMutationResult } from '@tanstack/react-query'
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
-import { useSignerClient } from '@/hooks/useSignerClient.js'
+import { useSendTransaction } from '@/hooks/useSendTransaction.js'
+import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { MutationKey } from '@/constants.js'
-import { useSendTransaction } from './useSendTransaction.js'
 
 type UpdateThresholdVariables = { threshold: number }
 
@@ -35,26 +30,18 @@ export type UseUpdateThresholdReturnType = Omit<
 export function useUpdateThreshold(
   params: UseUpdateThresholdParams = {}
 ): UseUpdateThresholdReturnType {
-  const signerClient = useSignerClient({ config: params.config })
   const { sendTransactionAsync } = useSendTransaction({ config: params.config })
 
-  const mutationFn = async ({ threshold }: UpdateThresholdVariables) => {
-    if (!signerClient) {
-      throw new Error('Signer client is not available')
+  const { mutate, mutateAsync, ...result } = useSignerClientMutation<
+    SafeClientResult,
+    UpdateThresholdVariables
+  >({
+    ...params,
+    mutationKey: [MutationKey.AddOwner],
+    mutationSafeClientFn: async (signerClient, { threshold }) => {
+      const updateThresholdTx = await signerClient.protocolKit.createChangeThresholdTx(threshold)
+      return sendTransactionAsync({ transactions: [updateThresholdTx] })
     }
-
-    if (threshold === 0) {
-      throw new Error('Threshold needs to be greater than 0')
-    }
-
-    const updateThresholdTx = await signerClient.protocolKit.createChangeThresholdTx(threshold)
-
-    return sendTransactionAsync({ transactions: [updateThresholdTx] })
-  }
-
-  const { mutate, mutateAsync, ...result } = useMutation({
-    mutationFn,
-    mutationKey: [MutationKey.UpdateThreshold]
   })
 
   return { ...result, updateThreshold: mutate, updateThresholdAsync: mutateAsync }
