@@ -47,6 +47,7 @@ describe('useSendTransaction', () => {
       waitForTransactionIndexed: waitForTransactionIndexedMock,
       waitForTransactionReceipt: waitForTransactionReceiptMock
     })
+
     useSignerClientMutationSpy.mockImplementation(
       <SafeClientResult, SendTransactionVariables>({
         mutationSafeClientFn,
@@ -231,11 +232,11 @@ describe('useSendTransaction', () => {
       await waitFor(() => expect(result.current[fnName]).toEqual(expect.any(Function)))
 
       if (fnName === 'sendTransactionAsync') {
-        await expect(() => result.current[fnName]({ transactions: [] })).rejects.toThrow(error)
+        await expect(() =>
+          result.current[fnName]({ transactions: [transactionMock] })
+        ).rejects.toThrow(error)
       } else {
-        result.current[fnName]({
-          transactions: [transactionMock]
-        })
+        result.current[fnName]({ transactions: [transactionMock] })
 
         await waitFor(() => expect(result.current.isError).toEqual(true))
 

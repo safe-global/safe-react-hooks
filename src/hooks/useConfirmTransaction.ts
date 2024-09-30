@@ -1,17 +1,12 @@
-import {
-  UseMutateAsyncFunction,
-  UseMutateFunction,
-  useMutation,
-  UseMutationResult
-} from '@tanstack/react-query'
+import { UseMutateAsyncFunction, UseMutateFunction, UseMutationResult } from '@tanstack/react-query'
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
-import { useSignerClient } from '@/hooks/useSignerClient.js'
+import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { useWaitForTransaction } from '@/hooks/useWaitForTransaction.js'
 import { MutationKey, QueryKey } from '@/constants.js'
 import { invalidateQueries } from '@/queryClient.js'
 
-type ConfirmTransactionVariables = { safeTxHash: string }
+export type ConfirmTransactionVariables = { safeTxHash: string }
 
 export type UseConfirmTransactionParams = ConfigParam<SafeConfigWithSigner>
 export type UseConfirmTransactionReturnType = Omit<
@@ -45,37 +40,29 @@ export function useConfirmTransaction(
     config: params.config
   })
 
-  const signerClient = useSignerClient({ config: params.config })
+  const { mutate, mutateAsync, ...result } = useSignerClientMutation<
+    SafeClientResult,
+    ConfirmTransactionVariables
+  >({
+    ...params,
+    mutationKey: [MutationKey.ConfirmTransaction],
+    mutationSafeClientFn: async (signerClient, { safeTxHash }) => {
+      const result = await signerClient.confirm({ safeTxHash })
 
-  const mutationFn = async ({ safeTxHash }: ConfirmTransactionVariables) => {
-    if (!signerClient) {
-      throw new Error('Signer client is not available')
+      if (result.transactions?.ethereumTxHash) {
+        await waitForTransactionReceipt(result.transactions.ethereumTxHash)
+
+        invalidateQueries([QueryKey.PendingTransactions, QueryKey.SafeInfo])
+
+        await waitForTransactionIndexed(result.transactions)
+
+        invalidateQueries([QueryKey.Transactions])
+      } else if (result.transactions?.safeTxHash) {
+        invalidateQueries([QueryKey.PendingTransactions])
+      }
+
+      return result
     }
-
-    if (!safeTxHash.length) {
-      throw new Error('`safeTxHash` parameter must not be empty')
-    }
-
-    const result = await signerClient.confirm({ safeTxHash })
-
-    if (result.transactions?.ethereumTxHash) {
-      await waitForTransactionReceipt(result.transactions.ethereumTxHash)
-
-      invalidateQueries([QueryKey.PendingTransactions, QueryKey.SafeInfo])
-
-      await waitForTransactionIndexed(result.transactions)
-
-      invalidateQueries([QueryKey.Transactions])
-    } else if (result.transactions?.safeTxHash) {
-      invalidateQueries([QueryKey.PendingTransactions])
-    }
-
-    return result
-  }
-
-  const { mutate, mutateAsync, ...result } = useMutation({
-    mutationFn,
-    mutationKey: [MutationKey.ConfirmTransaction]
   })
 
   return { ...result, confirmTransaction: mutate, confirmTransactionAsync: mutateAsync }

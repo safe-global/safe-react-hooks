@@ -1,23 +1,15 @@
 import { waitForTransactionReceipt } from 'wagmi/actions'
-import * as tanstackReactQuery from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useConfirmTransaction } from '@/hooks/useConfirmTransaction.js'
 import * as useWaitForTransaction from '@/hooks/useWaitForTransaction.js'
-import * as useSignerClient from '@/hooks/useSignerClient.js'
+import * as useSignerClientMutation from '@/hooks/useSignerClientMutation.js'
 import { configExistingSafe } from '@test/config.js'
 import { ethereumTxHash, safeAddress, safeTxHash, signerPrivateKeys } from '@test/fixtures/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey, QueryKey } from '@/constants.js'
 import { queryClient } from '@/queryClient.js'
-
-// This is necessary to set a spy on the `useMutation` function without getting the following error:
-// "TypeError: Cannot redefine property: useMutation"
-jest.mock('@tanstack/react-query', () => ({
-  __esModule: true,
-  // @ts-ignore
-  ...jest.requireActual('@tanstack/react-query')
-}))
 
 describe('useConfirmTransaction', () => {
   const confirmResponseMock = {
@@ -34,12 +26,11 @@ describe('useConfirmTransaction', () => {
   }
 
   const useWaitForTransactionSpy = jest.spyOn(useWaitForTransaction, 'useWaitForTransaction')
-  const useSignerClientSpy = jest.spyOn(useSignerClient, 'useSignerClient')
-  const useMutationSpy = jest.spyOn(tanstackReactQuery, 'useMutation')
+  const useSignerClientMutationSpy = jest.spyOn(useSignerClientMutation, 'useSignerClientMutation')
   const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries')
 
   const confirmMock = jest.fn().mockResolvedValue(confirmResponseMock)
-  const safeClientMock = { confirm: confirmMock }
+  const signerClientMock = { confirm: confirmMock } as unknown as SafeClient
 
   const waitForTransactionReceiptMock = jest.fn(
     () =>
@@ -54,7 +45,21 @@ describe('useConfirmTransaction', () => {
       waitForTransactionIndexed: waitForTransactionIndexedMock,
       waitForTransactionReceipt: waitForTransactionReceiptMock
     })
-    useSignerClientSpy.mockReturnValue(safeClientMock as unknown as SafeClient)
+
+    useSignerClientMutationSpy.mockImplementation(
+      <SafeClientResult, ConfirmTransactionVariables>({
+        mutationSafeClientFn,
+        mutationKey
+      }: useSignerClientMutation.UseSignerClientMutationParams<
+        SafeClientResult,
+        ConfirmTransactionVariables
+      >) =>
+        useMutation({
+          mutationKey,
+          mutationFn: (params: ConfirmTransactionVariables) =>
+            mutationSafeClientFn(signerClientMock, params)
+        })
+    )
   })
 
   afterEach(() => {
@@ -68,8 +73,12 @@ describe('useConfirmTransaction', () => {
     const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction(params))
     await waitFor(() => expect(result.current.isIdle).toEqual(true))
 
-    expect(useSignerClientSpy).toHaveBeenCalledTimes(1)
-    expect(useSignerClientSpy).toHaveBeenCalledWith(params)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(1)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
+      ...params,
+      mutationKey: [MutationKey.ConfirmTransaction],
+      mutationSafeClientFn: expect.any(Function)
+    })
 
     expect(confirmMock).toHaveBeenCalledTimes(0)
   })
@@ -97,44 +106,59 @@ describe('useConfirmTransaction', () => {
       confirmTransactionAsync: expect.any(Function)
     })
 
-    expect(useMutationSpy).toHaveBeenCalledTimes(1)
-    expect(useMutationSpy).toHaveBeenCalledWith({
-      mutationFn: expect.any(Function),
-      mutationKey: [MutationKey.ConfirmTransaction]
-    })
-
     expect(confirmMock).toHaveBeenCalledTimes(0)
   })
 
-  describe('confirmTransaction', () => {
-    it('should call `cofirm` from signer client', async () => {
+  it.each<'confirmTransaction' | 'confirmTransactionAsync'>([
+    'confirmTransaction',
+    'confirmTransactionAsync'
+  ])(
+    'calling `%s` should call `confirm` from signer client with the provided safeTxHash',
+    async (fnName) => {
       const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction())
 
-      await waitFor(() => expect(result.current.confirmTransaction).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current[fnName]).toEqual(expect.any(Function)))
 
-      result.current.confirmTransaction({ safeTxHash })
+      expect(confirmMock).toHaveBeenCalledTimes(0)
 
-      await waitFor(() => expect(result.current.isSuccess).toEqual(true))
+      const confirmResult = await result.current[fnName]({ safeTxHash })
 
-      expect(result.current.isIdle).toEqual(false)
-      expect(result.current.isPending).toEqual(false)
-      expect(result.current.isError).toEqual(false)
-      expect(result.current.isSuccess).toEqual(true)
-      expect(result.current.data).toEqual(confirmResponseMock)
-      expect(result.current.error).toEqual(null)
+      if (fnName === 'confirmTransactionAsync') {
+        expect(confirmResult).toEqual(confirmResponseMock)
+      }
+
+      await waitFor(() => expect(result.current.isSuccess).toBeTruthy())
+
+      expect(result.current).toMatchObject({
+        isSuccess: true,
+        isIdle: false,
+        isPending: false,
+        isError: false,
+        data: confirmResponseMock
+      })
 
       expect(confirmMock).toHaveBeenCalledTimes(1)
       expect(confirmMock).toHaveBeenCalledWith({ safeTxHash })
-    })
+    }
+  )
 
-    it('should invalidate queries for SafeInfo, PendingTransactions + Transactions if result contains `ethereumTxHash`', async () => {
+  it.each<'confirmTransaction' | 'confirmTransactionAsync'>([
+    'confirmTransaction',
+    'confirmTransactionAsync'
+  ])(
+    'calling `%s` should invalidate queries for SafeInfo, PendingTransactions + Transactions if result contains `ethereumTxHash`',
+    async (fnName) => {
       const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction())
 
-      await waitFor(() => expect(result.current.confirmTransaction).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current[fnName]).toEqual(expect.any(Function)))
 
-      result.current.confirmTransaction({ safeTxHash })
+      const confirmResult = await result.current[fnName]({ safeTxHash })
 
-      await waitFor(() => expect(result.current.isSuccess).toEqual(true))
+      if (fnName === 'confirmTransactionAsync') {
+        expect(confirmResult).toEqual(confirmResponseMock)
+      }
+
+      await waitFor(() => expect(result.current.isSuccess).toBeTruthy())
 
       expect(waitForTransactionReceiptMock).toHaveBeenCalledTimes(1)
       expect(waitForTransactionReceiptMock).toHaveBeenCalledWith(
@@ -146,12 +170,6 @@ describe('useConfirmTransaction', () => {
 
       expect(invalidateQueriesSpy).toHaveBeenCalledTimes(8)
 
-      expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(1, {
-        queryKey: [QueryKey.PendingTransactions]
-      })
-      expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(2, {
-        queryKey: [QueryKey.SafeInfo]
-      })
       expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(3, {
         queryKey: [QueryKey.Address]
       })
@@ -170,18 +188,29 @@ describe('useConfirmTransaction', () => {
       expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(8, {
         queryKey: [QueryKey.Transactions]
       })
-    })
+    }
+  )
 
-    it('should invalidate queries for PendingTransactions if result contains `safeTxHash`', async () => {
-      confirmMock.mockResolvedValueOnce({ ...confirmResponseMock, transactions: { safeTxHash } })
+  it.each<'confirmTransaction' | 'confirmTransactionAsync'>([
+    'confirmTransaction',
+    'confirmTransactionAsync'
+  ])(
+    'calling `%s` should invalidate queries for PendingTransactions if result contains `safeTxHash`',
+    async (fnName) => {
+      const confirmResponseWithSafeTxHash = { ...confirmResponseMock, transactions: { safeTxHash } }
+      confirmMock.mockResolvedValueOnce(confirmResponseWithSafeTxHash)
 
       const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction())
 
-      await waitFor(() => expect(result.current.confirmTransaction).toEqual(expect.any(Function)))
+      await waitFor(() => expect(result.current[fnName]).toEqual(expect.any(Function)))
 
-      result.current.confirmTransaction({ safeTxHash })
+      const confirmResult = await result.current[fnName]({ safeTxHash })
 
-      await waitFor(() => expect(result.current.isSuccess).toEqual(true))
+      if (fnName === 'confirmTransactionAsync') {
+        expect(confirmResult).toEqual(confirmResponseWithSafeTxHash)
+      }
+
+      await waitFor(() => expect(result.current.isSuccess).toBeTruthy())
 
       expect(waitForTransactionReceiptMock).not.toHaveBeenCalled()
       expect(waitForTransactionIndexedMock).not.toHaveBeenCalled()
@@ -190,93 +219,39 @@ describe('useConfirmTransaction', () => {
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
         queryKey: [QueryKey.PendingTransactions]
       })
-    })
+    }
+  )
 
-    it('should return error if signer client is not connected', async () => {
-      useSignerClientSpy.mockReturnValueOnce(undefined)
+  it.each<'confirmTransaction' | 'confirmTransactionAsync'>([
+    'confirmTransaction',
+    'confirmTransactionAsync'
+  ])('calling `%s` should return error data if the `confirm` request fails', async (fnName) => {
+    const error = new Error('Confirm transaction failed :(')
+    confirmMock.mockRejectedValueOnce(error)
 
-      const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction())
+    const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction())
 
-      await waitFor(() => expect(result.current.confirmTransaction).toEqual(expect.any(Function)))
+    await waitFor(() => expect(result.current[fnName]).toEqual(expect.any(Function)))
 
-      result.current.confirmTransaction({ safeTxHash })
-
-      await waitFor(() => expect(result.current.isError).toEqual(true))
-
-      expect(result.current.isIdle).toEqual(false)
-      expect(result.current.isPending).toEqual(false)
-      expect(result.current.isError).toEqual(true)
-      expect(result.current.isSuccess).toEqual(false)
-      expect(result.current.data).toEqual(undefined)
-      expect(result.current.error).toEqual(new Error('Signer client is not available'))
-
-      expect(confirmMock).toHaveBeenCalledTimes(0)
-    })
-
-    it('should return error if passed `safeTxHash` is an empty string', async () => {
-      const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction())
-
-      await waitFor(() => expect(result.current.confirmTransaction).toEqual(expect.any(Function)))
-
-      result.current.confirmTransaction({ safeTxHash: '' })
+    if (fnName === 'confirmTransactionAsync') {
+      await expect(() => result.current[fnName]({ safeTxHash })).rejects.toThrow(error)
+    } else {
+      result.current[fnName]({ safeTxHash })
 
       await waitFor(() => expect(result.current.isError).toEqual(true))
 
-      expect(result.current.isIdle).toEqual(false)
-      expect(result.current.isPending).toEqual(false)
-      expect(result.current.isError).toEqual(true)
-      expect(result.current.isSuccess).toEqual(false)
-      expect(result.current.data).toEqual(undefined)
-      expect(result.current.error).toEqual(new Error('`safeTxHash` parameter must not be empty'))
+      expect(result.current).toMatchObject({
+        isSuccess: false,
+        isIdle: false,
+        isPending: false,
+        isError: true,
+        data: undefined,
+        error
+      })
+    }
 
-      expect(confirmMock).toHaveBeenCalledTimes(0)
-    })
-  })
-
-  describe('confirmTransactionAsync', () => {
-    it('should call `confirm` from signer client and resolve with result', async () => {
-      const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction())
-
-      await waitFor(() =>
-        expect(result.current.confirmTransactionAsync).toEqual(expect.any(Function))
-      )
-
-      const sendResult = await result.current.confirmTransactionAsync({ safeTxHash })
-
-      expect(sendResult).toEqual(confirmResponseMock)
-
-      expect(confirmMock).toHaveBeenCalledTimes(1)
-      expect(confirmMock).toHaveBeenCalledWith({ safeTxHash })
-    })
-
-    it('should return error if signer client is not connected', async () => {
-      useSignerClientSpy.mockReturnValueOnce(undefined)
-
-      const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction())
-
-      await waitFor(() =>
-        expect(result.current.confirmTransactionAsync).toEqual(expect.any(Function))
-      )
-
-      expect(() => result.current.confirmTransactionAsync({ safeTxHash })).rejects.toThrow(
-        'Signer client is not available'
-      )
-
-      expect(confirmMock).toHaveBeenCalledTimes(0)
-    })
-
-    it('should return error if passed `safeTxHash` is an empty string', async () => {
-      const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction())
-
-      await waitFor(() =>
-        expect(result.current.confirmTransactionAsync).toEqual(expect.any(Function))
-      )
-
-      expect(() => result.current.confirmTransactionAsync({ safeTxHash: '' })).rejects.toThrow(
-        '`safeTxHash` parameter must not be empty'
-      )
-
-      expect(confirmMock).toHaveBeenCalledTimes(0)
-    })
+    expect(waitForTransactionReceiptMock).not.toHaveBeenCalled()
+    expect(waitForTransactionIndexedMock).not.toHaveBeenCalled()
+    expect(invalidateQueriesSpy).not.toHaveBeenCalled()
   })
 })
