@@ -84,7 +84,7 @@ export function getCustomMutationResult<
     [`${mutateFnName}Async`]: mutate,
     ...(status === 'success' && data ? { data, variables } : {}),
     ...(status === 'error' && error ? { error, failureReason: error, variables } : {})
-  } as TResult & {
+  } as Omit<TResult, 'mutate'> & {
     [k in TMutateFnName]: typeof mutate
   } & {
     [key in `${TMutateFnName}Async`]: typeof mutate
