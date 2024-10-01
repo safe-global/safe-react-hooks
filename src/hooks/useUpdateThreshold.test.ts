@@ -5,44 +5,36 @@ import { useUpdateThreshold } from '@/hooks/useUpdateThreshold.js'
 import * as useSendTransaction from '@/hooks/useSendTransaction.js'
 import * as useSignerClientMutation from '@/hooks/useSignerClientMutation.js'
 import { ethereumTxHash, safeMultisigTransaction, signerPrivateKeys } from '@test/fixtures/index.js'
-import { MutationKey } from '@/constants.js'
 import { configPredictedSafe } from '@test/config.js'
+import { getCustomMutationResult } from '@test/fixtures/mutationResult.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
+import { MutationKey } from '@/constants.js'
 
 describe('useUpdateThreshold', () => {
   const threshold = 2
+  const changeThresholdTxMock = safeMultisigTransaction
+  const sendTransactionResultMock = ethereumTxHash
+
+  const mutateFnName = 'updateThreshold'
+  const variables = { threshold }
+  const mutationIdleResult = getCustomMutationResult({ status: 'idle', mutateFnName })
+  const mutationSuccessResult = getCustomMutationResult({
+    status: 'success',
+    mutateFnName,
+    data: sendTransactionResultMock,
+    variables
+  })
 
   const useSendTransactionSpy = jest.spyOn(useSendTransaction, 'useSendTransaction')
   const useSignerClientMutationSpy = jest.spyOn(useSignerClientMutation, 'useSignerClientMutation')
 
-  const updateThresholdResultMock = safeMultisigTransaction
-  const createChangeThresholdTxMock = jest.fn().mockResolvedValue(updateThresholdResultMock)
+  const createChangeThresholdTxMock = jest.fn().mockResolvedValue(changeThresholdTxMock)
 
-  const sendTransactionResultMock = ethereumTxHash
   const sendTransactionAsyncMock = jest.fn().mockResolvedValue(sendTransactionResultMock)
 
   const signerClientMock = {
     protocolKit: { createChangeThresholdTx: createChangeThresholdTxMock }
   } as unknown as SafeClient
-
-  const mutationIdleResult = {
-    updateThreshold: expect.any(Function),
-    updateThresholdAsync: expect.any(Function),
-    isIdle: true,
-    isPaused: false,
-    isPending: false,
-    isSuccess: false,
-    reset: expect.any(Function),
-    status: 'idle',
-    submittedAt: 0,
-    variables: undefined,
-    context: undefined,
-    data: undefined,
-    error: null,
-    failureCount: 0,
-    failureReason: null,
-    isError: false
-  }
 
   beforeEach(() => {
     useSignerClientMutationSpy.mockImplementation(
@@ -130,43 +122,30 @@ describe('useUpdateThreshold', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy())
 
-      expect(result.current.data).toEqual(sendTransactionResultMock)
+      expect(result.current).toEqual(mutationSuccessResult)
 
       expect(createChangeThresholdTxMock).toHaveBeenCalledTimes(1)
       expect(createChangeThresholdTxMock).toHaveBeenCalledWith(threshold)
 
       expect(sendTransactionAsyncMock).toHaveBeenCalledTimes(1)
       expect(sendTransactionAsyncMock).toHaveBeenCalledWith({
-        transactions: [safeMultisigTransaction]
+        transactions: [changeThresholdTxMock]
       })
     }
   )
 
   describe('should return error data', () => {
-    const getMutationErrorResult = (error: Error) => ({
-      context: undefined,
-      isIdle: false,
-      isPaused: false,
-      isPending: false,
-      isSuccess: false,
-      status: 'error',
-      data: undefined,
-      error,
-      failureCount: 1,
-      failureReason: error,
-      isError: true,
-      reset: expect.any(Function),
-      submittedAt: expect.any(Number),
-      variables: { threshold },
-      updateThreshold: expect.any(Function),
-      updateThresholdAsync: expect.any(Function)
-    })
-
     it.each<'updateThreshold' | 'updateThresholdAsync'>([
       'updateThreshold',
       'updateThresholdAsync'
     ])('if creating a transaction for updating the thresholds fails for `%s`', async (fnName) => {
       const error = new Error('Error creating transaction')
+      const mutationErrorResult = getCustomMutationResult({
+        status: 'error',
+        mutateFnName,
+        error,
+        variables
+      })
 
       createChangeThresholdTxMock.mockRejectedValueOnce(error)
 
@@ -180,7 +159,7 @@ describe('useUpdateThreshold', () => {
 
       await waitFor(() => expect(result.current.isError).toBeTruthy())
 
-      expect(result.current).toEqual(getMutationErrorResult(error))
+      expect(result.current).toEqual(mutationErrorResult)
 
       expect(createChangeThresholdTxMock).toHaveBeenCalledTimes(1)
       expect(createChangeThresholdTxMock).toHaveBeenCalledWith(threshold)
@@ -190,6 +169,12 @@ describe('useUpdateThreshold', () => {
 
     it('if sending the threshold update transaction fails', async () => {
       const error = new Error('Error sending transaction')
+      const mutationErrorResult = getCustomMutationResult({
+        status: 'error',
+        mutateFnName,
+        error,
+        variables
+      })
 
       sendTransactionAsyncMock.mockRejectedValueOnce(error)
 
@@ -199,14 +184,14 @@ describe('useUpdateThreshold', () => {
 
       await waitFor(() => expect(result.current.isError).toBeTruthy())
 
-      expect(result.current).toEqual(getMutationErrorResult(error))
+      expect(result.current).toEqual(mutationErrorResult)
 
       expect(createChangeThresholdTxMock).toHaveBeenCalledTimes(1)
       expect(createChangeThresholdTxMock).toHaveBeenCalledWith(threshold)
 
       expect(sendTransactionAsyncMock).toHaveBeenCalledTimes(1)
       expect(sendTransactionAsyncMock).toHaveBeenCalledWith({
-        transactions: [safeMultisigTransaction]
+        transactions: [changeThresholdTxMock]
       })
     })
   })

@@ -6,6 +6,7 @@ import * as useWaitForTransaction from '@/hooks/useWaitForTransaction.js'
 import * as useSignerClientMutation from '@/hooks/useSignerClientMutation.js'
 import { configExistingSafe } from '@test/config.js'
 import { ethereumTxHash, safeAddress, safeTxHash, signerPrivateKeys } from '@test/fixtures/index.js'
+import { getCustomMutationResult } from '@test/fixtures/mutationResult.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey, QueryKey } from '@/constants.js'
 import { queryClient } from '@/queryClient.js'
@@ -26,6 +27,20 @@ describe('useSendTransaction', () => {
     safeOperations: undefined,
     safeAccountDeployment: undefined
   }
+
+  const mutateFnName = 'sendTransaction'
+  const variables = { transactions: [transactionMock] }
+
+  const mutationIdleResult = getCustomMutationResult({
+    status: 'idle',
+    mutateFnName
+  })
+  const mutationSuccessResult = getCustomMutationResult({
+    status: 'success',
+    mutateFnName,
+    data: sendResponseMock,
+    variables
+  })
 
   const useWaitForTransactionSpy = jest.spyOn(useWaitForTransaction, 'useWaitForTransaction')
   const useSignerClientMutationSpy = jest.spyOn(useSignerClientMutation, 'useSignerClientMutation')
@@ -89,24 +104,7 @@ describe('useSendTransaction', () => {
     const { result } = renderHookInQueryClientProvider(() => useSendTransaction())
     await waitFor(() => expect(result.current.isIdle).toEqual(true))
 
-    expect(result.current).toEqual({
-      context: undefined,
-      data: undefined,
-      error: null,
-      failureCount: 0,
-      failureReason: null,
-      isPaused: false,
-      status: 'idle',
-      variables: undefined,
-      submittedAt: 0,
-      isPending: false,
-      isSuccess: false,
-      isError: false,
-      isIdle: true,
-      reset: expect.any(Function),
-      sendTransaction: expect.any(Function),
-      sendTransactionAsync: expect.any(Function)
-    })
+    expect(result.current).toEqual(mutationIdleResult)
 
     expect(sendMock).toHaveBeenCalledTimes(0)
   })
@@ -120,9 +118,7 @@ describe('useSendTransaction', () => {
 
       expect(sendMock).toHaveBeenCalledTimes(0)
 
-      const sendResult = await result.current[fnName]({
-        transactions: [transactionMock]
-      })
+      const sendResult = await result.current[fnName](variables)
 
       if (fnName === 'sendTransactionAsync') {
         expect(sendResult).toEqual(sendResponseMock)
@@ -130,13 +126,7 @@ describe('useSendTransaction', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy())
 
-      expect(result.current).toMatchObject({
-        isSuccess: true,
-        isIdle: false,
-        isPending: false,
-        isError: false,
-        data: sendResponseMock
-      })
+      expect(result.current).toEqual(mutationSuccessResult)
 
       expect(sendMock).toHaveBeenCalledTimes(1)
       expect(sendMock).toHaveBeenCalledWith({ transactions: [transactionMock] })
@@ -225,6 +215,13 @@ describe('useSendTransaction', () => {
     'calling `%s` should return error data if the `send` request fails',
     async (fnName) => {
       const error = new Error('Send transaction failed :(')
+      const mutationErrorResult = getCustomMutationResult({
+        status: 'error',
+        mutateFnName,
+        error,
+        variables
+      })
+
       sendMock.mockRejectedValueOnce(error)
 
       const { result } = renderHookInQueryClientProvider(() => useSendTransaction())
@@ -232,22 +229,13 @@ describe('useSendTransaction', () => {
       await waitFor(() => expect(result.current[fnName]).toEqual(expect.any(Function)))
 
       if (fnName === 'sendTransactionAsync') {
-        await expect(() =>
-          result.current[fnName]({ transactions: [transactionMock] })
-        ).rejects.toThrow(error)
+        await expect(() => result.current[fnName](variables)).rejects.toThrow(error)
       } else {
-        result.current[fnName]({ transactions: [transactionMock] })
+        result.current[fnName](variables)
 
         await waitFor(() => expect(result.current.isError).toEqual(true))
 
-        expect(result.current).toMatchObject({
-          isSuccess: false,
-          isIdle: false,
-          isPending: false,
-          isError: true,
-          data: undefined,
-          error
-        })
+        expect(result.current).toEqual(mutationErrorResult)
       }
 
       expect(waitForTransactionReceiptMock).not.toHaveBeenCalled()

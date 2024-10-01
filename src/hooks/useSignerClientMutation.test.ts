@@ -6,6 +6,7 @@ import * as useSignerClient from '@/hooks/useSignerClient.js'
 import * as useConfig from '@/hooks/useConfig.js'
 import { configExistingSafe } from '@test/config.js'
 import { safeMultisigTransaction, signerPrivateKeys } from '@test/fixtures/index.js'
+import { getCustomMutationResult } from '@test/fixtures/mutationResult.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 
 // This is necessary to set a spy on the `useMutation` function without getting the following error:
@@ -22,6 +23,15 @@ describe('useSignerClientMutation', () => {
   const useMutationSpy = jest.spyOn(tanstackQuery, 'useMutation')
 
   const createAddOwnerTxMock = jest.fn().mockResolvedValue(safeMultisigTransaction)
+
+  const variables = 'test'
+  const mutationIdleResult = getCustomMutationResult({ status: 'idle', mutateFnName: 'mutate' })
+  const mutationSuccessResult = getCustomMutationResult({
+    status: 'success',
+    mutateFnName: 'mutate',
+    data: safeMultisigTransaction,
+    variables
+  })
 
   const signerClientMock = { protocolKit: { createAddOwnerTx: createAddOwnerTxMock } }
   const mutationKeyMock = 'test-mutation-key'
@@ -71,24 +81,7 @@ describe('useSignerClientMutation', () => {
     )
     await waitFor(() => expect(result.current.isIdle).toEqual(true))
 
-    expect(result.current).toEqual({
-      context: undefined,
-      data: undefined,
-      error: null,
-      failureCount: 0,
-      failureReason: null,
-      isPaused: false,
-      status: 'idle',
-      variables: undefined,
-      submittedAt: 0,
-      isPending: false,
-      isSuccess: false,
-      isError: false,
-      isIdle: true,
-      reset: expect.any(Function),
-      mutate: expect.any(Function),
-      mutateAsync: expect.any(Function)
-    })
+    expect(result.current).toEqual(mutationIdleResult)
 
     expect(useMutationSpy).toHaveBeenCalledTimes(1)
     expect(useMutationSpy).toHaveBeenCalledWith({
@@ -111,16 +104,11 @@ describe('useSignerClientMutation', () => {
 
       await waitFor(() => expect(result.current.mutate).toEqual(expect.any(Function)))
 
-      result.current.mutate('test')
+      result.current.mutate(variables)
 
       await waitFor(() => expect(result.current.isSuccess).toEqual(true))
 
-      expect(result.current.isIdle).toEqual(false)
-      expect(result.current.isPending).toEqual(false)
-      expect(result.current.isError).toEqual(false)
-      expect(result.current.isSuccess).toEqual(true)
-      expect(result.current.data).toEqual(safeMultisigTransaction)
-      expect(result.current.error).toEqual(null)
+      expect(result.current).toEqual(mutationSuccessResult)
 
       expect(mutationSafeClientFnMock).toHaveBeenCalledTimes(1)
       expect(mutationSafeClientFnMock).toHaveBeenCalledWith(signerClientMock, 'test')
@@ -130,6 +118,14 @@ describe('useSignerClientMutation', () => {
     })
 
     it('should return error data if signer client is not connected', async () => {
+      const error = new Error('Signer client is not available')
+      const mutationErrorResult = getCustomMutationResult({
+        status: 'error',
+        mutateFnName: 'mutate',
+        error,
+        variables
+      })
+
       useSignerClientSpy.mockReturnValueOnce(undefined)
 
       const { result } = renderHookInQueryClientProvider(() =>
@@ -141,22 +137,25 @@ describe('useSignerClientMutation', () => {
 
       await waitFor(() => expect(result.current.mutate).toEqual(expect.any(Function)))
 
-      result.current.mutate('test')
+      result.current.mutate(variables)
 
       await waitFor(() => expect(result.current.isError).toEqual(true))
 
-      expect(result.current.isIdle).toEqual(false)
-      expect(result.current.isPending).toEqual(false)
-      expect(result.current.isError).toEqual(true)
-      expect(result.current.isSuccess).toEqual(false)
-      expect(result.current.data).toEqual(undefined)
-      expect(result.current.error).toEqual(new Error('Signer client is not available'))
+      expect(result.current).toEqual(mutationErrorResult)
 
       expect(mutationSafeClientFnMock).toHaveBeenCalledTimes(0)
       expect(createAddOwnerTxMock).toHaveBeenCalledTimes(0)
     })
 
     it('should return error data if the request fails', async () => {
+      const error = new Error('Error :(')
+      const mutationErrorResult = getCustomMutationResult({
+        status: 'error',
+        mutateFnName: 'mutate',
+        error,
+        variables
+      })
+
       createAddOwnerTxMock.mockRejectedValueOnce(new Error('Error :('))
 
       const { result } = renderHookInQueryClientProvider(() =>
@@ -168,24 +167,17 @@ describe('useSignerClientMutation', () => {
 
       await waitFor(() => expect(result.current.mutate).toEqual(expect.any(Function)))
 
-      result.current.mutate('test')
+      result.current.mutate(variables)
 
       await waitFor(() => expect(result.current.isError).toEqual(true))
 
-      expect(result.current).toMatchObject({
-        data: undefined,
-        status: 'error',
-        isError: true,
-        isSuccess: false,
-        isPending: false,
-        error: new Error('Error :(')
-      })
+      expect(result.current).toEqual(mutationErrorResult)
 
       expect(mutationSafeClientFnMock).toHaveBeenCalledTimes(1)
-      expect(mutationSafeClientFnMock).toHaveBeenCalledWith(signerClientMock, 'test')
+      expect(mutationSafeClientFnMock).toHaveBeenCalledWith(signerClientMock, variables)
 
       expect(createAddOwnerTxMock).toHaveBeenCalledTimes(1)
-      expect(createAddOwnerTxMock).toHaveBeenCalledWith('test')
+      expect(createAddOwnerTxMock).toHaveBeenCalledWith(variables)
     })
   })
 
@@ -200,15 +192,15 @@ describe('useSignerClientMutation', () => {
 
       await waitFor(() => expect(result.current.mutateAsync).toEqual(expect.any(Function)))
 
-      const sendResult = await result.current.mutateAsync('test')
+      const sendResult = await result.current.mutateAsync(variables)
 
       expect(sendResult).toEqual(safeMultisigTransaction)
 
       expect(mutationSafeClientFnMock).toHaveBeenCalledTimes(1)
-      expect(mutationSafeClientFnMock).toHaveBeenCalledWith(signerClientMock, 'test')
+      expect(mutationSafeClientFnMock).toHaveBeenCalledWith(signerClientMock, variables)
 
       expect(createAddOwnerTxMock).toHaveBeenCalledTimes(1)
-      expect(createAddOwnerTxMock).toHaveBeenCalledWith('test')
+      expect(createAddOwnerTxMock).toHaveBeenCalledWith(variables)
     })
 
     it('should return error if signer client is not connected', async () => {
@@ -223,7 +215,7 @@ describe('useSignerClientMutation', () => {
 
       await waitFor(() => expect(result.current.mutateAsync).toEqual(expect.any(Function)))
 
-      await expect(() => result.current.mutateAsync('test')).rejects.toThrow(
+      await expect(() => result.current.mutateAsync(variables)).rejects.toThrow(
         'Signer client is not available'
       )
 
@@ -243,13 +235,13 @@ describe('useSignerClientMutation', () => {
 
       await waitFor(() => expect(result.current.mutateAsync).toEqual(expect.any(Function)))
 
-      await expect(() => result.current.mutateAsync('test')).rejects.toThrow('Error :(')
+      await expect(() => result.current.mutateAsync(variables)).rejects.toThrow('Error :(')
 
       expect(mutationSafeClientFnMock).toHaveBeenCalledTimes(1)
-      expect(mutationSafeClientFnMock).toHaveBeenCalledWith(signerClientMock, 'test')
+      expect(mutationSafeClientFnMock).toHaveBeenCalledWith(signerClientMock, variables)
 
       expect(createAddOwnerTxMock).toHaveBeenCalledTimes(1)
-      expect(createAddOwnerTxMock).toHaveBeenCalledWith('test')
+      expect(createAddOwnerTxMock).toHaveBeenCalledWith(variables)
     })
   })
 })

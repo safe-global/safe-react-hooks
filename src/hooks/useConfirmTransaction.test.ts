@@ -7,6 +7,7 @@ import * as useWaitForTransaction from '@/hooks/useWaitForTransaction.js'
 import * as useSignerClientMutation from '@/hooks/useSignerClientMutation.js'
 import { configExistingSafe } from '@test/config.js'
 import { ethereumTxHash, safeAddress, safeTxHash, signerPrivateKeys } from '@test/fixtures/index.js'
+import { getCustomMutationResult } from '@test/fixtures/mutationResult.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey, QueryKey } from '@/constants.js'
 import { queryClient } from '@/queryClient.js'
@@ -24,6 +25,19 @@ describe('useConfirmTransaction', () => {
     safeOperations: undefined,
     safeAccountDeployment: undefined
   }
+
+  const mutateFnName = 'confirmTransaction'
+  const variables = { safeTxHash }
+  const mutationIdleResult = getCustomMutationResult({
+    status: 'idle',
+    mutateFnName
+  })
+  const mutationSuccessResult = getCustomMutationResult({
+    status: 'success',
+    mutateFnName,
+    data: confirmResponseMock,
+    variables
+  })
 
   const useWaitForTransactionSpy = jest.spyOn(useWaitForTransaction, 'useWaitForTransaction')
   const useSignerClientMutationSpy = jest.spyOn(useSignerClientMutation, 'useSignerClientMutation')
@@ -87,24 +101,7 @@ describe('useConfirmTransaction', () => {
     const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction())
     await waitFor(() => expect(result.current.isIdle).toEqual(true))
 
-    expect(result.current).toEqual({
-      context: undefined,
-      data: undefined,
-      error: null,
-      failureCount: 0,
-      failureReason: null,
-      isPaused: false,
-      status: 'idle',
-      variables: undefined,
-      submittedAt: 0,
-      isPending: false,
-      isSuccess: false,
-      isError: false,
-      isIdle: true,
-      reset: expect.any(Function),
-      confirmTransaction: expect.any(Function),
-      confirmTransactionAsync: expect.any(Function)
-    })
+    expect(result.current).toEqual(mutationIdleResult)
 
     expect(confirmMock).toHaveBeenCalledTimes(0)
   })
@@ -129,13 +126,7 @@ describe('useConfirmTransaction', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBeTruthy())
 
-      expect(result.current).toMatchObject({
-        isSuccess: true,
-        isIdle: false,
-        isPending: false,
-        isError: false,
-        data: confirmResponseMock
-      })
+      expect(result.current).toEqual(mutationSuccessResult)
 
       expect(confirmMock).toHaveBeenCalledTimes(1)
       expect(confirmMock).toHaveBeenCalledWith({ safeTxHash })
@@ -227,6 +218,13 @@ describe('useConfirmTransaction', () => {
     'confirmTransactionAsync'
   ])('calling `%s` should return error data if the `confirm` request fails', async (fnName) => {
     const error = new Error('Confirm transaction failed :(')
+    const mutationErrorResult = getCustomMutationResult({
+      status: 'error',
+      mutateFnName,
+      error,
+      variables
+    })
+
     confirmMock.mockRejectedValueOnce(error)
 
     const { result } = renderHookInQueryClientProvider(() => useConfirmTransaction())
@@ -240,14 +238,7 @@ describe('useConfirmTransaction', () => {
 
       await waitFor(() => expect(result.current.isError).toEqual(true))
 
-      expect(result.current).toMatchObject({
-        isSuccess: false,
-        isIdle: false,
-        isPending: false,
-        isError: true,
-        data: undefined,
-        error
-      })
+      expect(result.current).toEqual(mutationErrorResult)
     }
 
     expect(waitForTransactionReceiptMock).not.toHaveBeenCalled()
