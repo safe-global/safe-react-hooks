@@ -142,7 +142,7 @@ describe('useAddOwner', () => {
     it.each<'addOwner' | 'addOwnerAsync'>(['addOwner', 'addOwnerAsync'])(
       'if creating a transaction for adding an owner fails for `%s`',
       async (fnName) => {
-        const error = new Error('Error creating transaction')
+        const error = new Error('Error creating add owner transaction')
         const mutationErrorResult = getCustomMutationResult({
           status: 'error',
           mutateFnName,
@@ -171,32 +171,39 @@ describe('useAddOwner', () => {
       }
     )
 
-    it('if sending the threshold add owner transaction fails', async () => {
-      const error = new Error('Error sending transaction')
-      const mutationErrorResult = getCustomMutationResult({
-        status: 'error',
-        mutateFnName,
-        error,
-        variables
-      })
+    it.each<'addOwner' | 'addOwnerAsync'>(['addOwner', 'addOwnerAsync'])(
+      'if sending a transaction for adding an owner fails for `%s`',
+      async (fnName) => {
+        const error = new Error('Error sending add owner transaction')
+        const mutationErrorResult = getCustomMutationResult({
+          status: 'error',
+          mutateFnName,
+          error,
+          variables
+        })
 
-      sendTransactionAsyncMock.mockRejectedValueOnce(error)
+        sendTransactionAsyncMock.mockRejectedValueOnce(error)
 
-      const { result } = renderHookInQueryClientProvider(() => useAddOwner())
+        const { result } = renderHookInQueryClientProvider(() => useAddOwner())
 
-      result.current.addOwner(variables)
+        if (fnName === 'addOwnerAsync') {
+          await expect(result.current.addOwnerAsync(variables)).rejects.toEqual(error)
+        } else {
+          result.current.addOwner(variables)
+        }
 
-      await waitFor(() => expect(result.current.isError).toBeTruthy())
+        await waitFor(() => expect(result.current.isError).toBeTruthy())
 
-      expect(result.current).toEqual(mutationErrorResult)
+        expect(result.current).toEqual(mutationErrorResult)
 
-      expect(createAddOwnerTxMock).toHaveBeenCalledTimes(1)
-      expect(createAddOwnerTxMock).toHaveBeenCalledWith(variables)
+        expect(createAddOwnerTxMock).toHaveBeenCalledTimes(1)
+        expect(createAddOwnerTxMock).toHaveBeenCalledWith(variables)
 
-      expect(sendTransactionAsyncMock).toHaveBeenCalledTimes(1)
-      expect(sendTransactionAsyncMock).toHaveBeenCalledWith({
-        transactions: [createAddOwnerTxResultMock]
-      })
-    })
+        expect(sendTransactionAsyncMock).toHaveBeenCalledTimes(1)
+        expect(sendTransactionAsyncMock).toHaveBeenCalledWith({
+          transactions: [createAddOwnerTxResultMock]
+        })
+      }
+    )
   })
 })

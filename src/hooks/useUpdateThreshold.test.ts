@@ -167,7 +167,10 @@ describe('useUpdateThreshold', () => {
       expect(sendTransactionAsyncMock).toHaveBeenCalledTimes(0)
     })
 
-    it('if sending the threshold update transaction fails', async () => {
+    it.each<'updateThreshold' | 'updateThresholdAsync'>([
+      'updateThreshold',
+      'updateThresholdAsync'
+    ])('if sending the threshold update transaction fails for `%s`', async (fnName) => {
       const error = new Error('Error sending transaction')
       const mutationErrorResult = getCustomMutationResult({
         status: 'error',
@@ -180,7 +183,11 @@ describe('useUpdateThreshold', () => {
 
       const { result } = renderHookInQueryClientProvider(() => useUpdateThreshold())
 
-      result.current.updateThreshold({ threshold })
+      if (fnName === 'updateThresholdAsync') {
+        await expect(result.current.updateThresholdAsync({ threshold })).rejects.toEqual(error)
+      } else {
+        result.current.updateThreshold({ threshold })
+      }
 
       await waitFor(() => expect(result.current.isError).toBeTruthy())
 
