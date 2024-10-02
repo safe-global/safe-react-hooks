@@ -2,17 +2,16 @@ import { act } from 'react'
 import { waitFor } from '@testing-library/react'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useAuthenticate, UseConnectSignerReturnType } from '@/hooks/useAuthenticate.js'
-import * as useOwners from '@/hooks/useSafeInfo/useOwners.js'
 import * as useSignerAddress from '@/hooks/useSignerAddress.js'
-import { renderHookInMockedSafeProvider } from '@test/utils.js'
+import { catchHookError, renderHookInMockedSafeProvider } from '@test/utils.js'
 import { safeInfo, signerPrivateKeys } from '@test/fixtures/index.js'
-import { createCustomQueryResult } from '@test/fixtures/queryResult.js'
 import { SafeContextType } from '@/SafeContext.js'
+import { configExistingSafe } from '@test/config.js'
 
 describe('useAuthenticate', () => {
-  const signerClientMock = { safeClient: 'signer' } as unknown as SafeClient
+  const isOwnerMock = jest.fn()
+  const signerClientMock = { isOwner: isOwnerMock } as unknown as SafeClient
   const setSignerMock = jest.fn(() => Promise.resolve())
-  const useOwnersSpy = jest.spyOn(useOwners, 'useOwners')
   const useSignerAddressSpy = jest.spyOn(useSignerAddress, 'useSignerAddress')
 
   const renderUseAuthenticate = async (
@@ -22,10 +21,11 @@ describe('useAuthenticate', () => {
     const renderOptions = {
       signerClient: signerClientMock,
       setSigner: setSignerMock,
+      config: configExistingSafe,
       ...context
     }
 
-    const renderResult = renderHookInMockedSafeProvider(() => useAuthenticate(), renderOptions)
+    const renderResult = renderHookInMockedSafeProvider(useAuthenticate, renderOptions)
 
     await waitFor(() =>
       expect(renderResult.result.current).toEqual({
@@ -40,37 +40,48 @@ describe('useAuthenticate', () => {
     return renderResult
   }
 
-  const ownersQueryResultMock = createCustomQueryResult({
-    status: 'success',
-    data: safeInfo.owners
-  })
-
   beforeEach(() => {
-    useOwnersSpy.mockReturnValue(ownersQueryResultMock)
+    isOwnerMock.mockResolvedValue(true)
     useSignerAddressSpy.mockReturnValue(safeInfo.owners[1])
   })
 
   afterEach(() => {
     jest.clearAllMocks()
+    jest.resetAllMocks()
   })
 
-  it('if connected signer is not owner of the Safe `isOwnerConnected` should be false', async () => {
-    useSignerAddressSpy.mockReturnValueOnce(safeInfo.owners[0])
-    useOwnersSpy.mockReturnValueOnce(
-      createCustomQueryResult({ status: 'success', data: safeInfo.owners.slice(1) })
-    )
+  describe('isOwnerConnected', () => {
+    it('should be true if connected signer is not owner of the Safe', async () => {
+      useSignerAddressSpy.mockReturnValue(safeInfo.owners[0])
 
-    const {
-      result: {
-        current: { isSignerConnected, isOwnerConnected }
-      }
-    } = await renderUseAuthenticate(undefined, {
-      isSignerConnected: true,
-      isOwnerConnected: false
+      const {
+        result: {
+          current: { isSignerConnected, isOwnerConnected }
+        }
+      } = await renderUseAuthenticate(undefined, {
+        isSignerConnected: true,
+        isOwnerConnected: true
+      })
+
+      expect(isSignerConnected).toBeTruthy()
+      expect(isOwnerConnected).toBeTruthy()
     })
 
-    expect(isSignerConnected).toBe(true)
-    expect(isOwnerConnected).toBe(false)
+    it('should be false if connected signer is not owner of the Safe', async () => {
+      useSignerAddressSpy.mockReturnValueOnce(safeInfo.owners[0])
+      isOwnerMock.mockResolvedValueOnce(false)
+
+      const {
+        result: {
+          current: { isSignerConnected, isOwnerConnected }
+        }
+      } = await renderUseAuthenticate(undefined, {
+        isSignerConnected: true
+      })
+
+      expect(isSignerConnected).toBeTruthy()
+      expect(isOwnerConnected).toBeFalsy()
+    })
   })
 
   describe('connect', () => {
@@ -82,8 +93,8 @@ describe('useAuthenticate', () => {
 
       await act(() => result.current.connect(signerPrivateKeys[1]))
 
-      expect(useOwnersSpy).toHaveBeenCalledTimes(1)
-      expect(useSignerAddressSpy).toHaveBeenCalledTimes(1)
+      expect(isOwnerMock).toHaveBeenCalledTimes(1)
+      expect(useSignerAddressSpy).toHaveBeenCalledTimes(2)
 
       expect(setSignerMock).toHaveBeenCalledTimes(1)
       expect(setSignerMock).toHaveBeenCalledWith(signerPrivateKeys[1])
@@ -98,7 +109,7 @@ describe('useAuthenticate', () => {
         'Failed to connect because signer is empty'
       )
 
-      expect(useOwnersSpy).toHaveBeenCalledTimes(1)
+      expect(isOwnerMock).toHaveBeenCalledTimes(0)
       expect(useSignerAddressSpy).toHaveBeenCalledTimes(1)
 
       expect(setSignerMock).toHaveBeenCalledTimes(0)
@@ -114,8 +125,8 @@ describe('useAuthenticate', () => {
 
       await act(() => result.current.disconnect())
 
-      expect(useOwnersSpy).toHaveBeenCalledTimes(1)
-      expect(useSignerAddressSpy).toHaveBeenCalledTimes(1)
+      expect(isOwnerMock).toHaveBeenCalledTimes(1)
+      expect(useSignerAddressSpy).toHaveBeenCalledTimes(2)
 
       expect(setSignerMock).toHaveBeenCalledTimes(1)
       expect(setSignerMock).toHaveBeenCalledWith(undefined)
@@ -130,10 +141,16 @@ describe('useAuthenticate', () => {
         'Failed to disconnect because no signer is connected'
       )
 
-      expect(useOwnersSpy).toHaveBeenCalledTimes(1)
+      expect(isOwnerMock).toHaveBeenCalledTimes(0)
       expect(useSignerAddressSpy).toHaveBeenCalledTimes(1)
 
       expect(setSignerMock).toHaveBeenCalledTimes(0)
     })
+  })
+
+  it('should throw if not used within a `SafeProvider`', async () => {
+    const error = catchHookError(() => useAuthenticate())
+
+    expect(error?.message).toEqual('`useAuthenticate` must be used within `SafeProvider`.')
   })
 })

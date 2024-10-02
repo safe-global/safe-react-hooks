@@ -1,4 +1,4 @@
-import { createContext, createElement } from 'react'
+import React, { createContext, createElement } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, RenderHookOptions } from '@testing-library/react'
 import * as safeContext from '@/SafeContext.js'
@@ -46,18 +46,21 @@ export function renderHookInMockedSafeProvider<Result, Props>(
     ...context
   }
 
-  const SafeContextTemp = createContext<safeContext.SafeContextType>(contextValue)
+  const SafeContext = createContext<safeContext.SafeContextType>(contextValue)
 
-  const OriginalSafeContext = safeContext.SafeContext
-  ;(safeContext as any).SafeContext = SafeContextTemp
+  const originalUseContext = React.useContext
+
+  jest
+    .spyOn(React, 'useContext')
+    .mockImplementation((context) =>
+      context === safeContext.SafeContext ? contextValue : originalUseContext(context)
+    )
 
   const renderResult = renderHook<Result, Props>(hook, {
     ...options,
     wrapper: ({ children }) =>
-      createElement(SafeContextTemp.Provider, { value: contextValue }, children)
+      createElement(SafeContext.Provider, { value: contextValue }, children)
   })
-
-  ;(safeContext as any).SafeContext = OriginalSafeContext
 
   return renderResult
 }
