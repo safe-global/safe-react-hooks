@@ -6,7 +6,7 @@ import * as useOwners from '@/hooks/useSafeInfo/useOwners.js'
 import * as useSignerAddress from '@/hooks/useSignerAddress.js'
 import { renderHookInMockedSafeProvider } from '@test/utils.js'
 import { safeInfo, signerPrivateKeys } from '@test/fixtures/index.js'
-import { createQuerySuccessResult } from '@test/fixtures/queryResult.js'
+import { createCustomQueryResult } from '@test/fixtures/queryResult.js'
 import { SafeContextType } from '@/SafeContext.js'
 
 describe('useAuthenticate', () => {
@@ -40,7 +40,10 @@ describe('useAuthenticate', () => {
     return renderResult
   }
 
-  const ownersQueryResultMock = createQuerySuccessResult(safeInfo.owners)
+  const ownersQueryResultMock = createCustomQueryResult({
+    status: 'success',
+    data: safeInfo.owners
+  })
 
   beforeEach(() => {
     useOwnersSpy.mockReturnValue(ownersQueryResultMock)
@@ -53,7 +56,9 @@ describe('useAuthenticate', () => {
 
   it('if connected signer is not owner of the Safe `isOwnerConnected` should be false', async () => {
     useSignerAddressSpy.mockReturnValueOnce(safeInfo.owners[0])
-    useOwnersSpy.mockReturnValueOnce(createQuerySuccessResult(safeInfo.owners.slice(1)))
+    useOwnersSpy.mockReturnValueOnce(
+      createCustomQueryResult({ status: 'success', data: safeInfo.owners.slice(1) })
+    )
 
     const {
       result: {

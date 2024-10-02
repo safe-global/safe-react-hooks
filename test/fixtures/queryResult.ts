@@ -1,6 +1,7 @@
 import {
   QueryObserverLoadingErrorResult,
   QueryObserverPendingResult,
+  QueryObserverResult,
   QueryObserverSuccessResult
 } from '@tanstack/react-query'
 
@@ -43,7 +44,7 @@ export const queryLoadingErrorResult: QueryObserverLoadingErrorResult = {
   isRefetchError: false,
   isSuccess: false,
   status: 'error',
-  failureReason: new Error('Something went wrong'),
+  failureReason: new Error('Query failed :('),
   errorUpdateCount: 1,
   isFetched: false,
   isFetchedAfterMount: false,
@@ -53,13 +54,12 @@ export const queryLoadingErrorResult: QueryObserverLoadingErrorResult = {
   isPlaceholderData: false,
   isRefetching: false,
   isStale: false,
-  refetch: refetchMock,
   fetchStatus: 'idle'
 }
 
-export const createQuerySuccessResult = <T>(data: T): QueryObserverSuccessResult<T> => ({
+export const querySuccessResult: QueryObserverSuccessResult = {
   ...queryPendingResult,
-  data,
+  data: undefined,
   isPending: false,
   isLoading: false,
   isLoadingError: false,
@@ -71,4 +71,23 @@ export const createQuerySuccessResult = <T>(data: T): QueryObserverSuccessResult
   isFetching: false,
   refetch: refetchMock,
   fetchStatus: 'idle'
-})
+}
+
+const resultMapping = {
+  pending: queryPendingResult,
+  error: queryLoadingErrorResult,
+  success: querySuccessResult
+}
+
+export function createCustomQueryResult<
+  TStatus extends keyof typeof resultMapping,
+  TData = TStatus extends 'success' ? unknown : undefined,
+  TError extends Error = Error
+>({ status, data, error }: { status: TStatus; data?: TData; error?: TError }) {
+  const result = resultMapping[status]
+  return {
+    ...result,
+    ...(status === 'success' && data ? { data } : {}),
+    ...(status === 'error' && error ? { error, failureReason: error } : {})
+  } as QueryObserverResult<TData, TError>
+}
