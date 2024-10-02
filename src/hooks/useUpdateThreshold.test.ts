@@ -6,7 +6,7 @@ import * as useSendTransaction from '@/hooks/useSendTransaction.js'
 import * as useSignerClientMutation from '@/hooks/useSignerClientMutation.js'
 import { ethereumTxHash, safeMultisigTransaction, signerPrivateKeys } from '@test/fixtures/index.js'
 import { configPredictedSafe } from '@test/config.js'
-import { getCustomMutationResult } from '@test/fixtures/mutationResult.js'
+import { createCustomMutationResult } from '@test/fixtures/mutationResult.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey } from '@/constants.js'
 
@@ -17,8 +17,8 @@ describe('useUpdateThreshold', () => {
 
   const mutateFnName = 'updateThreshold'
   const variables = { threshold }
-  const mutationIdleResult = getCustomMutationResult({ status: 'idle', mutateFnName })
-  const mutationSuccessResult = getCustomMutationResult({
+  const mutationIdleResult = createCustomMutationResult({ status: 'idle', mutateFnName })
+  const mutationSuccessResult = createCustomMutationResult({
     status: 'success',
     mutateFnName,
     data: sendTransactionResultMock,
@@ -140,7 +140,7 @@ describe('useUpdateThreshold', () => {
       'updateThresholdAsync'
     ])('if creating a transaction for updating the thresholds fails for `%s`', async (fnName) => {
       const error = new Error('Error creating transaction')
-      const mutationErrorResult = getCustomMutationResult({
+      const mutationErrorResult = createCustomMutationResult({
         status: 'error',
         mutateFnName,
         error,
@@ -172,7 +172,7 @@ describe('useUpdateThreshold', () => {
       'updateThresholdAsync'
     ])('if sending the threshold update transaction fails for `%s`', async (fnName) => {
       const error = new Error('Error sending transaction')
-      const mutationErrorResult = getCustomMutationResult({
+      const mutationErrorResult = createCustomMutationResult({
         status: 'error',
         mutateFnName,
         error,

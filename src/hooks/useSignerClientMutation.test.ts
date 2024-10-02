@@ -6,7 +6,7 @@ import * as useSignerClient from '@/hooks/useSignerClient.js'
 import * as useConfig from '@/hooks/useConfig.js'
 import { configExistingSafe } from '@test/config.js'
 import { safeMultisigTransaction, signerPrivateKeys } from '@test/fixtures/index.js'
-import { getCustomMutationResult } from '@test/fixtures/mutationResult.js'
+import { createCustomMutationResult } from '@test/fixtures/mutationResult.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 
 // This is necessary to set a spy on the `useMutation` function without getting the following error:
@@ -25,8 +25,8 @@ describe('useSignerClientMutation', () => {
   const createAddOwnerTxMock = jest.fn().mockResolvedValue(safeMultisigTransaction)
 
   const variables = 'test'
-  const mutationIdleResult = getCustomMutationResult({ status: 'idle', mutateFnName: 'mutate' })
-  const mutationSuccessResult = getCustomMutationResult({
+  const mutationIdleResult = createCustomMutationResult({ status: 'idle', mutateFnName: 'mutate' })
+  const mutationSuccessResult = createCustomMutationResult({
     status: 'success',
     mutateFnName: 'mutate',
     data: safeMultisigTransaction,
@@ -119,7 +119,7 @@ describe('useSignerClientMutation', () => {
 
     it('should return error data if signer client is not connected', async () => {
       const error = new Error('Signer client is not available')
-      const mutationErrorResult = getCustomMutationResult({
+      const mutationErrorResult = createCustomMutationResult({
         status: 'error',
         mutateFnName: 'mutate',
         error,
@@ -149,7 +149,7 @@ describe('useSignerClientMutation', () => {
 
     it('should return error data if the request fails', async () => {
       const error = new Error('Error :(')
-      const mutationErrorResult = getCustomMutationResult({
+      const mutationErrorResult = createCustomMutationResult({
         status: 'error',
         mutateFnName: 'mutate',
         error,

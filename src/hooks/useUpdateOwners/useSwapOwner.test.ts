@@ -11,15 +11,15 @@ import {
   signerPrivateKeys
 } from '@test/fixtures/index.js'
 import { configPredictedSafe } from '@test/config.js'
-import { getCustomMutationResult } from '@test/fixtures/mutationResult.js'
+import { createCustomMutationResult } from '@test/fixtures/mutationResult.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey } from '@/constants.js'
 
 describe('useSwapOwner', () => {
   const mutateFnName = 'swapOwner'
   const variables = { oldOwnerAddress: accounts[0], newOwnerAddress: accounts[1] }
-  const mutationIdleResult = getCustomMutationResult({ status: 'idle', mutateFnName })
-  const mutationSuccessResult = getCustomMutationResult({
+  const mutationIdleResult = createCustomMutationResult({ status: 'idle', mutateFnName })
+  const mutationSuccessResult = createCustomMutationResult({
     status: 'success',
     mutateFnName,
     data: ethereumTxHash,
@@ -141,7 +141,7 @@ describe('useSwapOwner', () => {
       'if creating a transaction for swapping an owner fails for `%s`',
       async (fnName) => {
         const error = new Error('Error creating swapt owner transaction')
-        const mutationErrorResult = getCustomMutationResult({
+        const mutationErrorResult = createCustomMutationResult({
           status: 'error',
           mutateFnName,
           error,
@@ -173,7 +173,7 @@ describe('useSwapOwner', () => {
       'if sending a transaction for swapping an owner fails for `%s`',
       async (fnName) => {
         const error = new Error('Error sending swap owner transaction')
-        const mutationErrorResult = getCustomMutationResult({
+        const mutationErrorResult = createCustomMutationResult({
           status: 'error',
           mutateFnName,
           error,

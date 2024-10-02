@@ -4,7 +4,7 @@ import * as useSwapOwner from '@/hooks/useUpdateOwners/useSwapOwner.js'
 import { configExistingSafe } from '@test/config.js'
 import { signerPrivateKeys } from '@test/fixtures/index.js'
 import { renderHookInMockedSafeProvider } from '@test/utils.js'
-import { getCustomMutationResult } from '@test/fixtures/mutationResult.js'
+import { createCustomMutationResult } from '@test/fixtures/mutationResult.js'
 import { useUpdateOwners } from './index.js'
 
 describe('useUpdateOwners', () => {
@@ -12,15 +12,15 @@ describe('useUpdateOwners', () => {
   const useRemoveOwnerSpy = jest.spyOn(useRemoveOwner, 'useRemoveOwner')
   const useSwapOwnerSpy = jest.spyOn(useSwapOwner, 'useSwapOwner')
 
-  const useAddOwnerResultMock = getCustomMutationResult({
+  const useAddOwnerResultMock = createCustomMutationResult({
     status: 'idle',
     mutateFnName: 'addOwner'
   }) as unknown as useAddOwner.UseAddOwnerReturnType
-  const useRemoveOwnerResultMock = getCustomMutationResult({
+  const useRemoveOwnerResultMock = createCustomMutationResult({
     status: 'idle',
     mutateFnName: 'removeOwner'
   }) as unknown as useRemoveOwner.UseRemoveOwnerReturnType
-  const useSwapOwnerResultMock = getCustomMutationResult({
+  const useSwapOwnerResultMock = createCustomMutationResult({
     status: 'idle',
     mutateFnName: 'swapOwner'
   }) as unknown as useSwapOwner.UseSwapOwnerReturnType

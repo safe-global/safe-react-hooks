@@ -57,7 +57,7 @@ const resultMapping = {
   error: mutationErrorResult
 }
 
-export function getCustomMutationResult<
+export function createCustomMutationResult<
   TStatus extends keyof typeof resultMapping,
   TMutateFnName extends string,
   TResult = (typeof resultMapping)[TStatus],

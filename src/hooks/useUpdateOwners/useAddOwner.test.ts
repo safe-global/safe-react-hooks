@@ -11,7 +11,7 @@ import {
   signerPrivateKeys
 } from '@test/fixtures/index.js'
 import { configPredictedSafe } from '@test/config.js'
-import { getCustomMutationResult } from '@test/fixtures/mutationResult.js'
+import { createCustomMutationResult } from '@test/fixtures/mutationResult.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey } from '@/constants.js'
 
@@ -20,8 +20,8 @@ describe('useAddOwner', () => {
 
   const mutateFnName = 'addOwner'
   const variables = { ownerAddress }
-  const mutationIdleResult = getCustomMutationResult({ status: 'idle', mutateFnName })
-  const mutationSuccessResult = getCustomMutationResult({
+  const mutationIdleResult = createCustomMutationResult({ status: 'idle', mutateFnName })
+  const mutationSuccessResult = createCustomMutationResult({
     status: 'success',
     mutateFnName,
     data: ethereumTxHash,
@@ -143,7 +143,7 @@ describe('useAddOwner', () => {
       'if creating a transaction for adding an owner fails for `%s`',
       async (fnName) => {
         const error = new Error('Error creating add owner transaction')
-        const mutationErrorResult = getCustomMutationResult({
+        const mutationErrorResult = createCustomMutationResult({
           status: 'error',
           mutateFnName,
           error,
@@ -175,7 +175,7 @@ describe('useAddOwner', () => {
       'if sending a transaction for adding an owner fails for `%s`',
       async (fnName) => {
         const error = new Error('Error sending add owner transaction')
-        const mutationErrorResult = getCustomMutationResult({
+        const mutationErrorResult = createCustomMutationResult({
           status: 'error',
           mutateFnName,
           error,

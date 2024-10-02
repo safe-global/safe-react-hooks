@@ -7,7 +7,7 @@ import * as useWaitForTransaction from '@/hooks/useWaitForTransaction.js'
 import * as useSignerClientMutation from '@/hooks/useSignerClientMutation.js'
 import { configExistingSafe } from '@test/config.js'
 import { ethereumTxHash, safeAddress, safeTxHash, signerPrivateKeys } from '@test/fixtures/index.js'
-import { getCustomMutationResult } from '@test/fixtures/mutationResult.js'
+import { createCustomMutationResult } from '@test/fixtures/mutationResult.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey, QueryKey } from '@/constants.js'
 import { queryClient } from '@/queryClient.js'
@@ -28,11 +28,11 @@ describe('useConfirmTransaction', () => {
 
   const mutateFnName = 'confirmTransaction'
   const variables = { safeTxHash }
-  const mutationIdleResult = getCustomMutationResult({
+  const mutationIdleResult = createCustomMutationResult({
     status: 'idle',
     mutateFnName
   })
-  const mutationSuccessResult = getCustomMutationResult({
+  const mutationSuccessResult = createCustomMutationResult({
     status: 'success',
     mutateFnName,
     data: confirmResponseMock,
@@ -218,7 +218,7 @@ describe('useConfirmTransaction', () => {
     'confirmTransactionAsync'
   ])('calling `%s` should return error data if the `confirm` request fails', async (fnName) => {
     const error = new Error('Confirm transaction failed :(')
-    const mutationErrorResult = getCustomMutationResult({
+    const mutationErrorResult = createCustomMutationResult({
       status: 'error',
       mutateFnName,
       error,
