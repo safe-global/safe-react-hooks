@@ -18,9 +18,7 @@ describe('useOwners', () => {
     status: 'success'
   } as unknown as UseQueryResult
 
-  const publicClientMock = {
-    protocolKit: { getOwners: getOwnersMock }
-  } as unknown as SafeClient
+  const publicClientMock = { getOwners: getOwnersMock } as unknown as SafeClient
 
   beforeEach(() => {
     usePublicClientQuerySpy.mockImplementation(({ querySafeClientFn }) => {

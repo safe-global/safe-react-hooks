@@ -17,9 +17,7 @@ describe('useNonce', () => {
     status: 'success'
   } as unknown as UseQueryResult
 
-  const publicClientMock = {
-    protocolKit: { getNonce: getNonceMock }
-  } as unknown as SafeClient
+  const publicClientMock = { getNonce: getNonceMock } as unknown as SafeClient
 
   beforeEach(() => {
     usePublicClientQuerySpy.mockImplementation(({ querySafeClientFn }) => {

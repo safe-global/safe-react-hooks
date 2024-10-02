@@ -36,7 +36,7 @@ describe('useSwapOwner', () => {
   const sendTransactionAsyncMock = jest.fn().mockResolvedValue(sendTransactionResultMock)
 
   const signerClientMock = {
-    protocolKit: { createSwapOwnerTx: createSwapOwnerTxMock }
+    createSwapOwnerTransaction: createSwapOwnerTxMock
   } as unknown as SafeClient
 
   beforeEach(() => {

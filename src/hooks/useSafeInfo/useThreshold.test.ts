@@ -17,9 +17,7 @@ describe('useThreshold', () => {
     status: 'success'
   } as unknown as UseQueryResult
 
-  const publicClientMock = {
-    protocolKit: { getThreshold: getThresholdMock }
-  } as unknown as SafeClient
+  const publicClientMock = { getThreshold: getThresholdMock } as unknown as SafeClient
 
   beforeEach(() => {
     usePublicClientQuerySpy.mockImplementation(({ querySafeClientFn }) => {

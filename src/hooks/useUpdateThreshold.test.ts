@@ -33,7 +33,7 @@ describe('useUpdateThreshold', () => {
   const sendTransactionAsyncMock = jest.fn().mockResolvedValue(sendTransactionResultMock)
 
   const signerClientMock = {
-    protocolKit: { createChangeThresholdTx: createChangeThresholdTxMock }
+    createChangeThresholdTransaction: createChangeThresholdTxMock
   } as unknown as SafeClient
 
   beforeEach(() => {
@@ -114,7 +114,7 @@ describe('useUpdateThreshold', () => {
       expect(createChangeThresholdTxMock).toHaveBeenCalledTimes(0)
       expect(sendTransactionAsyncMock).toHaveBeenCalledTimes(0)
 
-      const updateThresholdResult = await result.current[fnName]({ threshold })
+      const updateThresholdResult = await result.current[fnName](variables)
 
       if (fnName === 'updateThresholdAsync') {
         expect(updateThresholdResult).toEqual(sendTransactionResultMock)
@@ -125,7 +125,7 @@ describe('useUpdateThreshold', () => {
       expect(result.current).toEqual(mutationSuccessResult)
 
       expect(createChangeThresholdTxMock).toHaveBeenCalledTimes(1)
-      expect(createChangeThresholdTxMock).toHaveBeenCalledWith(threshold)
+      expect(createChangeThresholdTxMock).toHaveBeenCalledWith(variables)
 
       expect(sendTransactionAsyncMock).toHaveBeenCalledTimes(1)
       expect(sendTransactionAsyncMock).toHaveBeenCalledWith({
@@ -152,9 +152,9 @@ describe('useUpdateThreshold', () => {
       const { result } = renderHookInQueryClientProvider(() => useUpdateThreshold())
 
       if (fnName === 'updateThresholdAsync') {
-        await expect(result.current.updateThresholdAsync({ threshold })).rejects.toEqual(error)
+        await expect(result.current.updateThresholdAsync(variables)).rejects.toEqual(error)
       } else {
-        result.current.updateThreshold({ threshold })
+        result.current.updateThreshold(variables)
       }
 
       await waitFor(() => expect(result.current.isError).toBeTruthy())
@@ -162,7 +162,7 @@ describe('useUpdateThreshold', () => {
       expect(result.current).toEqual(mutationErrorResult)
 
       expect(createChangeThresholdTxMock).toHaveBeenCalledTimes(1)
-      expect(createChangeThresholdTxMock).toHaveBeenCalledWith(threshold)
+      expect(createChangeThresholdTxMock).toHaveBeenCalledWith(variables)
 
       expect(sendTransactionAsyncMock).toHaveBeenCalledTimes(0)
     })
@@ -184,9 +184,9 @@ describe('useUpdateThreshold', () => {
       const { result } = renderHookInQueryClientProvider(() => useUpdateThreshold())
 
       if (fnName === 'updateThresholdAsync') {
-        await expect(result.current.updateThresholdAsync({ threshold })).rejects.toEqual(error)
+        await expect(result.current.updateThresholdAsync(variables)).rejects.toEqual(error)
       } else {
-        result.current.updateThreshold({ threshold })
+        result.current.updateThreshold(variables)
       }
 
       await waitFor(() => expect(result.current.isError).toBeTruthy())
@@ -194,7 +194,7 @@ describe('useUpdateThreshold', () => {
       expect(result.current).toEqual(mutationErrorResult)
 
       expect(createChangeThresholdTxMock).toHaveBeenCalledTimes(1)
-      expect(createChangeThresholdTxMock).toHaveBeenCalledWith(threshold)
+      expect(createChangeThresholdTxMock).toHaveBeenCalledWith(variables)
 
       expect(sendTransactionAsyncMock).toHaveBeenCalledTimes(1)
       expect(sendTransactionAsyncMock).toHaveBeenCalledWith({

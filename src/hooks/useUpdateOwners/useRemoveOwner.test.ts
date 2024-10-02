@@ -38,7 +38,7 @@ describe('useRemoveOwner', () => {
   const sendTransactionAsyncMock = jest.fn().mockResolvedValue(sendTransactionResultMock)
 
   const signerClientMock = {
-    protocolKit: { createRemoveOwnerTx: createRemoveOwnerTxMock }
+    createRemoveOwnerTransaction: createRemoveOwnerTxMock
   } as unknown as SafeClient
 
   beforeEach(() => {

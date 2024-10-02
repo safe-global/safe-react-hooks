@@ -16,8 +16,7 @@ export type UseOwnersReturnType = UseQueryResult<Address[]>
 export function useOwners(params: UseOwnersParams = {}): UseOwnersReturnType {
   return usePublicClientQuery({
     ...params,
-    querySafeClientFn: (safeClient) =>
-      safeClient.protocolKit.getOwners().then((owners) => owners as Address[]),
+    querySafeClientFn: (safeClient) => safeClient.getOwners().then((owners) => owners as Address[]),
     queryKey: [QueryKey.Owners]
   })
 }

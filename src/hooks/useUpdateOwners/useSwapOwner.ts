@@ -5,7 +5,7 @@ import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { useSendTransaction } from '@/hooks/useSendTransaction.js'
 import { MutationKey } from '@/constants.js'
 
-type SwapOwnerVariables = Parameters<SafeClient['protocolKit']['createSwapOwnerTx']>[0]
+type SwapOwnerVariables = Parameters<SafeClient['createSwapOwnerTransaction']>[0]
 
 export type UseSwapOwnerParams = ConfigParam<SafeConfigWithSigner>
 export type UseSwapOwnerReturnType = Omit<
@@ -32,7 +32,7 @@ export function useSwapOwner(params: UseSwapOwnerParams = {}): UseSwapOwnerRetur
     ...params,
     mutationKey: [MutationKey.SwapOwner],
     mutationSafeClientFn: async (safeClient, params) => {
-      const swapOwnerTx = await safeClient.protocolKit.createSwapOwnerTx(params)
+      const swapOwnerTx = await safeClient.createSwapOwnerTransaction(params)
       return sendTransactionAsync({ transactions: [swapOwnerTx] })
     }
   })

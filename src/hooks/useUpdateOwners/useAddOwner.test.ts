@@ -38,7 +38,7 @@ describe('useAddOwner', () => {
   const sendTransactionAsyncMock = jest.fn().mockResolvedValue(sendTransactionResultMock)
 
   const signerClientMock = {
-    protocolKit: { createAddOwnerTx: createAddOwnerTxMock }
+    createAddOwnerTransaction: createAddOwnerTxMock
   } as unknown as SafeClient
 
   beforeEach(() => {

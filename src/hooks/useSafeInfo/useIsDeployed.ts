@@ -15,7 +15,7 @@ export type UseIsDeployedReturnType = UseQueryResult<boolean>
 export function useIsDeployed(params: UseIsDeployedParams = {}): UseIsDeployedReturnType {
   return usePublicClientQuery({
     ...params,
-    querySafeClientFn: (safeClient) => safeClient.protocolKit.isSafeDeployed(),
+    querySafeClientFn: (safeClient) => safeClient.isDeployed(),
     queryKey: [QueryKey.IsDeployed]
   })
 }

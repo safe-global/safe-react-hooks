@@ -17,7 +17,7 @@ describe('useAddress', () => {
     status: 'success'
   } as unknown as UseQueryResult
 
-  const publicClientMock = { protocolKit: { getAddress: getAddressMock } } as unknown as SafeClient
+  const publicClientMock = { getAddress: getAddressMock } as unknown as SafeClient
 
   beforeEach(() => {
     usePublicClientQuerySpy.mockImplementation(({ querySafeClientFn }) => {

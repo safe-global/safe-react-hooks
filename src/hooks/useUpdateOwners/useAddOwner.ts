@@ -5,7 +5,7 @@ import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { useSendTransaction } from '@/hooks/useSendTransaction.js'
 import { MutationKey } from '@/constants.js'
 
-type AddOwnerVariables = Parameters<SafeClient['protocolKit']['createAddOwnerTx']>[0]
+type AddOwnerVariables = Parameters<SafeClient['createAddOwnerTransaction']>[0]
 
 export type UseAddOwnerParams = ConfigParam<SafeConfigWithSigner>
 export type UseAddOwnerReturnType = Omit<
@@ -32,7 +32,7 @@ export function useAddOwner(params: UseAddOwnerParams = {}): UseAddOwnerReturnTy
     ...params,
     mutationKey: [MutationKey.AddOwner],
     mutationSafeClientFn: async (safeClient, params) => {
-      const addOwnerTx = await safeClient.protocolKit.createAddOwnerTx(params)
+      const addOwnerTx = await safeClient.createAddOwnerTransaction(params)
       return sendTransactionAsync({ transactions: [addOwnerTx] })
     }
   })

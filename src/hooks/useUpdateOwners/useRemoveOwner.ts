@@ -5,7 +5,7 @@ import { useSendTransaction } from '@/hooks/useSendTransaction.js'
 import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { MutationKey } from '@/constants.js'
 
-type RemoveOwnerVariables = Parameters<SafeClient['protocolKit']['createRemoveOwnerTx']>[0]
+type RemoveOwnerVariables = Parameters<SafeClient['createRemoveOwnerTransaction']>[0]
 
 export type UseRemoveOwnerParams = ConfigParam<SafeConfigWithSigner>
 export type UseRemoveOwnerReturnType = Omit<
@@ -32,7 +32,7 @@ export function useRemoveOwner(params: UseRemoveOwnerParams = {}): UseRemoveOwne
     ...params,
     mutationKey: [MutationKey.RemoveOwner],
     mutationSafeClientFn: async (safeClient, params) => {
-      const removeOwnerTx = await safeClient.protocolKit.createRemoveOwnerTx(params)
+      const removeOwnerTx = await safeClient.createRemoveOwnerTransaction(params)
       return sendTransactionAsync({ transactions: [removeOwnerTx] })
     }
   })
