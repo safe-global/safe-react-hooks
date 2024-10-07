@@ -12,7 +12,8 @@ export type UseUpdateOwnersReturnType = {
 }
 
 /**
- * Hook to add, remove or swap owners of the connected Safe.
+ * Hook to manage the owners of the Safe account. It provides methods to add a new owner, 
+ * remove an existing one, and to swap an existing owner in favor of a new one.
  * @returns Object wrapping the hooks to update, remove or swap owners.
  */
 export function useUpdateOwners(params: UseUpdateOwnersParams = {}): UseUpdateOwnersReturnType {

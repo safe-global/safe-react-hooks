@@ -22,7 +22,8 @@ export type UseUpdateThresholdReturnType = Omit<
 }
 
 /**
- * Hook to update the threshold of the connected Safe.
+ * Hook to update the threshold of the connected Safe. It sends or (if the current threshold is > 1) proposes
+ * a transaction to update the threshold of the Safe account and returns the transaction result.
  * @param params Parameters to customize the hook behavior.
  * @param params.config SafeConfig to use instead of the one provided by `SafeProvider`.
  * @returns Object containing the mutation state and the function to update the threshold.
