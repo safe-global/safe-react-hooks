@@ -6,11 +6,15 @@ import {
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 import { useSafeTransaction, UseSafeTransactionReturnType } from './useSafeTransaction.js'
 
-export type UseTransactionParams = ConfigParam<SafeConfig> &
-  ({ safeTxHash: Hash; ethereumTxHash?: never } | { safeTxHash?: never; ethereumTxHash: Hash })
+export type UseTransactionParams =
+  | (ConfigParam<SafeConfig> & { safeTxHash: Hash })
+  | { ethereumTxHash: Hash }
 
-export type UseTransactionReturnType<Params extends UseTransactionParams> =
-  Params['safeTxHash'] extends Hash ? UseSafeTransactionReturnType : UseTransactionReturnTypeWagmi
+export type UseTransactionReturnType<Params extends UseTransactionParams> = Params extends {
+  safeTxHash: Hash
+}
+  ? UseSafeTransactionReturnType
+  : UseTransactionReturnTypeWagmi
 
 /**
  * Hook to get the status of a specific transaction.
@@ -23,9 +27,10 @@ export type UseTransactionReturnType<Params extends UseTransactionParams> =
 export function useTransaction<Params extends UseTransactionParams>(
   params: Params
 ): UseTransactionReturnType<Params> {
-  if (params.safeTxHash && isHash(params.safeTxHash)) {
+  if ('safeTxHash' in params && isHash(params.safeTxHash)) {
     return useSafeTransaction(params) as UseTransactionReturnType<Params>
   }
-
-  return useTransactionWagmi({ hash: params.ethereumTxHash }) as UseTransactionReturnType<Params>
+  return useTransactionWagmi({
+    hash: (params as { ethereumTxHash: Hash }).ethereumTxHash
+  }) as UseTransactionReturnType<Params>
 }

@@ -9,6 +9,7 @@ import * as useSignerAddress from '@/hooks/useSignerAddress.js'
 import * as useTransaction from '@/hooks/useTransaction.js'
 import * as usePendingTransactions from '@/hooks/usePendingTransactions.js'
 import * as useTransactions from '@/hooks/useTransactions.js'
+import { UseSafeTransactionReturnType } from '@/hooks/useSafeTransaction.js'
 import { useSafe } from '@/hooks/useSafe.js'
 import { configExistingSafe } from '@test/config.js'
 import {
@@ -250,7 +251,7 @@ describe('useSafe', () => {
       useTransactionSpy.mockReturnValue({
         data: safeMultisigTransaction,
         status: 'success'
-      })
+      } as UseSafeTransactionReturnType)
 
       const { result } = await renderUseSafeHook()
 
