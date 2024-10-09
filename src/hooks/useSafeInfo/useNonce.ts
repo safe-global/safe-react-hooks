@@ -15,7 +15,7 @@ export type UseNonceReturnType = UseQueryResult<number>
 export function useNonce(params: UseNonceParams = {}): UseNonceReturnType {
   return usePublicClientQuery({
     ...params,
-    querySafeClientFn: (safeClient) => safeClient.protocolKit.getNonce(),
+    querySafeClientFn: (safeClient) => safeClient.getNonce(),
     queryKey: [QueryKey.Nonce]
   })
 }

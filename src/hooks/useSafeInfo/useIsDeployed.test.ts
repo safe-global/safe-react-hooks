@@ -9,16 +9,14 @@ import { QueryKey } from '@/constants.js'
 describe('useIsDeployed', () => {
   const usePublicClientQuerySpy = jest.spyOn(usePublicClientQuery, 'usePublicClientQuery')
 
-  const isSafeDeployedMock = jest.fn().mockResolvedValue(true)
+  const isDeployedMock = jest.fn().mockResolvedValue(true)
 
   const isDeployedQueryResultMock = {
     data: true,
     status: 'success'
   } as unknown as UseQueryResult
 
-  const publicClientMock = {
-    protocolKit: { isSafeDeployed: isSafeDeployedMock }
-  } as unknown as SafeClient
+  const publicClientMock = { isDeployed: isDeployedMock } as unknown as SafeClient
 
   beforeEach(() => {
     usePublicClientQuerySpy.mockImplementation(({ querySafeClientFn }) => {
@@ -40,8 +38,8 @@ describe('useIsDeployed', () => {
       queryKey: [QueryKey.IsDeployed]
     })
 
-    expect(isSafeDeployedMock).toHaveBeenCalledTimes(1)
-    expect(isSafeDeployedMock).toHaveBeenCalledWith()
+    expect(isDeployedMock).toHaveBeenCalledTimes(1)
+    expect(isDeployedMock).toHaveBeenCalledWith()
 
     expect(result.current).toEqual(isDeployedQueryResultMock)
   })

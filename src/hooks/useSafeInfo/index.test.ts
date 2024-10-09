@@ -7,7 +7,7 @@ import * as useOwners from '@/hooks/useSafeInfo/useOwners.js'
 import { configPredictedSafe } from '@test/config.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import {
-  createQuerySuccessResult,
+  createCustomQueryResult,
   queryLoadingErrorResult,
   queryPendingResult
 } from '@test/fixtures/queryResult.js'
@@ -20,11 +20,23 @@ describe('useSafeInfo', () => {
   const useIsDeployedSpy = jest.spyOn(useIsDeployed, 'useIsDeployed')
   const useOwnersSpy = jest.spyOn(useOwners, 'useOwners')
 
-  const addressQueryResultMock = createQuerySuccessResult(safeInfo.address)
-  const nonceQueryResultMock = createQuerySuccessResult(safeInfo.nonce)
-  const thresholdQueryResultMock = createQuerySuccessResult(safeInfo.threshold)
-  const isDeployedQueryResultMock = createQuerySuccessResult(safeInfo.isDeployed)
-  const ownersQueryResultMock = createQuerySuccessResult(safeInfo.owners)
+  const addressQueryResultMock = createCustomQueryResult({
+    status: 'success',
+    data: safeInfo.address
+  })
+  const nonceQueryResultMock = createCustomQueryResult({ status: 'success', data: safeInfo.nonce })
+  const thresholdQueryResultMock = createCustomQueryResult({
+    status: 'success',
+    data: safeInfo.threshold
+  })
+  const isDeployedQueryResultMock = createCustomQueryResult({
+    status: 'success',
+    data: safeInfo.isDeployed
+  })
+  const ownersQueryResultMock = createCustomQueryResult({
+    status: 'success',
+    data: safeInfo.owners
+  })
 
   beforeEach(() => {
     useAddressSpy.mockReturnValue(addressQueryResultMock)
@@ -39,7 +51,10 @@ describe('useSafeInfo', () => {
   })
 
   it('should return fetch and return Safe infos using individual hooks', () => {
-    const { refetch, ...expectedResult } = createQuerySuccessResult(safeInfo)
+    const { refetch, ...expectedResult } = createCustomQueryResult({
+      status: 'success',
+      data: safeInfo
+    })
 
     const { result } = renderHookInQueryClientProvider(() => useSafeInfo())
 
@@ -81,7 +96,7 @@ describe('useSafeInfo', () => {
   })
 
   it('should return with loading state + partial data if any individual hook returns with loading state', async () => {
-    useThresholdSpy.mockReturnValueOnce(queryPendingResult)
+    useThresholdSpy.mockReturnValueOnce(createCustomQueryResult({ status: 'pending' }))
 
     const { refetch, ...expectedResult } = {
       ...queryPendingResult,

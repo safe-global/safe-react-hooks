@@ -15,7 +15,7 @@ export type UseThresholdReturnType = UseQueryResult<number>
 export function useThreshold(params: UseThresholdParams = {}): UseThresholdReturnType {
   return usePublicClientQuery({
     ...params,
-    querySafeClientFn: (safeClient) => safeClient.protocolKit.getThreshold(),
+    querySafeClientFn: (safeClient) => safeClient.getThreshold(),
     queryKey: [QueryKey.Threshold]
   })
 }

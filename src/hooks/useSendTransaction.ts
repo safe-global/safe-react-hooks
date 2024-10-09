@@ -1,20 +1,18 @@
-import { useMutation, UseMutationReturnType } from 'wagmi/query'
-import { UseMutateAsyncFunction, UseMutateFunction } from '@tanstack/react-query'
-import { TransactionBase } from '@safe-global/safe-core-sdk-types'
+import { UseMutateAsyncFunction, UseMutateFunction, UseMutationResult } from '@tanstack/react-query'
+import { SafeTransaction, TransactionBase } from '@safe-global/safe-core-sdk-types'
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
-import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
-import { useSignerClient } from '@/hooks/useSignerClient.js'
+import { ConfigParam, isSafeTransaction, SafeConfigWithSigner } from '@/types/index.js'
+import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { useWaitForTransaction } from '@/hooks/useWaitForTransaction.js'
 import { MutationKey, QueryKey } from '@/constants.js'
 import { invalidateQueries } from '@/queryClient.js'
 
-type SendTransactionVariables = { transactions: TransactionBase[] }
+type SendTransactionVariables = { transactions: (TransactionBase | SafeTransaction)[] }
 
 export type UseSendTransactionParams = ConfigParam<SafeConfigWithSigner>
-export type UseSendTransactionReturnType = UseMutationReturnType<
-  SafeClientResult,
-  Error,
-  SendTransactionVariables
+export type UseSendTransactionReturnType = Omit<
+  UseMutationResult<SafeClientResult, Error, SendTransactionVariables>,
+  'mutate' | 'mutateAsync'
 > & {
   sendTransaction: UseMutateFunction<SafeClientResult, Error, SendTransactionVariables, unknown>
   sendTransactionAsync: UseMutateAsyncFunction<
@@ -37,37 +35,34 @@ export function useSendTransaction(
   const { waitForTransactionReceipt, waitForTransactionIndexed } = useWaitForTransaction({
     config: params.config
   })
-  const signerClient = useSignerClient({ config: params.config })
 
-  const mutationFn = async ({ transactions = [] }: SendTransactionVariables) => {
-    if (!signerClient) {
-      throw new Error('Signer client is not available')
+  const { mutate, mutateAsync, ...result } = useSignerClientMutation<
+    SafeClientResult,
+    SendTransactionVariables
+  >({
+    ...params,
+    mutationKey: [MutationKey.SendTransaction],
+    mutationSafeClientFn: async (signerClient, { transactions = [] }) => {
+      const result = await signerClient.send({
+        transactions: transactions.map((tx) =>
+          isSafeTransaction(tx) ? { to: tx.data.to, value: tx.data.value, data: tx.data.data } : tx
+        )
+      })
+
+      if (result.transactions?.ethereumTxHash) {
+        await waitForTransactionReceipt(result.transactions.ethereumTxHash)
+
+        invalidateQueries([QueryKey.PendingTransactions, QueryKey.SafeInfo])
+
+        await waitForTransactionIndexed(result.transactions)
+
+        invalidateQueries([QueryKey.Transactions])
+      } else if (result.transactions?.safeTxHash) {
+        invalidateQueries([QueryKey.PendingTransactions])
+      }
+
+      return result
     }
-
-    if (!transactions.length) {
-      throw new Error('No transactions provided')
-    }
-
-    const result = await signerClient.send({ transactions })
-
-    if (result.transactions?.ethereumTxHash) {
-      await waitForTransactionReceipt(result.transactions.ethereumTxHash)
-
-      invalidateQueries([QueryKey.PendingTransactions, QueryKey.SafeInfo])
-
-      await waitForTransactionIndexed(result.transactions)
-
-      invalidateQueries([QueryKey.Transactions])
-    } else if (result.transactions?.safeTxHash) {
-      invalidateQueries([QueryKey.PendingTransactions])
-    }
-
-    return result
-  }
-
-  const { mutate, mutateAsync, ...result } = useMutation({
-    mutationFn,
-    mutationKey: [MutationKey.SendTransaction]
   })
 
   return { ...result, sendTransaction: mutate, sendTransactionAsync: mutateAsync }

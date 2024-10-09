@@ -17,7 +17,7 @@ export function useAddress(params: UseAddressParams = {}): UseAddressReturnType 
   return usePublicClientQuery({
     ...params,
     querySafeClientFn: (safeClient) =>
-      safeClient.protocolKit.getAddress().then((address) => address as Address),
+      safeClient.getAddress().then((address) => address as Address),
     queryKey: [QueryKey.Address]
   })
 }

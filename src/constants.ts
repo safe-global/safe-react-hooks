@@ -11,5 +11,9 @@ export enum QueryKey {
 
 export enum MutationKey {
   SendTransaction = 'sendTransaction',
-  ConfirmTransaction = 'confirmTransaction'
+  ConfirmTransaction = 'confirmTransaction',
+  UpdateThreshold = 'updateThreshold',
+  SwapOwner = 'swapOwner',
+  AddOwner = 'addOwner',
+  RemoveOwner = 'removeOwner'
 }

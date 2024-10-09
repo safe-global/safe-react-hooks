@@ -27,14 +27,12 @@ export function usePublicClientQuery<T>(
   const [config] = useConfig({ config: params.config })
   const safeClient = usePublicClient({ config: params.config })
 
-  const queryFn = useCallback(async () => {
+  const queryFn = useCallback(() => {
     if (!safeClient) {
       throw new Error('SafeClient not initialized')
     }
 
-    const result = await querySafeClientFn(safeClient)
-    console.log('Fetched data:', result)
-    return result
+    return querySafeClientFn(safeClient)
   }, [safeClient, querySafeClientFn])
 
   return useQuery({ queryKey: [...queryKey, config], queryFn })

@@ -9,6 +9,7 @@ import * as useSignerAddress from '@/hooks/useSignerAddress.js'
 import * as useTransaction from '@/hooks/useTransaction.js'
 import * as usePendingTransactions from '@/hooks/usePendingTransactions.js'
 import * as useTransactions from '@/hooks/useTransactions.js'
+import { UseSafeTransactionReturnType } from '@/hooks/useSafeTransaction.js'
 import { useSafe } from '@/hooks/useSafe.js'
 import { configExistingSafe } from '@test/config.js'
 import {
@@ -56,7 +57,7 @@ describe('useSafe', () => {
     jest.clearAllMocks()
   })
 
-  it('should return object containing functions to call other hooks and `isInitialized` + `isSignerConnected` flags', async () => {
+  it('should return object containing functions to call other hooks and `isInitialized`, `isOwnerConnected` + `isSignerConnected` flags', async () => {
     const { result } = await renderUseSafeHook()
 
     expect(result.current).toMatchObject({
@@ -70,7 +71,8 @@ describe('useSafe', () => {
       getTransaction: expect.any(Function),
       getTransactions: expect.any(Function),
       isInitialized: true,
-      isSignerConnected: false
+      isSignerConnected: false,
+      isOwnerConnected: false
     })
   })
 
@@ -87,7 +89,8 @@ describe('useSafe', () => {
     useAuthenticateSpy.mockReturnValue({
       connect: connectMock,
       disconnect: disconnectMock,
-      isSignerConnected: false
+      isSignerConnected: false,
+      isOwnerConnected: false
     })
 
     describe('connect', () => {
@@ -248,7 +251,7 @@ describe('useSafe', () => {
       useTransactionSpy.mockReturnValue({
         data: safeMultisigTransaction,
         status: 'success'
-      })
+      } as UseSafeTransactionReturnType)
 
       const { result } = await renderUseSafeHook()
 

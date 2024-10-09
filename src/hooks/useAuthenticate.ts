@@ -1,11 +1,17 @@
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { SafeContext } from '@/SafeContext.js'
+import { useSignerAddress } from '@/hooks/useSignerAddress.js'
 import { AuthenticationError } from '@/errors/AuthenticationError.js'
+import { ConfigParam, SafeConfig } from '@/types/index.js'
+import { MissingSafeProviderError } from '@/errors/MissingSafeProviderError.js'
+
+export type UseAuthenticateParams = ConfigParam<SafeConfig>
 
 export type UseConnectSignerReturnType = {
   connect: (signer: string) => Promise<void>
   disconnect: () => Promise<void>
   isSignerConnected: boolean
+  isOwnerConnected: boolean
 }
 
 /**
@@ -13,7 +19,15 @@ export type UseConnectSignerReturnType = {
  * @returns Functions to connect and disconnect a signer.
  */
 export function useAuthenticate(): UseConnectSignerReturnType {
-  const { signerClient, setSigner } = useContext(SafeContext)
+  const { signerClient, setSigner, config } = useContext(SafeContext) || {}
+
+  if (!config) {
+    throw new MissingSafeProviderError('`useAuthenticate` must be used within `SafeProvider`.')
+  }
+
+  const signerAddress = useSignerAddress()
+
+  const [isOwnerConnected, setIsOwnerConnected] = useState(false)
 
   const connect = useCallback(
     async (signer: string) => {
@@ -32,7 +46,13 @@ export function useAuthenticate(): UseConnectSignerReturnType {
     return setSigner(undefined)
   }, [setSigner])
 
-  const isSignerConnected = !!signerClient
+  const isSignerConnected = !!signerAddress
 
-  return { connect, disconnect, isSignerConnected }
+  useEffect(() => {
+    if (signerClient && signerAddress) {
+      signerClient.isOwner(signerAddress).then(setIsOwnerConnected)
+    }
+  }, [signerClient, signerAddress])
+
+  return { connect, disconnect, isSignerConnected, isOwnerConnected }
 }
