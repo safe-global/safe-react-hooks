@@ -6,6 +6,6 @@ export * from '@/hooks/useUpdateThreshold.js'
 
 export * from '@/types/index.js'
 
-export { SafeProvider } from './SafeProvider.js'
-export { SafeContext } from './SafeContext.js'
+export * from './SafeProvider.js'
+export { SafeContext, SafeContextType } from './SafeContext.js'
 export { createConfig } from './createConfig.js'
