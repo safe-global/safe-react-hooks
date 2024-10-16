@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { Hash } from 'viem'
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
-import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types'
+import { SafeMultisigTransactionResponse } from '@safe-global/types-kit'
 import { usePublicClient } from '@/hooks/usePublicClient.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 
