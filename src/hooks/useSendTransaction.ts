@@ -7,7 +7,7 @@ import { useWaitForTransaction } from '@/hooks/useWaitForTransaction.js'
 import { MutationKey, QueryKey } from '@/constants.js'
 import { invalidateQueries } from '@/queryClient.js'
 
-type SendTransactionVariables = { transactions: (TransactionBase | SafeTransaction)[] }
+export type SendTransactionVariables = { transactions: (TransactionBase | SafeTransaction)[] }
 
 export type UseSendTransactionParams = ConfigParam<SafeConfigWithSigner>
 export type UseSendTransactionReturnType = Omit<
