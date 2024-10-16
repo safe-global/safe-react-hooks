@@ -5,7 +5,7 @@ import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { useSendTransaction } from '@/hooks/useSendTransaction.js'
 import { MutationKey } from '@/constants.js'
 
-type AddOwnerVariables = Parameters<SafeClient['createAddOwnerTransaction']>[0]
+export type AddOwnerVariables = Parameters<SafeClient['createAddOwnerTransaction']>[0]
 
 export type UseAddOwnerParams = ConfigParam<SafeConfigWithSigner>
 export type UseAddOwnerReturnType = Omit<

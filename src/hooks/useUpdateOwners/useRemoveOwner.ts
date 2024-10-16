@@ -5,7 +5,7 @@ import { useSendTransaction } from '@/hooks/useSendTransaction.js'
 import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { MutationKey } from '@/constants.js'
 
-type RemoveOwnerVariables = Parameters<SafeClient['createRemoveOwnerTransaction']>[0]
+export type RemoveOwnerVariables = Parameters<SafeClient['createRemoveOwnerTransaction']>[0]
 
 export type UseRemoveOwnerParams = ConfigParam<SafeConfigWithSigner>
 export type UseRemoveOwnerReturnType = Omit<
