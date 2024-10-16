@@ -9,7 +9,7 @@ First off, **thank you** for considering contributing to this project!
 
 ## I Have a Question
 
-See our [support guidelines](https://github.com/safe-global/safe-core-sdk-react-hooks/tree/main/SUPPORT.md). **Do not** use GitHub issues for general support or questions.
+See our [support guidelines](https://github.com/safe-global/safe-react-hooks/tree/main/SUPPORT.md). **Do not** use GitHub issues for general support or questions.
 
 ## I Want to Contribute
 ### Legal Notice

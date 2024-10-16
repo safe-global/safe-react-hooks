@@ -6,7 +6,7 @@ about: Bug report about the Safe Core SDK React Hooks
 ## Prerequisites
 
 - First, many thanks for taking part in the community and helping us improve. We appreciate that a lot.
-- **For support questions please follow our support guidelines:** https://github.com/safe-global/safe-core-sdk-react-hooks/tree/main/SUPPORT.md
+- **For support questions please follow our support guidelines:** https://github.com/safe-global/safe-react-hooks/tree/main/SUPPORT.md
 - Please ensure the issue isn't already reported.
 
 *Please delete the above section and the instructions in the sections below before submitting*
