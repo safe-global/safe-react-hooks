@@ -1,4 +1,4 @@
-import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types'
+import { SafeMultisigTransactionResponse } from '@safe-global/types-kit'
 import type { SdkStarterKitConfig } from '@safe-global/sdk-starter-kit'
 import type { Address, CustomTransport, HttpTransport } from 'viem'
 import type { Chain as ChainType } from 'viem/chains'

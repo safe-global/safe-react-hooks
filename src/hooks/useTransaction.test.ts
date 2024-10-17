@@ -5,7 +5,7 @@ import { useTransaction } from '@/hooks/useTransaction.js'
 import * as useSafeTransaction from '@/hooks/useSafeTransaction.js'
 import { ethereumTxHash, safeMultisigTransaction, safeTxHash } from '@test/fixtures/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
-import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types'
+import { SafeMultisigTransactionResponse } from '@safe-global/types-kit'
 import { configPredictedSafe } from '@test/config.js'
 
 describe('useTransaction', () => {

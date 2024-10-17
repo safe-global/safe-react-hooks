@@ -5,7 +5,7 @@ import {
   SafeModuleTransaction,
   SafeMultisigTransaction
 } from '@/types/index.js'
-import { SafeTransaction } from '@safe-global/safe-core-sdk-types'
+import { SafeTransaction } from '@safe-global/types-kit'
 
 export function isString(x: any): x is string {
   return typeof x === 'string'

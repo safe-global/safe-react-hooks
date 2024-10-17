@@ -1,4 +1,4 @@
-# Safe Core SDK React Hooks
+# Safe React Hooks
 
 A collection of React hooks to simplify the usage of the Safe Core SDK for React developers, written in TypeScript.
 
@@ -15,13 +15,13 @@ A collection of React hooks to simplify the usage of the Safe Core SDK for React
 To install the package, run:
 
 ```bash
-npm install @safe-global/safe-core-sdk-react-sdk
+npm install @safe-global/safe-react-hooks
 ```
 
 or
 
 ```bash
-yarn add @safe-global/safe-core-sdk-react-sdk
+yarn add @safe-global/safe-react-hooks
 ```
 
 ## Usage
@@ -30,8 +30,8 @@ yarn add @safe-global/safe-core-sdk-react-sdk
 
 ## Contributing
 
-If you are interested in contributing, please read the [Contributing Guidelines](https://github.com/safe-global/safe-core-sdk-react-hooks/tree/main/CONTRIBUTING.md) **before opening an issue or submitting a pull request**.
+If you are interested in contributing, please read the [Contributing Guidelines](https://github.com/safe-global/safe-react-hooks/tree/main/CONTRIBUTING.md) **before opening an issue or submitting a pull request**.
 
 ## License
 
-This library is released under [MIT](https://github.com/safe-global/safe-core-sdk-react-hooks/tree/main/LICENSE.md).
+This library is released under [MIT](https://github.com/safe-global/safe-react-hooks/tree/main/LICENSE.md).

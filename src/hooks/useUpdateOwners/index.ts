@@ -11,6 +11,10 @@ export type UseUpdateOwnersReturnType = {
   swap: ReturnType<typeof useSwapOwner>
 }
 
+export { type AddOwnerVariables } from './useAddOwner.js'
+export { type RemoveOwnerVariables } from './useRemoveOwner.js'
+export { type SwapOwnerVariables } from './useSwapOwner.js'
+
 /**
  * Hook to manage the owners of the Safe account. It provides methods to add a new owner,
  * remove an existing one, and to swap an existing owner in favor of a new one.

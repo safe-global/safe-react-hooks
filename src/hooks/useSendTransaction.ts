@@ -1,5 +1,5 @@
 import { UseMutateAsyncFunction, UseMutateFunction, UseMutationResult } from '@tanstack/react-query'
-import { SafeTransaction, TransactionBase } from '@safe-global/safe-core-sdk-types'
+import { SafeTransaction, TransactionBase } from '@safe-global/types-kit'
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, isSafeTransaction, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
@@ -7,7 +7,7 @@ import { useWaitForTransaction } from '@/hooks/useWaitForTransaction.js'
 import { MutationKey, QueryKey } from '@/constants.js'
 import { invalidateQueries } from '@/queryClient.js'
 
-type SendTransactionVariables = { transactions: (TransactionBase | SafeTransaction)[] }
+export type SendTransactionVariables = { transactions: (TransactionBase | SafeTransaction)[] }
 
 export type UseSendTransactionParams = ConfigParam<SafeConfigWithSigner>
 export type UseSendTransactionReturnType = Omit<

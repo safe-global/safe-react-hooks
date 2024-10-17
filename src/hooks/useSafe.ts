@@ -13,7 +13,7 @@ import {
 import { MissingSafeProviderError } from '@/errors/MissingSafeProviderError.js'
 import { SafeContext } from '@/SafeContext.js'
 
-export type UseReturnType = UseConnectSignerReturnType & {
+export type UseSafeReturnType = UseConnectSignerReturnType & {
   isInitialized: boolean
   getBalance: typeof useBalance
   getChain: typeof useChain
@@ -28,7 +28,7 @@ export type UseReturnType = UseConnectSignerReturnType & {
  * Top-level hook to get Safe-related information.
  * @returns Object wrapping the Safe hooks.
  */
-export function useSafe(): UseReturnType {
+export function useSafe(): UseSafeReturnType {
   const { isInitialized, config } = useContext(SafeContext)
 
   if (!config) {
