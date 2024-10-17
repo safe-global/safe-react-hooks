@@ -1,7 +1,7 @@
 {
   "name": "@safe-global/safe-react-hooks",
   "version": "0.0.0",
-  "description": "SDK that facilitates the interaction with Safe Smart Accounts",
+  "description": "A collection of React Hooks that facilitates the interaction of React apps with Safe Smart Accounts",
   "keywords": [
     "Ethereum",
     "Wallet",

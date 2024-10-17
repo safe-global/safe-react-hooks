@@ -28,11 +28,11 @@ By following the steps bellow you will understand the development process and wo
 
 The first step would be to [fork the repository](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#forking-a-repository). This will allow you to get a current copy of the repository state. Follow the steps to also clone your forked repository locally.
 
-For active development we use the `development` branch. Our `main` branch contains only the currently published code. All new branches should be created from `development`.
+All new branches should be created from `main`. PRs would be requested to `main` branch. An approval from a team member is required before merging.
 
 #### Installing Node and Yarn
 
-The Safe{Core} SDK uses [Node](https://nodejs.org) as development environment and Yarn to manage the dependencies. You will need to make sure you are using the [latest Node LTS version](https://nodejs.org/en/about/previous-releases) and that you have available Yarn v1.
+The Safe React Hooks uses [Node](https://nodejs.org) as development environment and Yarn to manage the dependencies. You will need to make sure you are using the [latest Node LTS version](https://nodejs.org/en/about/previous-releases) and that you have available Yarn v1.
 
 You can check which versions you are using with:
 

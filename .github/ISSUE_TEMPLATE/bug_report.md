@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Bug report about the Safe Core SDK React Hooks
+about: Bug report about the Safe React Hooks
 ---
 
 ## Prerequisites
@@ -16,18 +16,9 @@ about: Bug report about the Safe Core SDK React Hooks
 Please describe concisely the bug you have found.
 
 ## Environment
-- Safe Core SDK versions:
-  <!-- Please leave empty or delete those that you don't use. -->
-  - api-kit:
-  - auth-kit:
-  - onramp-kit
-  - protocol-kit:
-  - relay-kit:
-  - safe-core-sdk-types:
+- Safe React Hooks version:
 - Safe contract version: 
-- Environment:
-  - browser
-  - non-browser
+- React version:
 
 ## Steps to reproduce
 

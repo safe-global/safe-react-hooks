@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea or feature request for the Safe Core SDK React Hooks
+about: Suggest an idea or feature request for the Safe React Hooks
 ---
 
 ## Prerequisites
