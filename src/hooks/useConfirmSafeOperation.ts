@@ -45,12 +45,8 @@ export function useConfirmSafeOperation(
     ...params,
     mutationKey: [MutationKey.ConfirmSafeOperation],
     mutationSafeClientFn: async (signerClient, { safeOperationHash }) => {
-      if (!config?.safeOperationOptions)
-        throw new Error('SafeOperationOptions are not specified in SafeConfig')
-
-      if (!signerClient.confirmSafeOperation) {
-        throw new Error('You should add safeOperationOptions to the SafeConfig')
-      }
+      if (!config?.safeOperationOptions || !signerClient.confirmSafeOperation)
+        throw new Error('Property safeOperationOptions are not specified in SafeConfig')
 
       const result = await signerClient.confirmSafeOperation({
         safeOperationHash

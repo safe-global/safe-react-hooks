@@ -29,12 +29,8 @@ export function usePendingSafeOperations(
         throw new Error('Safe is not deployed')
       }
 
-      if (!config?.safeOperationOptions)
-        throw new Error('SafeOperationOptions are not specified in SafeConfig')
-
-      if (!safeClient.getPendingSafeOperations) {
-        throw new Error('You should add safeOperationOptions to the SafeConfig')
-      }
+      if (!config?.safeOperationOptions || !safeClient.getPendingSafeOperations)
+        throw new Error('Property safeOperationOptions are not specified in SafeConfig')
 
       const pendingSafeOperations = await safeClient.getPendingSafeOperations({
         limit: params.limit,

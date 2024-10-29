@@ -39,33 +39,22 @@ export function useSendSafeOperation(
     ...params,
     mutationKey: [MutationKey.SendSafeOperation],
     mutationSafeClientFn: async (signerClient, { transactions = [], ...paymasterSendOptions }) => {
-      if (!config?.safeOperationOptions)
-        throw new Error('SafeOperationOptions are not specified in SafeConfig')
+      if (!config?.safeOperationOptions || !signerClient.sendSafeOperation)
+        throw new Error('Property safeOperationOptions are not specified in SafeConfig')
 
-      try {
-        console.log('sendSafeOperation', { transactions, ...paymasterSendOptions })
+      const result = await signerClient.sendSafeOperation({
+        transactions,
+        ...paymasterSendOptions
+      })
+      console.log('result', result)
 
-        if (!signerClient.sendSafeOperation) {
-          throw new Error('You should add safeOperationOptions to the SafeConfig')
-        }
-
-        const result = await signerClient.sendSafeOperation({
-          transactions,
-          ...paymasterSendOptions
-        })
-        console.log('result', result)
-
-        if (result.safeOperations?.userOperationHash) {
-          invalidateQueries([QueryKey.SafeOperations, QueryKey.SafeInfo])
-        } else if (result.safeOperations?.safeOperationHash) {
-          invalidateQueries([QueryKey.PendingSafeOperations])
-        }
-
-        return result
-      } catch (error) {
-        console.error('error', error)
-        throw new Error("Couldn't send SafeOperation")
+      if (result.safeOperations?.userOperationHash) {
+        invalidateQueries([QueryKey.SafeOperations, QueryKey.SafeInfo])
+      } else if (result.safeOperations?.safeOperationHash) {
+        invalidateQueries([QueryKey.PendingSafeOperations])
       }
+
+      return result
     }
   })
 
