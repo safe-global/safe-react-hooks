@@ -6,14 +6,18 @@ export enum QueryKey {
   Threshold = 'threshold',
   IsDeployed = 'isDeployed',
   Owners = 'owners',
-  SafeInfo = 'safeInfo'
+  SafeInfo = 'safeInfo',
+  SafeOperations = 'safeOperations',
+  PendingSafeOperations = 'pendingSafeOperations',
 }
 
 export enum MutationKey {
-  SendTransaction = 'sendTransaction',
-  ConfirmTransaction = 'confirmTransaction',
+  SendTransaction = 'sendTransaction',  
+  ConfirmTransaction = 'confirmTransaction',  
   UpdateThreshold = 'updateThreshold',
   SwapOwner = 'swapOwner',
   AddOwner = 'addOwner',
-  RemoveOwner = 'removeOwner'
+  RemoveOwner = 'removeOwner',
+  SendSafeOperation = 'sendSafeOperation',
+  ConfirmSafeOperation = 'confirmSafeOperation'
 }

@@ -1,7 +1,12 @@
 import { SafeMultisigTransactionResponse } from '@safe-global/types-kit'
 import type { SdkStarterKitConfig } from '@safe-global/sdk-starter-kit'
+import type { PaymasterOptions } from '@safe-global/relay-kit'
 import type { Address, CustomTransport, HttpTransport } from 'viem'
 import type { Chain as ChainType } from 'viem/chains'
+
+type BundlerOptions = {
+  bundlerUrl: string
+}
 
 export * from './guards.js'
 
@@ -11,7 +16,12 @@ export type CreateConfigParams<
   Provider extends SdkStarterKitConfig['provider'] = SdkStarterKitConfig['provider'],
   Signer extends SdkStarterKitConfig['signer'] = SdkStarterKitConfig['signer'],
   Chain extends ChainType = ChainType
-> = { chain: Chain; provider: Provider; signer: Signer } & SdkStarterKitConfig
+> = {
+  chain: Chain
+  provider: Provider
+  signer: Signer
+  safeOperationOptions?: BundlerOptions & PaymasterOptions
+} & SdkStarterKitConfig
 
 export type SafeConfig<
   Provider extends SdkStarterKitConfig['provider'] = SdkStarterKitConfig['provider'],
@@ -21,6 +31,7 @@ export type SafeConfig<
   chain: Chain
   provider: Provider
   signer: Signer
+  safeOperationOptions?: BundlerOptions & PaymasterOptions
 } & (Provider extends string ? { transport: HttpTransport } : { transport: CustomTransport })
 
 export type SafeConfigWithSigner = SafeConfig & { signer: string }

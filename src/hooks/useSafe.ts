@@ -4,11 +4,14 @@ import {
   useBalance,
   useChain,
   UseConnectSignerReturnType,
+  usePendingSafeOperations,
   usePendingTransactions,
   useSafeInfo,
+  useSafeOperation,
   useSignerAddress,
   useTransaction,
-  useTransactions
+  useTransactions,
+  useSafeOperations
 } from '@/hooks/index.js'
 import { MissingSafeProviderError } from '@/errors/MissingSafeProviderError.js'
 import { SafeContext } from '@/SafeContext.js'
@@ -22,6 +25,9 @@ export type UseSafeReturnType = UseConnectSignerReturnType & {
   getTransactions: typeof useTransactions
   getSafeInfo: typeof useSafeInfo
   getSignerAddress: typeof useSignerAddress
+  getSafeOperation: typeof useSafeOperation
+  getSafeOperations: typeof useSafeOperations
+  getPendingSafeOperations: typeof usePendingSafeOperations
 }
 
 /**
@@ -49,6 +55,9 @@ export function useSafe(): UseSafeReturnType {
     getTransaction: useTransaction,
     getTransactions: useTransactions,
     getSafeInfo: useSafeInfo,
-    getSignerAddress: useSignerAddress
+    getSignerAddress: useSignerAddress,
+    getSafeOperation: useSafeOperation,
+    getSafeOperations: useSafeOperations,
+    getPendingSafeOperations: usePendingSafeOperations
   }
 }
