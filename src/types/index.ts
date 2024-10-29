@@ -1,8 +1,19 @@
-import { SafeMultisigTransactionResponse } from '@safe-global/types-kit'
+import {
+  SafeMultisigTransactionResponse,
+  SafeOperationResponse,
+  ListResponse
+} from '@safe-global/types-kit'
 import type { SdkStarterKitConfig } from '@safe-global/sdk-starter-kit'
 import type { PaymasterOptions } from '@safe-global/relay-kit'
 import type { Address, CustomTransport, HttpTransport } from 'viem'
 import type { Chain as ChainType } from 'viem/chains'
+import {
+  ConfirmSafeOperationProps,
+  SafeClient as SafeClientType,
+  SafeClientResult,
+  SendSafeOperationProps
+} from '@safe-global/sdk-starter-kit'
+import { ListOptions } from '@safe-global/api-kit'
 
 type BundlerOptions = {
   bundlerUrl: string
@@ -11,6 +22,14 @@ type BundlerOptions = {
 export * from './guards.js'
 
 export type EIP1193Provider = Exclude<SdkStarterKitConfig['provider'], string>
+
+type SafeOperationsClient = {
+  sendSafeOperation?: (props: SendSafeOperationProps) => Promise<SafeClientResult>
+  confirmSafeOperation?: (props: ConfirmSafeOperationProps) => Promise<SafeClientResult>
+  getPendingSafeOperations?: (options?: ListOptions) => Promise<ListResponse<SafeOperationResponse>>
+}
+
+export type SafeClient = SafeClientType & SafeOperationsClient
 
 export type CreateConfigParams<
   Provider extends SdkStarterKitConfig['provider'] = SdkStarterKitConfig['provider'],

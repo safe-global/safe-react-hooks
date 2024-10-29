@@ -1,9 +1,5 @@
 import { UseMutateAsyncFunction, UseMutateFunction, UseMutationResult } from '@tanstack/react-query'
-import {
-  SafeClientResult,
-  safeOperations,
-  SendSafeOperationProps
-} from '@safe-global/sdk-starter-kit'
+import { SafeClientResult, SendSafeOperationProps } from '@safe-global/sdk-starter-kit'
 import { useConfig } from '@/hooks/useConfig.js'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
@@ -46,14 +42,14 @@ export function useSendSafeOperation(
       if (!config?.safeOperationOptions)
         throw new Error('SafeOperationOptions are not specified in SafeConfig')
 
-      const { bundlerUrl, ...paymasterOptions } = config.safeOperationOptions
-      const signerClientWithSafeOperations = await signerClient.extend(
-        safeOperations({ bundlerUrl }, paymasterOptions)
-      )
-
       try {
         console.log('sendSafeOperation', { transactions, ...paymasterSendOptions })
-        const result = await signerClientWithSafeOperations.sendSafeOperation({
+
+        if (!signerClient.sendSafeOperation) {
+          throw new Error('You should add safeOperationOptions to the SafeConfig')
+        }
+
+        const result = await signerClient.sendSafeOperation({
           transactions,
           ...paymasterSendOptions
         })

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { type SafeClient } from '@safe-global/sdk-starter-kit'
-import type { ConfigParam, SafeConfig } from '@/types/index.js'
+import type { ConfigParam, SafeClient, SafeConfig } from '@/types/index.js'
 import { SafeContext } from '@/SafeContext.js'
 import { useCompareObject } from '@/hooks/helpers/useCompare.js'
 import { createPublicClient } from '@/createClient.js'

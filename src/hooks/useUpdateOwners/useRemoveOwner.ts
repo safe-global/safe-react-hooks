@@ -1,6 +1,6 @@
 import { UseMutateAsyncFunction, UseMutateFunction, UseMutationResult } from '@tanstack/react-query'
-import { SafeClient, SafeClientResult } from '@safe-global/sdk-starter-kit'
-import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
+import { SafeClientResult } from '@safe-global/sdk-starter-kit'
+import { ConfigParam, SafeConfigWithSigner, SafeClient } from '@/types/index.js'
 import { useSendTransaction } from '@/hooks/useSendTransaction.js'
 import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { MutationKey } from '@/constants.js'

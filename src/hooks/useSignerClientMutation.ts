@@ -1,9 +1,8 @@
 import { useCallback } from 'react'
 import { useMutation, type UseMutationResult } from '@tanstack/react-query'
-import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useConfig } from '@/hooks/useConfig.js'
 import { useSignerClient } from '@/hooks//useSignerClient.js'
-import type { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
+import type { ConfigParam, SafeConfigWithSigner, SafeClient } from '@/types/index.js'
 
 export type UseSignerClientMutationParams<TReturnData, TParams> =
   ConfigParam<SafeConfigWithSigner> & {

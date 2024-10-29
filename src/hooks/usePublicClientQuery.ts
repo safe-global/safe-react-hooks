@@ -1,9 +1,8 @@
 import { useCallback } from 'react'
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
-import { SafeClient } from '@safe-global/sdk-starter-kit'
 import { useConfig } from '@/hooks/useConfig.js'
 import { usePublicClient } from '@/hooks/usePublicClient.js'
-import type { ConfigParam, SafeConfig } from '@/types/index.js'
+import type { ConfigParam, SafeConfig, SafeClient } from '@/types/index.js'
 
 export type UsePublicClientQueryParams<T> = ConfigParam<SafeConfig> & {
   querySafeClientFn: (safeClient: SafeClient) => Promise<T> | T

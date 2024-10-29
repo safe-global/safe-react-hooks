@@ -1,5 +1,5 @@
+import { createSafeClient, safeOperations } from '@safe-global/sdk-starter-kit'
 import type { SafeConfig, SafeConfigWithSigner } from '@/types/index.js'
-import { createSafeClient } from '@safe-global/sdk-starter-kit'
 
 const getPublicClientConfig = ({ provider, safeAddress, safeOptions }: SafeConfig) => ({
   signer: undefined,
@@ -12,16 +12,40 @@ const getPublicClientConfig = ({ provider, safeAddress, safeOptions }: SafeConfi
  * @param config Config object for the Safe client
  * @returns Safe client instance with public method capabilities
  */
-export const createPublicClient = (config: SafeConfig) =>
-  createSafeClient(getPublicClientConfig(config))
+export const createPublicClient = async (config: SafeConfig) => {
+  const publicClient = await createSafeClient(getPublicClientConfig(config))
+
+  if (config.safeOperationOptions) {
+    const { bundlerUrl, ...paymasterOptions } = config.safeOperationOptions
+    const publicClientWithSafeOperations = await publicClient.extend(
+      safeOperations({ bundlerUrl }, paymasterOptions)
+    )
+
+    return publicClientWithSafeOperations
+  }
+
+  return publicClient
+}
 
 /**
  * Creates a SafeClient instance with signer capabilities.
  * @param config Config object for the Safe client with mandatory `signer` property
  * @returns Safe client instance with signer capabilities
  */
-export const createSignerClient = ({ signer, ...config }: SafeConfigWithSigner) =>
-  createSafeClient({
+export const createSignerClient = async ({ signer, ...config }: SafeConfigWithSigner) => {
+  const signerClient = await createSafeClient({
     ...getPublicClientConfig({ ...config, signer: undefined }),
     signer
   })
+
+  if (config.safeOperationOptions) {
+    const { bundlerUrl, ...paymasterOptions } = config.safeOperationOptions
+    const publicClientWithSafeOperations = await signerClient.extend(
+      safeOperations({ bundlerUrl }, paymasterOptions)
+    )
+
+    return publicClientWithSafeOperations
+  }
+
+  return signerClient
+}
