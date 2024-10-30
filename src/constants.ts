@@ -8,12 +8,12 @@ export enum QueryKey {
   Owners = 'owners',
   SafeInfo = 'safeInfo',
   SafeOperations = 'safeOperations',
-  PendingSafeOperations = 'pendingSafeOperations',
+  PendingSafeOperations = 'pendingSafeOperations'
 }
 
 export enum MutationKey {
-  SendTransaction = 'sendTransaction',  
-  ConfirmTransaction = 'confirmTransaction',  
+  SendTransaction = 'sendTransaction',
+  ConfirmTransaction = 'confirmTransaction',
   UpdateThreshold = 'updateThreshold',
   SwapOwner = 'swapOwner',
   AddOwner = 'addOwner',

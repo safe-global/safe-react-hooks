@@ -1,6 +1,5 @@
 import { UseMutateAsyncFunction, UseMutateFunction, UseMutationResult } from '@tanstack/react-query'
 import { SafeClientResult, SendSafeOperationProps } from '@safe-global/sdk-starter-kit'
-import { useConfig } from '@/hooks/useConfig.js'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
 import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { MutationKey, QueryKey } from '@/constants.js'
@@ -31,7 +30,6 @@ export type UseSendSafeOperationReturnType = Omit<
 export function useSendSafeOperation(
   params: UseSendSafeOperationParams = {}
 ): UseSendSafeOperationReturnType {
-  const [config] = useConfig({ config: params.config })
   const { mutate, mutateAsync, ...result } = useSignerClientMutation<
     SafeClientResult,
     SendSafeOperationVariables
@@ -39,14 +37,15 @@ export function useSendSafeOperation(
     ...params,
     mutationKey: [MutationKey.SendSafeOperation],
     mutationSafeClientFn: async (signerClient, { transactions = [], ...paymasterSendOptions }) => {
-      if (!config?.safeOperationOptions || !signerClient.sendSafeOperation)
-        throw new Error('Property safeOperationOptions are not specified in SafeConfig')
+      if (!signerClient.sendSafeOperation)
+        throw new Error(
+          'To use Safe Operations, you need to specify the safeOperationOptions in the SafeProvider configuration.'
+        )
 
       const result = await signerClient.sendSafeOperation({
         transactions,
         ...paymasterSendOptions
       })
-      console.log('result', result)
 
       if (result.safeOperations?.userOperationHash) {
         invalidateQueries([QueryKey.SafeOperations, QueryKey.SafeInfo])

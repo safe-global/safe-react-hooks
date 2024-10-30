@@ -31,6 +31,8 @@ type SafeOperationsClient = {
 
 export type SafeClient = SafeClientType & SafeOperationsClient
 
+export type SafeOperationOptions = BundlerOptions & PaymasterOptions
+
 export type CreateConfigParams<
   Provider extends SdkStarterKitConfig['provider'] = SdkStarterKitConfig['provider'],
   Signer extends SdkStarterKitConfig['signer'] = SdkStarterKitConfig['signer'],
@@ -39,7 +41,7 @@ export type CreateConfigParams<
   chain: Chain
   provider: Provider
   signer: Signer
-  safeOperationOptions?: BundlerOptions & PaymasterOptions
+  safeOperationOptions?: SafeOperationOptions
 } & SdkStarterKitConfig
 
 export type SafeConfig<
@@ -50,7 +52,7 @@ export type SafeConfig<
   chain: Chain
   provider: Provider
   signer: Signer
-  safeOperationOptions?: BundlerOptions & PaymasterOptions
+  safeOperationOptions?: SafeOperationOptions
 } & (Provider extends string ? { transport: HttpTransport } : { transport: CustomTransport })
 
 export type SafeConfigWithSigner = SafeConfig & { signer: string }
