@@ -1,7 +1,5 @@
 import { type UseQueryResult } from '@tanstack/react-query'
 import { ListOptions } from '@safe-global/api-kit'
-import { useConfig } from '@/hooks/useConfig.js'
-import { useIsDeployed } from '@/hooks/useSafeInfo/useIsDeployed.js'
 import { usePublicClientQuery } from '@/hooks/usePublicClientQuery.js'
 import type { ConfigParam, SafeConfig } from '@/types/index.js'
 import { QueryKey } from '@/constants.js'
@@ -19,16 +17,9 @@ export type UsePendingSafeOperationsReturnType = UseQueryResult<ListResponse<Saf
 export function usePendingSafeOperations(
   params: UsePendingSafeOperationsParams = {}
 ): UsePendingSafeOperationsReturnType {
-  const [config] = useConfig({ config: params.config })
-  const { data: isDeployed } = useIsDeployed({ config })
-
   return usePublicClientQuery({
     ...params,
     querySafeClientFn: async (safeClient) => {
-      if (!isDeployed) {
-        throw new Error('Safe is not deployed')
-      }
-
       if (!safeClient.getPendingSafeOperations)
         throw new Error(
           'To use Safe Operations, you need to specify the safeOperationOptions in the SafeProvider configuration.'

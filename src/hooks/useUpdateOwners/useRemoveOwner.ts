@@ -1,7 +1,7 @@
 import { UseMutateAsyncFunction, UseMutateFunction, UseMutationResult } from '@tanstack/react-query'
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner, SafeClient } from '@/types/index.js'
-import { useSendTransaction } from '@/hooks/useSendTransaction.js'
+import { useDynamicSafeAction } from '../useDynamicSafeAction.js'
 import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { MutationKey } from '@/constants.js'
 
@@ -23,7 +23,7 @@ export type UseRemoveOwnerReturnType = Omit<
  * @returns Object containing the mutation state and the function to remove an owner.
  */
 export function useRemoveOwner(params: UseRemoveOwnerParams = {}): UseRemoveOwnerReturnType {
-  const { sendTransactionAsync } = useSendTransaction({ config: params.config })
+  const { sendAsync } = useDynamicSafeAction({ config: params.config })
 
   const { mutate, mutateAsync, ...result } = useSignerClientMutation<
     SafeClientResult,
@@ -33,7 +33,7 @@ export function useRemoveOwner(params: UseRemoveOwnerParams = {}): UseRemoveOwne
     mutationKey: [MutationKey.RemoveOwner],
     mutationSafeClientFn: async (safeClient, params) => {
       const removeOwnerTx = await safeClient.createRemoveOwnerTransaction(params)
-      return sendTransactionAsync({ transactions: [removeOwnerTx] })
+      return sendAsync({ transactions: [removeOwnerTx] })
     }
   })
 
