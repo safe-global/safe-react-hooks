@@ -14,6 +14,7 @@ import {
   useConfirmTransaction,
   UseConfirmTransactionReturnType
 } from '@/hooks/useConfirmTransaction.js'
+import { useConfig } from './useConfig.js'
 
 export type UseDynamicSafeActionParams = ConfigParam<SafeConfigWithSigner>
 
@@ -33,7 +34,9 @@ export type UseDynamicSafeActionReturnType = {
 export function useDynamicSafeAction(
   params: UseDynamicSafeActionParams = {}
 ): UseDynamicSafeActionReturnType {
-  const isSafeOperation = !!params.config?.safeOperationOptions
+  const [config] = useConfig({ config: params.config })
+
+  const isSafeOperation = !!config?.safeOperationOptions
 
   // Use the appropriate hooks based on the presence of safeOperations in the config
   const { sendSafeOperation, sendSafeOperationAsync }: UseSendSafeOperationReturnType =
