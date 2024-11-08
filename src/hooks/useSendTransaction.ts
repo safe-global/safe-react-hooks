@@ -51,6 +51,7 @@ export function useSendTransaction(
 
       if (result.transactions?.ethereumTxHash) {
         await waitForTransactionReceipt(result.transactions.ethereumTxHash)
+
         invalidateQueries([QueryKey.PendingTransactions, QueryKey.SafeInfo])
 
         await waitForTransactionIndexed(result.transactions)
