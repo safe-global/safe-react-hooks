@@ -71,7 +71,7 @@ describe('useUpdateThreshold', () => {
     expect(useSendTransactionSpy).toHaveBeenCalledTimes(1)
     expect(useSendTransactionSpy).toHaveBeenCalledWith({ config: undefined })
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(4)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       mutationSafeClientFn: expect.any(Function),
       mutationKey: [MutationKey.UpdateThreshold]
@@ -79,7 +79,7 @@ describe('useUpdateThreshold', () => {
 
     expect(result.current).toEqual(mutationIdleResult)
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(4)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       mutationKey: [MutationKey.UpdateThreshold],
       mutationSafeClientFn: expect.any(Function)
@@ -97,7 +97,7 @@ describe('useUpdateThreshold', () => {
     expect(useSendTransactionSpy).toHaveBeenCalledTimes(1)
     expect(useSendTransactionSpy).toHaveBeenCalledWith({ config })
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(4)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       config,
       mutationSafeClientFn: expect.any(Function),

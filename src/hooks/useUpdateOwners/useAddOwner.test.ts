@@ -75,7 +75,7 @@ describe('useAddOwner', () => {
     expect(useSendTransactionSpy).toHaveBeenCalledTimes(1)
     expect(useSendTransactionSpy).toHaveBeenCalledWith({ config: undefined })
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(4)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       mutationSafeClientFn: expect.any(Function),
       mutationKey: [MutationKey.AddOwner]
@@ -83,7 +83,7 @@ describe('useAddOwner', () => {
 
     expect(result.current).toEqual(mutationIdleResult)
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(4)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       mutationKey: [MutationKey.AddOwner],
       mutationSafeClientFn: expect.any(Function)
@@ -101,7 +101,7 @@ describe('useAddOwner', () => {
     expect(useSendTransactionSpy).toHaveBeenCalledTimes(1)
     expect(useSendTransactionSpy).toHaveBeenCalledWith({ config })
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(4)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       config,
       mutationSafeClientFn: expect.any(Function),

@@ -1,8 +1,10 @@
 import { UseMutateAsyncFunction, UseMutateFunction, UseMutationResult } from '@tanstack/react-query'
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner, SafeClient } from '@/types/index.js'
+import { useSendSafeOperation } from '@/hooks/useSendSafeOperation.js'
+import { useSendTransaction } from '@/hooks/useSendTransaction.js'
+import { useConfig } from '@/hooks/useConfig.js'
 import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
-import { useDynamicSafeAction } from '../useDynamicSafeAction.js'
 
 import { MutationKey } from '@/constants.js'
 
@@ -24,7 +26,9 @@ export type UseAddOwnerReturnType = Omit<
  * @returns Object containing the mutation state and the function to add an owner.
  */
 export function useAddOwner(params: UseAddOwnerParams = {}): UseAddOwnerReturnType {
-  const { sendAsync } = useDynamicSafeAction({ config: params.config })
+  const [config] = useConfig({ config: params.config })
+  const { sendSafeOperationAsync } = useSendSafeOperation(params)
+  const { sendTransactionAsync } = useSendTransaction(params)
 
   const { mutate, mutateAsync, ...result } = useSignerClientMutation<
     SafeClientResult,
@@ -34,7 +38,12 @@ export function useAddOwner(params: UseAddOwnerParams = {}): UseAddOwnerReturnTy
     mutationKey: [MutationKey.AddOwner],
     mutationSafeClientFn: async (safeClient, params) => {
       const addOwnerTx = await safeClient.createAddOwnerTransaction(params)
-      return sendAsync({ transactions: [addOwnerTx] })
+
+      const isSafeOperation = !!config.safeOperationOptions
+
+      return isSafeOperation
+        ? sendSafeOperationAsync({ transactions: [addOwnerTx] })
+        : sendTransactionAsync({ transactions: [addOwnerTx] })
     }
   })
 
