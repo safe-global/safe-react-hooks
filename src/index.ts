@@ -3,6 +3,8 @@ export * from '@/hooks/useConfirmTransaction.js'
 export * from '@/hooks/useSendTransaction.js'
 export * from '@/hooks/useUpdateOwners/index.js'
 export * from '@/hooks/useUpdateThreshold.js'
+export * from '@/hooks/useSendSafeOperation.js'
+export * from '@/hooks/useConfirmSafeOperation.js'
 
 export * from '@/types/index.js'
 

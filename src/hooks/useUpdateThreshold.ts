@@ -1,7 +1,9 @@
 import { UseMutateAsyncFunction, UseMutateFunction, UseMutationResult } from '@tanstack/react-query'
 import { SafeClientResult } from '@safe-global/sdk-starter-kit'
 import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
+import { useSendSafeOperation } from '@/hooks/useSendSafeOperation.js'
 import { useSendTransaction } from '@/hooks/useSendTransaction.js'
+import { useConfig } from '@/hooks/useConfig.js'
 import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { MutationKey } from '@/constants.js'
 
@@ -31,7 +33,9 @@ export type UseUpdateThresholdReturnType = Omit<
 export function useUpdateThreshold(
   params: UseUpdateThresholdParams = {}
 ): UseUpdateThresholdReturnType {
-  const { sendTransactionAsync } = useSendTransaction({ config: params.config })
+  const [config] = useConfig({ config: params.config })
+  const { sendSafeOperationAsync } = useSendSafeOperation(params)
+  const { sendTransactionAsync } = useSendTransaction(params)
 
   const { mutate, mutateAsync, ...result } = useSignerClientMutation<
     SafeClientResult,
@@ -42,7 +46,12 @@ export function useUpdateThreshold(
     mutationSafeClientFn: async (signerClient, updateThresholdParams) => {
       const updateThresholdTx =
         await signerClient.createChangeThresholdTransaction(updateThresholdParams)
-      return sendTransactionAsync({ transactions: [updateThresholdTx] })
+
+      const isSafeOperation = !!config.safeOperationOptions
+
+      return isSafeOperation
+        ? sendSafeOperationAsync({ transactions: [updateThresholdTx] })
+        : sendTransactionAsync({ transactions: [updateThresholdTx] })
     }
   })
 

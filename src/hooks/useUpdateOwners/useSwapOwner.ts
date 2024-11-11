@@ -1,8 +1,10 @@
 import { UseMutateAsyncFunction, UseMutateFunction, UseMutationResult } from '@tanstack/react-query'
-import { SafeClient, SafeClientResult } from '@safe-global/sdk-starter-kit'
-import { ConfigParam, SafeConfigWithSigner } from '@/types/index.js'
-import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
+import { SafeClientResult } from '@safe-global/sdk-starter-kit'
+import { ConfigParam, SafeConfigWithSigner, SafeClient } from '@/types/index.js'
+import { useSendSafeOperation } from '@/hooks/useSendSafeOperation.js'
 import { useSendTransaction } from '@/hooks/useSendTransaction.js'
+import { useConfig } from '@/hooks/useConfig.js'
+import { useSignerClientMutation } from '@/hooks/useSignerClientMutation.js'
 import { MutationKey } from '@/constants.js'
 
 export type SwapOwnerVariables = Parameters<SafeClient['createSwapOwnerTransaction']>[0]
@@ -23,7 +25,9 @@ export type UseSwapOwnerReturnType = Omit<
  * @returns Object containing the mutation state and the function to swap an owner.
  */
 export function useSwapOwner(params: UseSwapOwnerParams = {}): UseSwapOwnerReturnType {
-  const { sendTransactionAsync } = useSendTransaction({ config: params.config })
+  const [config] = useConfig({ config: params.config })
+  const { sendSafeOperationAsync } = useSendSafeOperation(params)
+  const { sendTransactionAsync } = useSendTransaction(params)
 
   const { mutate, mutateAsync, ...result } = useSignerClientMutation<
     SafeClientResult,
@@ -33,7 +37,12 @@ export function useSwapOwner(params: UseSwapOwnerParams = {}): UseSwapOwnerRetur
     mutationKey: [MutationKey.SwapOwner],
     mutationSafeClientFn: async (safeClient, params) => {
       const swapOwnerTx = await safeClient.createSwapOwnerTransaction(params)
-      return sendTransactionAsync({ transactions: [swapOwnerTx] })
+
+      const isSafeOperation = !!config.safeOperationOptions
+
+      return isSafeOperation
+        ? sendSafeOperationAsync({ transactions: [swapOwnerTx] })
+        : sendTransactionAsync({ transactions: [swapOwnerTx] })
     }
   })
 

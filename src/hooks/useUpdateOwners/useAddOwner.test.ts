@@ -4,13 +4,14 @@ import { SafeClient } from '@safe-global/sdk-starter-kit'
 import * as useSendTransaction from '@/hooks/useSendTransaction.js'
 import * as useSignerClientMutation from '@/hooks/useSignerClientMutation.js'
 import { useAddOwner } from '@/hooks/useUpdateOwners/useAddOwner.js'
+import * as useConfig from '@/hooks//useConfig.js'
 import {
   accounts,
   ethereumTxHash,
   safeMultisigTransaction,
   signerPrivateKeys
 } from '@test/fixtures/index.js'
-import { configPredictedSafe } from '@test/config.js'
+import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { createCustomMutationResult } from '@test/fixtures/mutationResult/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey } from '@/constants.js'
@@ -30,6 +31,7 @@ describe('useAddOwner', () => {
 
   const useSendTransactionSpy = jest.spyOn(useSendTransaction, 'useSendTransaction')
   const useSignerClientMutationSpy = jest.spyOn(useSignerClientMutation, 'useSignerClientMutation')
+  const useConfigSpy = jest.spyOn(useConfig, 'useConfig')
 
   const createAddOwnerTxResultMock = safeMultisigTransaction
   const createAddOwnerTxMock = jest.fn().mockResolvedValue(createAddOwnerTxResultMock)
@@ -59,6 +61,8 @@ describe('useAddOwner', () => {
     useSendTransactionSpy.mockReturnValue({
       sendTransactionAsync: sendTransactionAsyncMock
     } as unknown as useSendTransaction.UseSendTransactionReturnType)
+
+    useConfigSpy.mockReturnValue([configExistingSafe, () => {}])
   })
 
   afterEach(() => {
@@ -71,7 +75,7 @@ describe('useAddOwner', () => {
     expect(useSendTransactionSpy).toHaveBeenCalledTimes(1)
     expect(useSendTransactionSpy).toHaveBeenCalledWith({ config: undefined })
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(1)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       mutationSafeClientFn: expect.any(Function),
       mutationKey: [MutationKey.AddOwner]
@@ -79,7 +83,7 @@ describe('useAddOwner', () => {
 
     expect(result.current).toEqual(mutationIdleResult)
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(1)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       mutationKey: [MutationKey.AddOwner],
       mutationSafeClientFn: expect.any(Function)
@@ -97,7 +101,7 @@ describe('useAddOwner', () => {
     expect(useSendTransactionSpy).toHaveBeenCalledTimes(1)
     expect(useSendTransactionSpy).toHaveBeenCalledWith({ config })
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(1)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       config,
       mutationSafeClientFn: expect.any(Function),

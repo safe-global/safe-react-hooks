@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 import { Config } from 'wagmi'
-import { SafeClient } from '@safe-global/sdk-starter-kit'
-import type { SafeConfig } from '@/types/index.js'
+
+import type { SafeClient, SafeConfig } from '@/types/index.js'
 
 export type SafeContextType = {
   isInitialized: boolean

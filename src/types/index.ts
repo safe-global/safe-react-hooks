@@ -1,17 +1,48 @@
-import { SafeMultisigTransactionResponse } from '@safe-global/types-kit'
+import {
+  SafeMultisigTransactionResponse,
+  SafeOperationResponse,
+  ListResponse
+} from '@safe-global/types-kit'
 import type { SdkStarterKitConfig } from '@safe-global/sdk-starter-kit'
+import type { PaymasterOptions } from '@safe-global/relay-kit'
 import type { Address, CustomTransport, HttpTransport } from 'viem'
 import type { Chain as ChainType } from 'viem/chains'
+import {
+  ConfirmSafeOperationProps,
+  SafeClient as SafeClientType,
+  SafeClientResult,
+  SendSafeOperationProps
+} from '@safe-global/sdk-starter-kit'
+import { ListOptions } from '@safe-global/api-kit'
+
+type BundlerOptions = {
+  bundlerUrl: string
+}
 
 export * from './guards.js'
 
 export type EIP1193Provider = Exclude<SdkStarterKitConfig['provider'], string>
 
+type SafeOperationsClient = {
+  sendSafeOperation?: (props: SendSafeOperationProps) => Promise<SafeClientResult>
+  confirmSafeOperation?: (props: ConfirmSafeOperationProps) => Promise<SafeClientResult>
+  getPendingSafeOperations?: (options?: ListOptions) => Promise<ListResponse<SafeOperationResponse>>
+}
+
+export type SafeClient = SafeClientType & SafeOperationsClient
+
+export type SafeOperationOptions = BundlerOptions & PaymasterOptions
+
 export type CreateConfigParams<
   Provider extends SdkStarterKitConfig['provider'] = SdkStarterKitConfig['provider'],
   Signer extends SdkStarterKitConfig['signer'] = SdkStarterKitConfig['signer'],
   Chain extends ChainType = ChainType
-> = { chain: Chain; provider: Provider; signer: Signer } & SdkStarterKitConfig
+> = {
+  chain: Chain
+  provider: Provider
+  signer: Signer
+  safeOperationOptions?: SafeOperationOptions
+} & SdkStarterKitConfig
 
 export type SafeConfig<
   Provider extends SdkStarterKitConfig['provider'] = SdkStarterKitConfig['provider'],
@@ -21,6 +52,7 @@ export type SafeConfig<
   chain: Chain
   provider: Provider
   signer: Signer
+  safeOperationOptions?: SafeOperationOptions
 } & (Provider extends string ? { transport: HttpTransport } : { transport: CustomTransport })
 
 export type SafeConfigWithSigner = SafeConfig & { signer: string }

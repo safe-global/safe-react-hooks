@@ -3,6 +3,7 @@ import { waitFor } from '@testing-library/dom'
 import { SafeClient } from '@safe-global/sdk-starter-kit'
 import * as useSendTransaction from '@/hooks/useSendTransaction.js'
 import * as useSignerClientMutation from '@/hooks/useSignerClientMutation.js'
+import * as useConfig from '@/hooks//useConfig.js'
 import { useSwapOwner } from '@/hooks/useUpdateOwners/useSwapOwner.js'
 import {
   accounts,
@@ -10,7 +11,7 @@ import {
   safeMultisigTransaction,
   signerPrivateKeys
 } from '@test/fixtures/index.js'
-import { configPredictedSafe } from '@test/config.js'
+import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { createCustomMutationResult } from '@test/fixtures/mutationResult/index.js'
 import { renderHookInQueryClientProvider } from '@test/utils.js'
 import { MutationKey } from '@/constants.js'
@@ -28,6 +29,7 @@ describe('useSwapOwner', () => {
 
   const useSendTransactionSpy = jest.spyOn(useSendTransaction, 'useSendTransaction')
   const useSignerClientMutationSpy = jest.spyOn(useSignerClientMutation, 'useSignerClientMutation')
+  const useConfigSpy = jest.spyOn(useConfig, 'useConfig')
 
   const createSwapOwnerTxResultMock = safeMultisigTransaction
   const createSwapOwnerTxMock = jest.fn().mockResolvedValue(createSwapOwnerTxResultMock)
@@ -57,6 +59,8 @@ describe('useSwapOwner', () => {
     useSendTransactionSpy.mockReturnValue({
       sendTransactionAsync: sendTransactionAsyncMock
     } as unknown as useSendTransaction.UseSendTransactionReturnType)
+
+    useConfigSpy.mockReturnValue([configExistingSafe, () => {}])
   })
 
   afterEach(() => {
@@ -69,7 +73,7 @@ describe('useSwapOwner', () => {
     expect(useSendTransactionSpy).toHaveBeenCalledTimes(1)
     expect(useSendTransactionSpy).toHaveBeenCalledWith({ config: undefined })
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(1)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       mutationSafeClientFn: expect.any(Function),
       mutationKey: [MutationKey.SwapOwner]
@@ -77,7 +81,7 @@ describe('useSwapOwner', () => {
 
     expect(result.current).toEqual(mutationIdleResult)
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(1)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       mutationKey: [MutationKey.SwapOwner],
       mutationSafeClientFn: expect.any(Function)
@@ -95,7 +99,7 @@ describe('useSwapOwner', () => {
     expect(useSendTransactionSpy).toHaveBeenCalledTimes(1)
     expect(useSendTransactionSpy).toHaveBeenCalledWith({ config })
 
-    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(1)
+    expect(useSignerClientMutationSpy).toHaveBeenCalledTimes(2)
     expect(useSignerClientMutationSpy).toHaveBeenCalledWith({
       config,
       mutationSafeClientFn: expect.any(Function),
