@@ -14,9 +14,15 @@ const extendWithSafeOperations = async (
   return await client.extend(safeOperations({ bundlerUrl }, paymasterOptions))
 }
 
-const getPublicClientConfig = ({ provider, safeAddress, safeOptions }: SafeConfig) => ({
+const getPublicClientConfig = ({
+  provider,
+  safeAddress,
+  txServiceUrl,
+  safeOptions
+}: SafeConfig) => ({
   signer: undefined,
   provider,
+  txServiceUrl,
   ...(safeAddress ? { safeAddress } : { safeOptions })
 })
 
