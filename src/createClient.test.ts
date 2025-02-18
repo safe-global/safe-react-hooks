@@ -3,12 +3,20 @@ import { createPublicClient, createSignerClient } from '@/createClient.js'
 import { configExistingSafe, configPredictedSafe } from '@test/config.js'
 import { signerPrivateKeys } from '@test/fixtures/index.js'
 
+jest.mock('@safe-global/sdk-starter-kit', () => ({
+  createSafeClient: jest.fn()
+}))
+
 describe('createClient', () => {
   const safeClientMock = { safe: 'client' } as unknown as sdkStarterKit.SafeClient
 
   const createSafeClientSpy = jest
     .spyOn(sdkStarterKit, 'createSafeClient')
     .mockResolvedValue(safeClientMock)
+
+  beforeEach(() => {
+    ;(sdkStarterKit.createSafeClient as jest.Mock).mockResolvedValue(safeClientMock)
+  })
 
   afterEach(() => {
     jest.clearAllMocks()
