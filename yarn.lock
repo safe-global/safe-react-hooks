@@ -1086,24 +1086,24 @@
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.1.1.tgz#1ec17e2edbec25c8306d424ecfbf13c7de1aaa31"
   integrity sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==
 
-"@safe-global/api-kit@^3.0.0-alpha.2":
-  version "3.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@safe-global/api-kit/-/api-kit-3.0.0-alpha.2.tgz#fd94ad434fa6c31d85e168f9aa554ce9b13b3da1"
-  integrity sha512-c37y14bfNNJK9SSA3nLTpXOt1pShGWQBM4qOAxPnT5v6A00qQWjNKv61b0TS5Fp4VH2GT6LPS/QpL9AV7MMW8Q==
+"@safe-global/api-kit@^3.0.0-alpha.3":
+  version "3.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/@safe-global/api-kit/-/api-kit-3.0.0-alpha.3.tgz#f4819af24a492efeb06487571269b3243630d01d"
+  integrity sha512-GJYwxba9ebKUFP87SUto2q7tdX8+fDwkm5osPljSE2O8knuC26sstvdtvfXL8yMTOM8NT+r/UYjHyBZkT1SnMA==
   dependencies:
-    "@safe-global/protocol-kit" "^6.0.0-alpha.2"
-    "@safe-global/types-kit" "^2.0.0-alpha.2"
+    "@safe-global/protocol-kit" "^6.0.0-alpha.3"
+    "@safe-global/types-kit" "^2.0.0-alpha.3"
     node-fetch "^2.7.0"
     viem "^2.21.8"
 
-"@safe-global/protocol-kit@^6.0.0-alpha.2":
-  version "6.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@safe-global/protocol-kit/-/protocol-kit-6.0.0-alpha.2.tgz#a1eae60815dcde3fbf84adb913c08d28d46a1772"
-  integrity sha512-Mj9CkcicwauKst9/XKKyMxzyDpNtOR1CeD3EsxtAg+QiVF6CgwN+GHsgnTfUPHc0RE6MEVFYn7bSnO8F/dyTDw==
+"@safe-global/protocol-kit@^6.0.0-alpha.3":
+  version "6.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/@safe-global/protocol-kit/-/protocol-kit-6.0.0-alpha.3.tgz#f5914570a935426b758216e40f2c074d878df374"
+  integrity sha512-th45iACMXBbI7GS8vTnRqKRkjJJoJXmcwfgYNk/DSyPPwEPwp21EKUoydnBksSKHHxIq3xoCDxmjuTP+Zz0EBA==
   dependencies:
     "@safe-global/safe-deployments" "^1.37.28"
     "@safe-global/safe-modules-deployments" "^2.2.5"
-    "@safe-global/types-kit" "^2.0.0-alpha.2"
+    "@safe-global/types-kit" "^2.0.0-alpha.3"
     abitype "^1.0.2"
     semver "^7.6.3"
     viem "^2.21.8"
@@ -1111,15 +1111,15 @@
     "@noble/curves" "^1.6.0"
     "@peculiar/asn1-schema" "^2.3.13"
 
-"@safe-global/relay-kit@^4.0.0-alpha.2":
-  version "4.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@safe-global/relay-kit/-/relay-kit-4.0.0-alpha.2.tgz#1dec67c27942b3cd6370fae0bcdb9002b54efce9"
-  integrity sha512-/Zoc9R02oKHa2gSvhkvWV0RHRzs66JlZwtvGYvl9ibl4ssxTkcKfqLSMZkFqeZ83z2A90Z66FWI/jCwhExCeYA==
+"@safe-global/relay-kit@^4.0.0-alpha.3":
+  version "4.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/@safe-global/relay-kit/-/relay-kit-4.0.0-alpha.3.tgz#229fb748d87397a2a704ba36f9b66e12210783c2"
+  integrity sha512-1JvrYXN4QcXmMQVoHXP4qrsYbJXiPHrnxHrphZbXi9m+FIh5EnWiypP9nNsHZormQs+n9eJrLWa80m8bECzvLA==
   dependencies:
     "@gelatonetwork/relay-sdk" "^5.5.0"
-    "@safe-global/protocol-kit" "^6.0.0-alpha.2"
+    "@safe-global/protocol-kit" "^6.0.0-alpha.3"
     "@safe-global/safe-modules-deployments" "^2.2.5"
-    "@safe-global/types-kit" "^2.0.0-alpha.2"
+    "@safe-global/types-kit" "^2.0.0-alpha.3"
     semver "^7.6.3"
     viem "^2.21.8"
 
@@ -1156,21 +1156,28 @@
   resolved "https://registry.yarnpkg.com/@safe-global/safe-modules-deployments/-/safe-modules-deployments-2.2.7.tgz#8d9cabea778767776de2dc62258dcc458f2f2c14"
   integrity sha512-xlnAW7d0394EwlRgWJ+nuQNQmGkL0qBE54pN+1IBbUEFvWW8q0SbhDsTmlGgeDM+9F8q2KM06Ip1JMmddppA/Q==
 
-"@safe-global/sdk-starter-kit@2.0.0-alpha.2":
-  version "2.0.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/@safe-global/sdk-starter-kit/-/sdk-starter-kit-2.0.0-alpha.2.tgz#2cbdbaac94954191ef13dc51cf5435079c80ac22"
-  integrity sha512-EJM7UYSenw2j+wRDeV2HXIOw8ZL24sJJLO16GblyNGqUFX4XOwLII1ReATcW/yTMPFH2A9I3ZzrKqwj19ucM5A==
+"@safe-global/sdk-starter-kit@2.0.0-alpha.3":
+  version "2.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/@safe-global/sdk-starter-kit/-/sdk-starter-kit-2.0.0-alpha.3.tgz#9b6a8484fa036b0d7eeb7a4530cc51d358c65405"
+  integrity sha512-T7gbaHf07otUM9Y8OgC+Cc1AdFYx9keyOiFk/Vc5/I9sfbeTvjZM1JE1rnSf33EiSsTkCEDQY/2oCxnR0zgX1g==
   dependencies:
-    "@safe-global/api-kit" "^3.0.0-alpha.2"
-    "@safe-global/protocol-kit" "^6.0.0-alpha.2"
-    "@safe-global/relay-kit" "^4.0.0-alpha.2"
-    "@safe-global/types-kit" "^2.0.0-alpha.2"
+    "@safe-global/api-kit" "^3.0.0-alpha.3"
+    "@safe-global/protocol-kit" "^6.0.0-alpha.3"
+    "@safe-global/relay-kit" "^4.0.0-alpha.3"
+    "@safe-global/types-kit" "^2.0.0-alpha.3"
     viem "^2.21.8"
 
-"@safe-global/types-kit@2.0.0-alpha.2", "@safe-global/types-kit@^2.0.0-alpha.2":
+"@safe-global/types-kit@2.0.0-alpha.2":
   version "2.0.0-alpha.2"
   resolved "https://registry.yarnpkg.com/@safe-global/types-kit/-/types-kit-2.0.0-alpha.2.tgz#4b2792258bd77953ec6171b6c135fe9821febb57"
   integrity sha512-M6I7xMmuB8ZnMTBBny3T+8Rbzsawr6guLL1khFYndfnZ+LG845Oiw+cxd+e7+rZg7DZjTtJ+P5YdFIj1iPpBuQ==
+  dependencies:
+    abitype "^1.0.2"
+
+"@safe-global/types-kit@^2.0.0-alpha.3":
+  version "2.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/@safe-global/types-kit/-/types-kit-2.0.0-alpha.3.tgz#1600e28a8485c44aadd0293506774d0bd8dce7ca"
+  integrity sha512-IkR6dtft5zlEM/Wur9yeIMvvd+2015aQvOUdboKitcPvcyZRw9LAKpAc5COvXF2UAbKOt9tZMwY1ImtU9xIqhg==
   dependencies:
     abitype "^1.0.2"
 

@@ -52,7 +52,11 @@ export function useConfirmSafeOperation(
       })
 
       if (result.safeOperations?.userOperationHash) {
-        invalidateQueries([QueryKey.SafeOperations, QueryKey.SafeInfo])
+        invalidateQueries([
+          QueryKey.SafeOperations,
+          QueryKey.SafeInfo,
+          QueryKey.PendingSafeOperations
+        ])
       } else if (result.safeOperations?.safeOperationHash) {
         invalidateQueries([QueryKey.PendingSafeOperations])
       }
