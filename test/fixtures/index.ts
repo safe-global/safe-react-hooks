@@ -63,7 +63,15 @@ export const safeMultisigTransaction: SafeMultisigTransaction = {
   isExecuted: false,
   origin: '{}',
   confirmationsRequired: 2,
-  trusted: true
+  trusted: true,
+  proposedByDelegate: null,
+  isSuccessful: null,
+  ethGasPrice: null,
+  maxFeePerGas: null,
+  maxPriorityFeePerGas: null,
+  gasUsed: null,
+  fee: null,
+  signatures: null
 }
 
 export const safeModuleTransaction: SafeModuleTransaction = {

@@ -29,8 +29,7 @@ export function useSafeOperations(
       throw new Error('SafeClient not initialized')
     }
 
-    const response = await safeClient.apiKit.getSafeOperationsByAddress({
-      safeAddress: address,
+    const response = await safeClient.apiKit.getSafeOperationsByAddress(address, {
       limit: params.limit,
       offset: params.offset,
       ordering: params.ordering
